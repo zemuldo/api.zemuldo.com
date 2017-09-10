@@ -43,7 +43,7 @@ let titles = db.collection('titles')
 module.exports = {
     addNewBlog: (newData) => {
         return new Promise(function (resolve,reject) {
-        let date = new Date()
+        let date = new Date().toDateString()
         let thisPost = {
             title:newData.title,
             date:date,
