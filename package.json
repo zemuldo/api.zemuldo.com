@@ -1,0 +1,28 @@
+{
+  "name": "zemuldo.com.backend",
+  "version": "1.0.0",
+  "description": "Backend for Zemuldo.com",
+  "main": "app.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/zemuldo/zemuldo.com.backend.git"
+  },
+  "keywords": [
+    "zemuldo"
+  ],
+  "author": "Danstan Otieno Onyango",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zemuldo/zemuldo.com.backend/issues"
+  },
+  "homepage": "https://github.com/zemuldo/zemuldo.com.backend#readme",
+  "dependencies": {
+    "body-parser": "^1.18.0",
+    "express": "^4.15.4",
+    "moment": "^2.18.1",
+    "mongodb": "^2.2.31"
+  }
+}
