@@ -142,6 +142,38 @@ module.exports = {
             });
         })
 
+    },
+    getFilterBlogs: (filter)=> {
+        return new Promise(function (resolve,reject) {
+            posts.find({}).toArray(function (e,o) {
+                if(e){
+                    reject(e)
+                }
+                else {
+                    let blogs =[]
+                    for(let i=0;i<o.length;i++){
+                        let filters = filter.split(' ')
+                        for(let j=0;j<filters.length;j++){
+                            let index = o[i].title.toLowerCase().search(filters[j].toLowerCase())
+                            if(index>=0){
+                                if(i===0){
+                                    blogs.push(o[i])
+                                    break
+                                }
+                                else {
+                                    o[i].body = o[i].body.slice(0,140)
+                                    blogs.push(o[i])
+                                    break
+                                }
+
+                            }
+                        }
+                    }
+                    resolve(blogs)
+                }
+            });
+        })
+
     }
 }
 
