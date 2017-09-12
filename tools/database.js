@@ -156,22 +156,22 @@ module.exports = {
                         for(let j=0;j<filters.length;j++){
                             let index = o[i].title.toLowerCase().search(filters[j].toLowerCase())
                             if(index>=0){
-                                if(i===0){
+                                if(blogs.length<1){
                                     blogs.push(o[i])
                                     break
                                 }
-                                else {
+                                else{
                                     o[i].body = o[i].body.slice(0,140)
                                     blogs.push(o[i])
                                     break
                                 }
-
                             }
                         }
                     }
+
                     resolve(blogs)
                 }
-            });
+            })
         })
 
     }
