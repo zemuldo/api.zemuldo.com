@@ -38,6 +38,7 @@ db.open((e, d)=>{
 
 let posts = db.collection('posts')
 let titles = db.collection('titles')
+let visitors = db.collection('visitors')
 
 /* login validation methods */
 module.exports = {
@@ -91,6 +92,27 @@ module.exports = {
             console.log(success)
             return success
         })
+            .catch(function (e) {
+                console.log(e)
+                return e
+            })
+    },
+    addVisitor: (newData) => {
+        return new Promise(function (resolve,reject) {
+            visitors.insertOne(newData, {safe: true}, function (e,o) {
+                if(e){
+                    console.log("**********DB Error ********")
+                    reject ({error:e})
+                }
+                else {
+                    resolve(true)
+                }
+            });
+        })
+            .then(function (success) {
+                console.log(success)
+                return success
+            })
             .catch(function (e) {
                 console.log(e)
                 return e
