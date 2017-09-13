@@ -2,9 +2,11 @@
 
 let express = require("express");
 const EventEmitter = require('events');
-
-let {getAllBlogs,getBlog,addNewBlog,getBlogs,getFilterBlogs} = require('../tools/database')
+const requestIp = require('request-ip');
 let router = express();
+router.use(requestIp.mw())
+
+let {getAllBlogs,getBlog,addNewBlog,getBlogs,addVisitor} = require('../tools/database')
 
 router.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
@@ -12,7 +14,6 @@ router.use((req, res, next) => {
     res.header("Allow-Control-Access-Method", "POST", "GET");
     next();
 });
-
 router.post(('/login'), async function (req, res) {
 
 })
@@ -42,5 +43,35 @@ router.get(('/all'), async function (req, res) {
 router.get(('/filter/:filterString'), async function (req, res) {
     let state = await getFilterBlogs(req.params.filterString)
     res.send(state)
+})
+router.post('/analytics/visitors/new',function (req,res) {
+    if(req.body.status){
+        if(req.body.status!=="success"){
+            let unResolvedUser = {
+                "as": "AS36866 JTL",
+                "city": "Nairobi",
+                "country": "Kenya",
+                "countryCode": "KE",
+                "isp": "Jamii Telecommunications Limited",
+                "lat": -1.2833,
+                "lon": 36.8167,
+                "org": "JTL",
+                "query": req.body.query,
+                "region": "30",
+                "regionName": "Nairobi Province",
+                "status": "success",
+                "timezone": "Africa/Nairobi",
+                "zip": ""
+            }
+            addVisitor(unResolvedUser)
+        }
+        else {
+            addVisitor(req.body)
+        }
+    }
+    res.send(true)
+})
+router.get('/getIp',function (req,res) {
+    res.send({ip:req.clientIp})
 })
 module.exports = router;
