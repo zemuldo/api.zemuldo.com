@@ -23,6 +23,7 @@
     "body-parser": "^1.18.0",
     "express": "^4.15.4",
     "moment": "^2.18.1",
-    "mongodb": "^2.2.31"
+    "mongodb": "^2.2.31",
+    "request-ip": "^2.0.2"
   }
 }
