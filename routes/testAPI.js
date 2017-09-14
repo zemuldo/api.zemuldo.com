@@ -6,7 +6,7 @@ const requestIp = require('request-ip');
 let router = express();
 router.use(requestIp.mw())
 
-let {getAllBlogs,getBlog,addNewBlog,getBlogs,addVisitor} = require('../tools/database')
+let {getFilterBlogs,getAllBlogs,getBlog,addNewBlog,getBlogs,addVisitor} = require('../tools/database')
 
 router.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
@@ -75,3 +75,4 @@ router.get('/getIp',function (req,res) {
     res.send({ip:req.clientIp})
 })
 module.exports = router;
+
