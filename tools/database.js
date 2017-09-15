@@ -157,11 +157,20 @@ module.exports = {
                 }
                 else {
                     let filtered = []
-                    for(let i=0;i<o.length;i++){
-                        o[i].body = o[i].body.slice(0,140)
-                        filtered.push(o[i])
+                    if(o.length<11){
+                        for(let i=0;i<o.length;i++){
+                            o[i].body = o[i].body.slice(0,140)
+                            filtered.push(o[i])
+                        }
+                        resolve(filtered)
                     }
-                    resolve(filtered)
+                    else {
+                        for(let i=0;i<10;i++){
+                            o[i].body = o[i].body.slice(0,140)
+                            filtered.push(o[i])
+                        }
+                        resolve(filtered)
+                    }
                 }
             });
         })
