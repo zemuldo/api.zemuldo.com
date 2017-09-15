@@ -156,10 +156,12 @@ module.exports = {
                     reject(e)
                 }
                 else {
-                    for(let i=0;i<10;i++){
+                    let filtered = []
+                    for(let i=0;i<o.length;i++){
                         o[i].body = o[i].body.slice(0,140)
+                        filtered.push(o[i])
                     }
-                    resolve(o)
+                    resolve(filtered)
                 }
             });
         })
