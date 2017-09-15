@@ -162,14 +162,14 @@ module.exports = {
                             o[i].body = o[i].body.slice(0,140)
                             filtered.push(o[i])
                         }
-                        resolve(filtered)
+                        resolve(shuffle(filtered))
                     }
                     else {
                         for(let i=0;i<10;i++){
                             o[i].body = o[i].body.slice(0,140)
                             filtered.push(o[i])
                         }
-                        resolve(filtered)
+                        resolve(shuffle(filtered))
                     }
                 }
             });
@@ -208,5 +208,23 @@ module.exports = {
         })
 
     }
+}
+function shuffle(array) {
+    let currentIndex = array.length, temporaryValue, randomIndex;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+
+        // Pick a remaining element...
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+
+        // And swap it with the current element.
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+    }
+
+    return array;
 }
 
