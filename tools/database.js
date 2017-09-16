@@ -99,22 +99,67 @@ module.exports = {
     },
     addVisitor: (newData) => {
         return new Promise(function (resolve,reject) {
-            visitors.insertOne(newData, {safe: true}, function (e,o) {
+            let sessionid=newData.countryCode+(newData.lat+newData.lon)+newData.query+newData.regionName
+            let visitor = {
+                sessionID:sessionid,
+                country:newData.country,
+                countryCode:[newData.countryCode],
+                ipAddress:newData.query,
+                date:[new Date()],
+                region:[newData.regionName],
+                visits:1,
+                network:[newData.isp]
+            }
+            visitors.findOne({sessionID:sessionid},(e,o)=>{
                 if(e){
-                    console.log("**********DB Error ********")
-                    reject ({error:e})
+                    console.log({error:"database error"})
                 }
                 else {
-                    resolve(true)
+                    if(o){
+                        o.region.push(newData.regionName)
+                        o.visits +=1
+                        o.network.push(newData.isp)
+                        o.countryCode.push(newData.countryCode)
+                        visitors.updateOne({_id:o._id},o, {upsert: true}, function (e,o) {
+                            if(e){
+                                console.log("**********DB Error ********")
+                                reject ({error:e})
+                            }
+                            else {
+                                let user = {
+                                    sessionID:sessionid,
+                                    country:newData.country,
+                                    region:newData.regionName
+                                }
+                                resolve(user)
+                            }
+                        });
+                    }
+                    else {
+                        visitors.insertOne(visitor, {safe: true}, function (e,o) {
+                            if(e){
+                                console.log("**********DB Error ********")
+                                reject ({error:e})
+                            }
+                            else {
+                                let user = {
+                                    sessionID:sessionid,
+                                    country:newData.country,
+                                    region:newData.regionName
+                                }
+                                resolve(user)
+                            }
+                        });
+                    }
+
                 }
-            });
+            })
+
         })
             .then(function (success) {
-                console.log(success)
                 return success
             })
             .catch(function (e) {
-                console.log(e)
                 return e
             })
     },
