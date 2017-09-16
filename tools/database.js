@@ -99,9 +99,8 @@ module.exports = {
     },
     addVisitor: (newData) => {
         return new Promise(function (resolve,reject) {
-            let sessionid=newData.countryCode+(newData.lat+newData.lon)+newData.query+newData.regionName
             let visitor = {
-                sessionID:sessionid,
+                sessionID:newData.sessionid,
                 country:newData.country,
                 countryCode:[newData.countryCode],
                 ipAddress:newData.query,
@@ -110,12 +109,13 @@ module.exports = {
                 visits:1,
                 network:[newData.isp]
             }
-            visitors.findOne({sessionID:sessionid},(e,o)=>{
+            visitors.findOne({sessionID:newData.sessionid},(e,o)=>{
                 if(e){
                     console.log({error:"database error"})
                 }
                 else {
                     if(o){
+                        let visits = o.visits +1
                         o.region.push(newData.regionName)
                         o.visits +=1
                         o.network.push(newData.isp)
@@ -127,9 +127,11 @@ module.exports = {
                             }
                             else {
                                 let user = {
-                                    sessionID:sessionid,
+                                    sessionID:newData.sessionid,
                                     country:newData.country,
-                                    region:newData.regionName
+                                    region:newData.regionName,
+                                    status:'known',
+                                    visits:visits
                                 }
                                 resolve(user)
                             }
@@ -143,9 +145,11 @@ module.exports = {
                             }
                             else {
                                 let user = {
-                                    sessionID:sessionid,
+                                    sessionID:newData.sessionid,
                                     country:newData.country,
-                                    region:newData.regionName
+                                    region:newData.regionName,
+                                    status:"new",
+                                    visits:1
                                 }
                                 resolve(user)
                             }

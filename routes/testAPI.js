@@ -49,6 +49,7 @@ router.post('/analytics/visitors/new', async function (req,res) {
     if(req.body.status){
         if(req.body.status!=="success"){
             let unResolvedUser = {
+                sessionID:'unknownuser'+new Date().toDateString(),
                 "as": "Unknown",
                 "city": "Unknown",
                 "country": "Unknown",
