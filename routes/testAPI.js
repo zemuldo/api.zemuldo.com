@@ -44,29 +44,61 @@ router.get(('/filter/:filterString'), async function (req, res) {
     let state = await getFilterBlogs(req.params.filterString)
     res.send(state)
 })
-router.post('/analytics/visitors/new',function (req,res) {
+router.post('/analytics/visitors/new', async function (req,res) {
+    let state = null
     if(req.body.status){
         if(req.body.status!=="success"){
             let unResolvedUser = {
-                "as": "AS36866 JTL",
-                "city": "Nairobi",
-                "country": "Kenya",
-                "countryCode": "KE",
-                "isp": "Jamii Telecommunications Limited",
-                "lat": -1.2833,
-                "lon": 36.8167,
-                "org": "JTL",
+                "as": "Unknown",
+                "city": "Unknown",
+                "country": "Unknown",
+                "countryCode": "Unknown",
+                "isp": "Unknown",
+                "lat": 'Unknown',
+                "lon": 'Unknown',
+                "org": "Unknown",
                 "query": req.body.query,
-                "region": "30",
-                "regionName": "Nairobi Province",
-                "status": "success",
-                "timezone": "Africa/Nairobi",
+                "region": "Unknown",
+                "regionName": "Unknown",
+                "status": "Unknown",
+                "timezone": "Unknown",
                 "zip": ""
             }
-            addVisitor(unResolvedUser)
+            state = await addVisitor(unResolvedUser)
+            console.log(state)
+            res.send(state)
         }
         else {
-            addVisitor(req.body)
+           state = await addVisitor(req.body)
+            console.log(state)
+            res.send(state)
+        }
+    }
+})
+router.post('/analytics/visitors/update',function (req,res) {
+    let state = null
+    if(req.body.status){
+        if(req.body.status!=="success"){
+            let unResolvedUser = {
+                "as": "Unknown",
+                "city": "Unknown",
+                "country": "Unknown",
+                "countryCode": "Unknown",
+                "isp": "Unknown",
+                "lat": 'Unknown',
+                "lon": 'Unknown',
+                "org": "Unknown",
+                "query": req.body.query,
+                "region": "Unknown",
+                "regionName": "Unknown",
+                "status": "Unknown",
+                "timezone": "Unknown",
+                "zip": ""
+            }
+            state = addVisitor(unResolvedUser)
+        }
+        else {
+            state = addVisitor(req.body)
         }
     }
     res.send(true)
