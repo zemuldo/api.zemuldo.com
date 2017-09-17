@@ -243,20 +243,23 @@ module.exports = {
                     for(let i=0;i<o.length;i++){
                         let filters = filter.split(' ')
                         for(let j=0;j<filters.length;j++){
-                            let filtered = []
-                            if(o.length<5){
-                                for(let i=0;i<o.length;i++){
-                                    o[i].body = o[i].body.slice(0,140)
-                                    filtered.push(o[i])
+                            let index = o[i].title.toLowerCase().search(filters[j].toLowerCase())
+                            if(index>=0){
+                                let filtered = []
+                                if(o.length<5){
+                                    for(let i=0;i<o.length;i++){
+                                        o[i].body = o[i].body.slice(0,140)
+                                        filtered.push(o[i])
+                                    }
+                                    resolve(shuffle(filtered))
                                 }
-                                resolve(shuffle(filtered))
-                            }
-                            else {
-                                for(let i=0;i<4;i++){
-                                    o[i].body = o[i].body.slice(0,140)
-                                    filtered.push(o[i])
+                                else {
+                                    for(let i=0;i<4;i++){
+                                        o[i].body = o[i].body.slice(0,140)
+                                        filtered.push(o[i])
+                                    }
+                                    resolve(shuffle(filtered))
                                 }
-                                resolve(shuffle(filtered))
                             }
                         }
                     }
