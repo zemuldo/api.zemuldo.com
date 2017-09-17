@@ -115,6 +115,7 @@ module.exports = {
                 }
                 else {
                     if(o){
+                        console.log(o)
                         let visits = o.visits +1
                         o.region.push(newData.regionName)
                         o.visits +=1
