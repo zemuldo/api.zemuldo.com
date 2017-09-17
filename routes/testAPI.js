@@ -6,7 +6,7 @@ const requestIp = require('request-ip');
 let router = express();
 router.use(requestIp.mw())
 
-let {getFilterBlogs,getAllBlogs,getBlog,addNewBlog,getBlogs,addVisitor} = require('../tools/database')
+let {addReview,getFilterBlogs,getAllBlogs,getBlog,addNewBlog,getBlogs,addVisitor} = require('../tools/database')
 
 router.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
@@ -64,47 +64,23 @@ router.post('/analytics/visitors/new', async function (req,res) {
                 "zip": ""
             }
             state = await addVisitor(unResolvedUser)
-            console.log(state)
             res.send(state)
         }
         else {
            state = await addVisitor(req.body)
-            console.log(state)
             res.send(state)
         }
     }
 })
-router.post('/analytics/visitors/update',function (req,res) {
-    let state = null
-    if(req.body.status){
-        if(req.body.status!=="success"){
-            let unResolvedUser = {
-                "as": "Unknown",
-                "city": "Unknown",
-                "country": "Unknown",
-                "countryCode": "Unknown",
-                "isp": "Unknown",
-                "lat": 'Unknown',
-                "lon": 'Unknown',
-                "org": "Unknown",
-                "query": req.body.query,
-                "region": "Unknown",
-                "regionName": "Unknown",
-                "status": "Unknown",
-                "timezone": "Unknown",
-                "zip": ""
-            }
-            state = addVisitor(unResolvedUser)
-        }
-        else {
-            state = addVisitor(req.body)
-        }
-    }
+router.post('/analytics/visitors/review',async function (req,res) {
+    let o = req.body
+    let state = await addReview(req.body)
     res.send(true)
 })
+
 router.get('/getIp',function (req,res) {
-    console.log(req.clientIp)
     res.send({ip:req.clientIp})
 })
+
 module.exports = router;
 

@@ -39,6 +39,7 @@ db.open((e, d)=>{
 let posts = db.collection('posts')
 let titles = db.collection('titles')
 let visitors = db.collection('visitors')
+let reviews = db.collection('reviews')
 
 /* login validation methods */
 module.exports = {
@@ -167,6 +168,19 @@ module.exports = {
                 }
                 else{
                     resolve (o)
+                }
+            });
+        })
+
+    },
+    addReview: (review)=> {
+        return new Promise(function (resolve,reject) {
+            reviews.insertOne(review, {safe: true}, function (e,o) {
+                if(e){
+                    reject ({error:e})
+                }
+                else {
+                    resolve(true)
                 }
             });
         })
