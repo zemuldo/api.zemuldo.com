@@ -59,22 +59,18 @@ module.exports = {
         titles.findOne({title:newData.title}, (e, o)=> {
 
                 if (e){
-                    console.log("**********DataBase Error********")
                     reject({error:e})
                 }	else{
                     if(o){
-                        console.log("**********Record Exists ********")
                         reject({error:'Title: ' + newData.title + ' Exists in ' + newData.type})
                     }
                     else {
                         titles.insertOne(thisTitle, {safe: true}, function (e,o) {
                             if(e){
-                                console.log("**********DB Error ********")
                                 reject ({error:e})
                             }
                             else {
                                 posts.insertOne(thisPost, function (e,o) {
-                                    console.log("**********Post Added ********")
                                     if(e){
                                         reject({error:'database error'})
                                     }
@@ -89,11 +85,9 @@ module.exports = {
             })
         })
     .then(function (success) {
-            console.log(success)
             return success
         })
             .catch(function (e) {
-                console.log(e)
                 return e
             })
     },
@@ -111,11 +105,10 @@ module.exports = {
             }
             visitors.findOne({sessionID:newData.sessionID},(e,o)=>{
                 if(e){
-                    console.log({error:"database error"})
+                    reject(e)
                 }
                 else {
                     if(o){
-                        console.log(o)
                         let visits = o.visits +1
                         //o.region.push(newData.regionName)
                         o.visits +=1
@@ -123,7 +116,6 @@ module.exports = {
                         o.countryCode.push(newData.countryCode)
                         visitors.updateOne({_id:o._id},o, {upsert: true}, function (e,o) {
                             if(e){
-                                console.log("**********DB Error ********")
                                 reject ({error:e})
                             }
                             else {
@@ -141,7 +133,6 @@ module.exports = {
                     else {
                         visitors.insertOne(visitor, {safe: true}, function (e,o) {
                             if(e){
-                                console.log("**********DB Error ********")
                                 reject ({error:e})
                             }
                             else {
@@ -172,11 +163,9 @@ module.exports = {
         return new Promise(function (resolve,reject) {
             posts.findOne({title:queryParam.title}, (e, o)=> {
                 if (e){
-                    console.log(e)
                     reject({error:'error in db'})
                 }
                 else{
-                    console.log(o)
                     resolve (o)
                 }
             });
@@ -236,7 +225,6 @@ module.exports = {
         return new Promise(function (resolve,reject) {
             posts.find({}).toArray(function (e,o) {
                 if(e){
-                    console.log("-----------------------")
                     reject(e)
                 }
                 else {
@@ -245,7 +233,6 @@ module.exports = {
                         let filters = filter.split(' ')
                         for(let j=0;j<filters.length;j++){
                             let index = o[i].title.toLowerCase().search(filters[j].toLowerCase())
-                            console.log(index)
                             if(index>0){
                                 if(blogs.length<1){
                                     blogs.push(o[i])

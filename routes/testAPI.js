@@ -105,6 +105,7 @@ router.post('/analytics/visitors/update',function (req,res) {
     res.send(true)
 })
 router.get('/getIp',function (req,res) {
+    console.log(req.clientIp)
     res.send({ip:req.clientIp})
 })
 module.exports = router;
