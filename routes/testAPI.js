@@ -73,9 +73,8 @@ router.post('/analytics/visitors/new', async function (req,res) {
     }
 })
 router.post('/analytics/visitors/review',async function (req,res) {
-    let o = req.body
     let state = await addReview(req.body)
-    res.send(true)
+    res.send(state)
 })
 
 router.get('/getIp',function (req,res) {
