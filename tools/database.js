@@ -186,14 +186,20 @@ module.exports = {
     getBlogs: (type)=> {
         return new Promise(function (resolve,reject) {
             posts.find({type:type}).toArray(function (e,o) {
-                if(e){
-                    reject(e)
+                let filtered = []
+                if(o.length<5){
+                    for(let i=0;i<o.length;i++){
+                        o[i].body = o[i].body.slice(0,140)
+                        filtered.push(o[i])
+                    }
+                    resolve(shuffle(filtered))
                 }
                 else {
-                    for(let i=1;i<o.length;i++){
+                    for(let i=0;i<4;i++){
                         o[i].body = o[i].body.slice(0,140)
+                        filtered.push(o[i])
                     }
-                    resolve(o)
+                    resolve(shuffle(filtered))
                 }
             });
         })
