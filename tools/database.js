@@ -207,7 +207,7 @@ module.exports = {
                 }
                 else {
                     let filtered = []
-                    if(o.length<11){
+                    if(o.length<5){
                         for(let i=0;i<o.length;i++){
                             o[i].body = o[i].body.slice(0,140)
                             filtered.push(o[i])
@@ -215,7 +215,7 @@ module.exports = {
                         resolve(shuffle(filtered))
                     }
                     else {
-                        for(let i=0;i<10;i++){
+                        for(let i=0;i<4;i++){
                             o[i].body = o[i].body.slice(0,140)
                             filtered.push(o[i])
                         }
@@ -237,17 +237,20 @@ module.exports = {
                     for(let i=0;i<o.length;i++){
                         let filters = filter.split(' ')
                         for(let j=0;j<filters.length;j++){
-                            let index = o[i].title.toLowerCase().search(filters[j].toLowerCase())
-                            if(index>=0){
-                                if(blogs.length<1){
-                                    blogs.push(o[i])
-                                    break
-                                }
-                                else{
+                            let filtered = []
+                            if(o.length<5){
+                                for(let i=0;i<o.length;i++){
                                     o[i].body = o[i].body.slice(0,140)
-                                    blogs.push(o[i])
-                                    break
+                                    filtered.push(o[i])
                                 }
+                                resolve(shuffle(filtered))
+                            }
+                            else {
+                                for(let i=0;i<4;i++){
+                                    o[i].body = o[i].body.slice(0,140)
+                                    filtered.push(o[i])
+                                }
+                                resolve(shuffle(filtered))
                             }
                         }
                     }
