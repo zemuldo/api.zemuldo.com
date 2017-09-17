@@ -27,13 +27,11 @@ router.get(('/posts/:type/:title'), async function (req, res) {
         type:req.params.type,
         title:req.params.title
     }
-    console.log(query)
     let state = await getBlog(query)
     res.send(state)
 })
 router.get(('/posts/:type'), async function (req, res) {
     let state = await getBlogs(req.params.type)
-    console.log(state)
     res.send(state)
 })
 router.get(('/all'), async function (req, res) {
