@@ -236,6 +236,7 @@ module.exports = {
         return new Promise(function (resolve,reject) {
             posts.find({}).toArray(function (e,o) {
                 if(e){
+                    console.log("-----------------------")
                     reject(e)
                 }
                 else {
@@ -244,7 +245,8 @@ module.exports = {
                         let filters = filter.split(' ')
                         for(let j=0;j<filters.length;j++){
                             let index = o[i].title.toLowerCase().search(filters[j].toLowerCase())
-                            if(index>=0){
+                            console.log(index)
+                            if(index>0){
                                 if(blogs.length<1){
                                     blogs.push(o[i])
                                     break
@@ -257,32 +259,24 @@ module.exports = {
                             }
                         }
                     }
-
-                    resolve(shuffle(blogs))
+                    let filtered = []
+                    if(blogs.length<5){
+                        for(let i=0;i<blogs.length;i++){
+                            blogs[i].body = blogs[i].body.slice(0,140)
+                            filtered.push(blogs[i])
+                        }
+                        resolve(shuffle(filtered))
+                    }
+                    else {
+                        for(let i=0;i<5;i++){
+                            blogs[i].body = blogs[i].body.slice(0,140)
+                            filtered.push(blogs[i])
+                        }
+                        resolve(shuffle(filtered))
+                    }
                 }
             })
-
         })
-            .then(function (blogs) {
-                let filtered = []
-                if(blogs.length<5){
-                    for(let i=0;i<blogs.length;i++){
-                        blogs[i].body = blogs[i].body.slice(0,140)
-                        filtered.push(o[i])
-                    }
-                    return shuffle(filtered)
-                }
-                else {
-                    for(let i=0;i<5;i++){
-                        blogs[i].body = blogs[i].body.slice(0,140)
-                        filtered.push(blogs[i])
-                    }
-                    return shuffle(filtered)
-                }
-            })
-            .catch(function (err) {
-                return err
-            })
 
     }
 }
