@@ -100,7 +100,7 @@ module.exports = {
     addVisitor: (newData) => {
         return new Promise(function (resolve,reject) {
             let visitor = {
-                sessionID:newData.sessionid,
+                sessionID:newData.sessionID,
                 country:newData.country,
                 countryCode:[newData.countryCode],
                 ipAddress:newData.query,
@@ -109,7 +109,7 @@ module.exports = {
                 visits:1,
                 network:[newData.isp]
             }
-            visitors.findOne({sessionID:newData.sessionid},(e,o)=>{
+            visitors.findOne({sessionID:newData.sessionID},(e,o)=>{
                 if(e){
                     console.log({error:"database error"})
                 }
@@ -117,7 +117,7 @@ module.exports = {
                     if(o){
                         console.log(o)
                         let visits = o.visits +1
-                        o.region.push(newData.regionName)
+                        //o.region.push(newData.regionName)
                         o.visits +=1
                         o.network.push(newData.isp)
                         o.countryCode.push(newData.countryCode)
@@ -128,7 +128,7 @@ module.exports = {
                             }
                             else {
                                 let user = {
-                                    sessionID:newData.sessionid,
+                                    sessionID:newData.sessionID,
                                     country:newData.country,
                                     region:newData.regionName,
                                     status:'known',
@@ -146,7 +146,7 @@ module.exports = {
                             }
                             else {
                                 let user = {
-                                    sessionID:newData.sessionid,
+                                    sessionID:newData.sessionID,
                                     country:newData.country,
                                     region:newData.regionName,
                                     status:"new",
