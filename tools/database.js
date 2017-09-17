@@ -245,8 +245,15 @@ module.exports = {
                         for(let j=0;j<filters.length;j++){
                             let index = o[i].title.toLowerCase().search(filters[j].toLowerCase())
                             if(index>=0){
-                                o[i].body = o[i].body.slice(0,140)
-                                blogs.push(o[i])
+                                if(blogs.length<1){
+                                    blogs.push(o[i])
+                                    break
+                                }
+                                else{
+                                    o[i].body = o[i].body.slice(0,140)
+                                    blogs.push(o[i])
+                                    break
+                                }
                             }
                         }
                     }
