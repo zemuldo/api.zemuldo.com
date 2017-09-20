@@ -67,7 +67,7 @@ router.post('/analytics/visitors/new', async function (req,res) {
             res.send(state)
         }
         else {
-           state = await addVisitor(req.body)
+            state = await addVisitor(req.body)
             res.send(state)
         }
     }
