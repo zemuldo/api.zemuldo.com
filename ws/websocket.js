@@ -3,10 +3,10 @@ const processRequest = require('./intents');
 const WebSocket = require('ws');
 const uuidv4 = require('uuid/v4');
 
-const wss = new WebSocket.Server({server: server});
 
+const wss = new WebSocket.Server({server: server});
 wss.on('connection', (ws) => {
-    console.log("*********************")
+    console.log("----------------------")
   ws.on('message', (msg) =>
     processRequest(msg)
       .then(answer => ws.send(JSON.stringify({type: 'bot', msg: answer})))
