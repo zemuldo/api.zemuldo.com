@@ -26,7 +26,7 @@ app.get('/',(req,res)=>{
 })
 let expiryDate = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
 app.use(checkMe({
-    name: 'session',
+    name: 'checkMe',
     keys: ['themati#@tripple26=n26gohb()@#$$#$THF$%^$FGDFRFU', '#$THF$%^$FGDFRFU26gohb()@#i#@tripple26='],
     cookie: {
         secure: true,
