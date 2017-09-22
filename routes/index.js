@@ -1,9 +1,7 @@
 'use strict';
-
-let express = require("express");
-const EventEmitter = require('events');
+const express = require("express");
 const requestIp = require('request-ip');
-let router = express();
+const router = express();
 router.use(requestIp.mw())
 
 let {addReview,getFilterBlogs,getAllBlogs,getBlog,addNewBlog,getBlogs,addVisitor} = require('../tools/database')
