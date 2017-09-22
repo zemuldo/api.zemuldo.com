@@ -1,15 +1,21 @@
 'use strict';
-
+const dotenv = require('dotenv').config({
+    path: process.env.NODE_ENV === 'test' ? 'test.env' :
+        (process.env.NODE_ENV === 'production' ? 'production.env' : '.env')
+});
 let express = require("express");
 let bodyParser = require('body-parser');
 let helmet = require('helmet')
 let checkMe = require('cookie-session')
+const compression = require('compression');
+const wsserver = require('./ws');
+let wss = require('./ws/websocket')
 let config = require('./config/env');
 
 let configs = {port:8090}
-
 let app = express();
 
+app.use(compression());
 app.use(bodyParser.json());
 app.use(helmet())
 app.set('x-powered-by',false)
@@ -21,9 +27,6 @@ app.use(helmet({
     frameguard: false,
     noCache:true
 }))
-app.get('/',(req,res)=>{
-    res.send('hello')
-})
 let expiryDate = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
 app.use(checkMe({
     name: 'checkMe',
@@ -41,6 +44,7 @@ let route = require('./routes');
 
 app.use(route);
 
-app.listen(configs.port, "0.0.0.0",function(){
-    console.log("Web server running at http://localhost:"+configs.port)
+wsserver.on('request', app);
+wsserver.listen(process.env.PORT || 8090, () => {
+    console.info(`server/ws started on port ${process.env.PORT}`); // eslint-disable-line no-console
 });
