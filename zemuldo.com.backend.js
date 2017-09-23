@@ -10,9 +10,9 @@ let checkMe = require('cookie-session')
 const compression = require('compression');
 const wsserver = require('./ws');
 let wss = require('./ws/websocket')
-let config = require('./config/env');
+let ENV = require('./config/env');
 
-let configs = {port:8090}
+let config = ENV[process.env.NODE_ENV]
 let app = express();
 
 app.use(compression());
@@ -42,11 +42,13 @@ app.use(checkMe({
 
 let apiRoute = require('./routes');
 let blogsRoute = require('./routes/blogs');
+let analyticsRoute = require('./routes/analytics');
 
 app.use(apiRoute);
 app.use(blogsRoute);
-
+app.use(analyticsRoute);
 wsserver.on('request', app);
-wsserver.listen(process.env.PORT || 8090, () => {
-    console.info(`server/ws started on port ${process.env.PORT}`); // eslint-disable-line no-console
+wsserver.listen(config.httpPort, () => {
+    console.info(`Web server started at http://localhost:${config.httpPort}`);
+    console.info(`Web Socket started at  ws://localhost:${config.httpPort}`);
 });
