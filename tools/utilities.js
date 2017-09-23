@@ -7,7 +7,7 @@ module.exports ={
         return new Promise(function (resolve,reject) {
             if(post){
                 let state = {error:'invalid data'}
-                Object.keys(post).forEach(function(prop) {
+                Object.keys(validator).forEach(function(prop) {
                     if(validator[prop]){
                         if(validator[prop].type!==typeof post[prop]){
                             reject( {error:'Expecting '+validator[prop].type+" on field "+prop+' but got '+ typeof post[prop]})
