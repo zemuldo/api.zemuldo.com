@@ -12,10 +12,6 @@ router.use((req, res, next) => {
     res.header("Allow-Control-Access-Method", "POST", "GET");
     next();
 });
-router.post(('/login'), async function (req, res) {
-
-})
-
 router.get(('/posts/:type/:title'), async function (req, res) {
     let query = {
         type:req.params.type,

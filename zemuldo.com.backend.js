@@ -40,11 +40,14 @@ app.use(checkMe({
     }
 }))
 
-let apiRoute = require('./routes');
+let athRoute = require('./routes/auth');
+let fetchRoute = require('./routes/fetch');
 let blogsRoute = require('./routes/blogs');
 let analyticsRoute = require('./routes/analytics');
 
-app.use(apiRoute);
+
+app.use(athRoute);
+app.use(fetchRoute);
 app.use(blogsRoute);
 app.use(analyticsRoute);
 wsserver.on('request', app);
