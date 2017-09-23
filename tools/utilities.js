@@ -8,16 +8,16 @@ module.exports ={
             if(post){
                 let state = {error:'invalid data'}
                 Object.keys(validator).forEach(function(prop) {
-                    if(validator[prop]){
+                    if(!post[prop]){
+                      reject  ({error: "No "+prop+" defined in post"})
+                    }
+                    else {
                         if(validator[prop].type!==typeof post[prop]){
                             reject( {error:'Expecting '+validator[prop].type+" on field "+prop+' but got '+ typeof post[prop]})
                         }
                         else {
                             state = true
                         }
-                    }
-                    else {
-                        return {error: "No "+post[prop]+" defined in post"}
                     }
                 })
                 resolve(state)
