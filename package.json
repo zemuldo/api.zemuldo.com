@@ -4,7 +4,8 @@
   "description": "Backend for Zemuldo.com",
   "main": "app.js",
   "scripts": {
-    "test": "npm test"
+    "test": "nodemon zemuldo.com.backend.js",
+    "start": "pm2 start zemuldo.com.backend.js"
   },
   "repository": {
     "type": "git",
