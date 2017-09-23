@@ -245,17 +245,31 @@ module.exports = {
                     let blogs =[]
                     for(let i=0;i<o.length;i++){
                         let filters = filter.split(' ')
-                        for(let j=0;j<filters.length;j++){
-                            let index = o[i].title.toLowerCase().search(filters[j].toLowerCase())
-                            if(index>0){
+                        if(filters.length>1){
+                            for(let j=0;j<filters.length;j++){
+                                let index = o[i].title.toLowerCase().search(filters[j].toLowerCase())
+                                if(index>0){
+                                    if(blogs.length<1){
+                                        blogs.push(o[i])
+                                        break
+                                    }
+                                    else{
+                                        o[i].body = o[i].body.slice(0,140)
+                                        blogs.push(o[i])
+                                        break
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            let index = o[i].title.toLowerCase().search(filters[0].toLowerCase())
+                            if(!(index<0)){
                                 if(blogs.length<1){
                                     blogs.push(o[i])
-                                    break
                                 }
                                 else{
                                     o[i].body = o[i].body.slice(0,140)
                                     blogs.push(o[i])
-                                    break
                                 }
                             }
                         }
