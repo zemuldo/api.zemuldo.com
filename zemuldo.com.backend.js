@@ -40,9 +40,11 @@ app.use(checkMe({
     }
 }))
 
-let route = require('./routes');
+let apiRoute = require('./routes');
+let blogsRoute = require('./routes/blogs');
 
-app.use(route);
+app.use(apiRoute);
+app.use(blogsRoute);
 
 wsserver.on('request', app);
 wsserver.listen(process.env.PORT || 8090, () => {
