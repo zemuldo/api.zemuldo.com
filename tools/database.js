@@ -167,7 +167,7 @@ module.exports = {
                     reject({error:'error in db'})
                 }
                 else{
-                    resolve (o)
+                    resolve(o)
                 }
             });
         })
@@ -192,8 +192,13 @@ module.exports = {
                 let filtered = []
                 if(o.length<5){
                     for(let i=0;i<o.length;i++){
-                        o[i].body = o[i].body.slice(0,140)
-                        filtered.push(o[i])
+                        if(i===0){
+                            filtered.push(o[i])
+                        }
+                        else {
+                            o[i].body = o[i].body.slice(0,140)
+                            filtered.push(o[i])
+                        }
                     }
                     resolve(shuffle(filtered))
                 }
