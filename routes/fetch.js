@@ -18,7 +18,13 @@ router.get(('/posts/:type/:title'), async function (req, res) {
         title:req.params.title
     }
     let state = await getBlog(query)
-    res.send(state)
+    if(state){
+        res.send(state)
+    }
+    else {
+        res.send({error:"not found"})
+    }
+
 })
 router.get(('/posts/:type'), async function (req, res) {
     let state = await getBlogs(req.params.type)
