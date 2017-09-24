@@ -188,26 +188,26 @@ module.exports = {
     },
     getBlogs: (type)=> {
         return new Promise(function (resolve,reject) {
-            posts.find({type:type}).toArray(function (e,o) {
+            posts.find({type:type}).toArray(function (e,ot) {
                 let filtered = []
+                let o = shuffle(ot)
                 if(o.length<5){
                     for(let i=0;i<o.length;i++){
                         if(i===0){
                             filtered.push(o[i])
+                            continue
                         }
-                        else {
-                            o[i].body = o[i].body.slice(0,140)
-                            filtered.push(o[i])
-                        }
+                        o[i].body = o[i].body.slice(0,140)
+                        filtered.push(o[i])
                     }
-                    resolve(shuffle(filtered))
+                    resolve(filtered)
                 }
                 else {
                     for(let i=0;i<5;i++){
                         o[i].body = o[i].body.slice(0,140)
                         filtered.push(o[i])
                     }
-                    resolve(shuffle(filtered))
+                    resolve(filtered)
                 }
             });
         })
@@ -223,6 +223,10 @@ module.exports = {
                     let filtered = []
                     if(o.length<5){
                         for(let i=0;i<o.length;i++){
+                            if(i===0){
+                                filtered.push(o[i])
+                                continue
+                            }
                             o[i].body = o[i].body.slice(0,140)
                             filtered.push(o[i])
                         }
@@ -230,6 +234,10 @@ module.exports = {
                     }
                     else {
                         for(let i=0;i<5;i++){
+                            if(i===0){
+                                filtered.push(o[i])
+                                continue
+                            }
                             o[i].body = o[i].body.slice(0,140)
                             filtered.push(o[i])
                         }
