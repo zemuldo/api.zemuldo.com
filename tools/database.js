@@ -55,6 +55,7 @@ module.exports = {
             date:date,
             body:newData.body,
             likes:1000000,
+            type:newData.type,
             images:newData.images,
             author:newData.author
         }
@@ -172,7 +173,7 @@ module.exports = {
     getBlog: (queryParam)=> {
         let validQuery = normalizeQuery(queryParam)
         return new Promise(function (resolve,reject) {
-            posts.findOne(queryParam, (e, o)=> {
+            posts.findOne(validQuery, (e, o)=> {
                 if (e){
                     reject({error:'error in db'})
                 }
@@ -203,16 +204,19 @@ module.exports = {
 
     },
     getBlogs: (queryParam)=> {
+        let validQuery = normalizeQuery(queryParam)
         return new Promise(function (resolve,reject) {
-            posts.find(queryParam).toArray(function (e,ot) {
+            posts.find(validQuery).toArray(function (e,ot) {
                 let filtered = []
                 let o = shuffle(ot)
                 if(o.length<5){
                     for(let i=0;i<o.length;i++){
                         if(i===0){
+                            o[i].title = toSentanceCase(o[i].title)
                             filtered.push(o[i])
                             continue
                         }
+                        o[i].title = toSentanceCase(o[i].title)
                         o[i].body = o[i].body.slice(0,140)
                         filtered.push(o[i])
                     }
@@ -220,6 +224,7 @@ module.exports = {
                 }
                 else {
                     for(let i=0;i<5;i++){
+                        o[i].title = toSentanceCase(o[i].title)
                         o[i].body = o[i].body.slice(0,140)
                         filtered.push(o[i])
                     }
@@ -240,9 +245,11 @@ module.exports = {
                     if(o.length<5){
                         for(let i=0;i<o.length;i++){
                             if(i===0){
+                                o[i].title = toSentanceCase(o[i].title)
                                 filtered.push(o[i])
                                 continue
                             }
+                            o[i].title = toSentanceCase(o[i].title)
                             o[i].body = o[i].body.slice(0,140)
                             filtered.push(o[i])
                         }
@@ -251,9 +258,11 @@ module.exports = {
                     else {
                         for(let i=0;i<5;i++){
                             if(i===0){
+                                o[i].title = toSentanceCase(o[i].title)
                                 filtered.push(o[i])
                                 continue
                             }
+                            o[i].title = toSentanceCase(o[i].title)
                             o[i].body = o[i].body.slice(0,140)
                             filtered.push(o[i])
                         }
@@ -264,9 +273,12 @@ module.exports = {
         })
 
     },
-    getFilterBlogs: (filter)=> {
+    getFilterBlogs: (query)=> {
+        let filter = query.filter
+        delete query.filter
+        let validQuery = normalizeQuery(query)
         return new Promise(function (resolve,reject) {
-            posts.find({}).toArray(function (e,o) {
+            posts.find(validQuery).toArray(function (e,o) {
                 if(e){
                     reject(e)
                 }
@@ -279,10 +291,12 @@ module.exports = {
                                 let index = o[i].title.toLowerCase().search(filters[j].toLowerCase())
                                 if(index>0){
                                     if(blogs.length<1){
+                                        o[i].title = toSentanceCase(o[i].title)
                                         blogs.push(o[i])
                                         break
                                     }
                                     else{
+                                        o[i].title = toSentanceCase(o[i].title)
                                         o[i].body = o[i].body.slice(0,140)
                                         blogs.push(o[i])
                                         break
@@ -294,9 +308,11 @@ module.exports = {
                             let index = o[i].title.toLowerCase().search(filters[0].toLowerCase())
                             if(!(index<0)){
                                 if(blogs.length<1){
+                                    o[i].title = toSentanceCase(o[i].title)
                                     blogs.push(o[i])
                                 }
                                 else{
+                                    o[i].title = toSentanceCase(o[i].title)
                                     o[i].body = o[i].body.slice(0,140)
                                     blogs.push(o[i])
                                 }
@@ -306,6 +322,7 @@ module.exports = {
                     let filtered = []
                     if(blogs.length<5){
                         for(let i=0;i<blogs.length;i++){
+                            o[i].title = toSentanceCase(o[i].title)
                             blogs[i].body = blogs[i].body.slice(0,140)
                             filtered.push(blogs[i])
                         }
@@ -313,6 +330,7 @@ module.exports = {
                     }
                     else {
                         for(let i=0;i<5;i++){
+                            o[i].title = toSentanceCase(o[i].title)
                             blogs[i].body = blogs[i].body.slice(0,140)
                             filtered.push(blogs[i])
                         }
