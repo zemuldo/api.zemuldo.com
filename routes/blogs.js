@@ -10,7 +10,7 @@ router.use((req, res, next) => {
     next();
 });
 
-router.post('/blogs',async (req,res)=>{
+router.post('/',async (req,res)=>{
     if(Controllers[req.body.query]){
         let state = await Controllers[req.body.query](req.body)
         if(!state.error){
