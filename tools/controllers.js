@@ -56,10 +56,11 @@ module.exports = {
                 return err
             })
     },
-    addUser:data =>{
+    getFiltered:data =>{
         return new Promise(function (resolve,reject) {
             if(data){
-                resolve(true)
+                let state  = getFilterBlogs(data.queryParam)
+                resolve(state)
             }
             else {
                 reject(false)
