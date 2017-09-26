@@ -11,6 +11,7 @@ router.use((req, res, next) => {
 });
 
 router.post('/',async (req,res)=>{
+    console.log(req.body)
     if(Controllers[req.body.query]){
         let state = await Controllers[req.body.query](req.body)
         if(!state.error){
