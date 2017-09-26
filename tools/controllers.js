@@ -72,6 +72,23 @@ module.exports = {
             .catch(function (err) {
                 return err
             })
+    },
+    getAllPosts:() =>{
+        return new Promise(function (resolve,reject) {
+            let state  = getAllBlogs()
+            if(!state.error){
+                resolve(state)
+            }
+            else {
+                reject(false)
+            }
+        })
+            .then(function (succeed) {
+                return succeed
+            })
+            .catch(function (err) {
+                return err
+            })
     }
 
 }
