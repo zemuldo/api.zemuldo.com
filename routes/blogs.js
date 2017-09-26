@@ -2,7 +2,6 @@
 const express = require("express");
 const router = express();
 let Controllers = require('../tools/controllers')
-let {validatePost} = require('../tools/utilities')
 
 router.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
@@ -12,20 +11,13 @@ router.use((req, res, next) => {
 });
 
 router.post('/blogs',async (req,res)=>{
-
     if(Controllers[req.body.query]){
-        let validate = await validatePost(req.body)
-        if(!validate.error){
-            let state = await Controllers.newPost(req.body)
-            if(!state.error){
-                res.status(200).send(state)
-            }
-            else {
-                res.status(200).send(state)
-            }
+        let state = await Controllers[req.body.query](req.body)
+        if(!state.error){
+            res.status(200).send(state)
         }
-        else{
-            res.status(200).send(validate)
+        else {
+            res.status(200).send(state)
         }
     }
     else {
