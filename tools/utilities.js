@@ -48,6 +48,27 @@ module.exports ={
                 return err
             })
 
+    },
+    toSentanceCase:lower=>{
+        let arr =  lower.split(' ')
+        let o = []
+        arr.forEach(function (elem) {
+            let letters = elem.split('')
+            letters[0]= letters[0].toUpperCase()
+            elem = letters.join('')
+            o.push(elem)
+        })
+
+        return o.join(' ')
+    },
+    normalizeQuery:query=>{
+        Object.keys(query).forEach(function(prop) {
+            if(typeof query[prop]==='string'){
+                query[prop]=query[prop].toLocaleLowerCase()
+            }
+        })
+
+        return query
     }
 
 }
