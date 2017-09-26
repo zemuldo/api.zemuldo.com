@@ -2,7 +2,9 @@
 let server = require('mongodb')
 let moment = require('moment')
 let mongodb = require('mongodb')
+let ObjectID = require('mongodb').ObjectID
 
+let {toSentanceCase,normalizeQuery} = require('./utilities')
 const MongoDB=mongodb.Db
 const Server=server.Server
 /*
@@ -46,18 +48,25 @@ module.exports = {
     addNewBlog: (newData) => {
         return new Promise(function (resolve,reject) {
         let date = new Date().toDateString()
+        let _id = new ObjectID()
         let thisPost = {
-            title:newData.title,
+            _id:_id,
+            title:newData.title.toLocaleLowerCase(),
             date:date,
-            author:newData.author,
             body:newData.body,
-            type:newData.type
+            likes:1000000,
+            images:newData.images,
+            author:newData.author
         }
         let thisTitle = {
-            title:newData.title,
+            title:newData.title.toLocaleLowerCase(),
             date:date,
+            likes:1000000,
+            topics:newData.topics,
+            type:newData.type,
+            postID:_id
         }
-        titles.findOne({title:newData.title}, (e, o)=> {
+        titles.findOne({title:thisPost.title}, (e, o)=> {
 
                 if (e){
                     reject({error:e})
@@ -161,13 +170,20 @@ module.exports = {
             })
     },
     getBlog: (queryParam)=> {
+        let validQuery = normalizeQuery(queryParam)
         return new Promise(function (resolve,reject) {
-            posts.findOne({title:queryParam.title}, (e, o)=> {
+            posts.findOne(queryParam, (e, o)=> {
                 if (e){
                     reject({error:'error in db'})
                 }
                 else{
-                    resolve(o)
+                    if(o){
+                        o.title = toSentanceCase(o.title)
+                        resolve(o)
+                    }
+                    else {
+                        reject({error:"not found"})
+                    }
                 }
             });
         })
@@ -186,9 +202,9 @@ module.exports = {
         })
 
     },
-    getBlogs: (type)=> {
+    getBlogs: (queryParam)=> {
         return new Promise(function (resolve,reject) {
-            posts.find({type:type}).toArray(function (e,ot) {
+            posts.find(queryParam).toArray(function (e,ot) {
                 let filtered = []
                 let o = shuffle(ot)
                 if(o.length<5){
