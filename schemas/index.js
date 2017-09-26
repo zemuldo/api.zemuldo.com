@@ -22,6 +22,12 @@ module.exports = {
             },
         author:{
             type:'string'
+        },
+        topics:{
+            type:'object'
+        },
+        images:{
+            type:'object'
         }
     },
 }
