@@ -4,7 +4,7 @@ let moment = require('moment')
 let mongodb = require('mongodb')
 let ObjectID = require('mongodb').ObjectID
 
-let {toSentanceCase,normalizeQuery} = require('./utilities')
+let {toSentanceCase,normalizeQuery,shuffle} = require('./utilities')
 const MongoDB=mongodb.Db
 const Server=server.Server
 /*
@@ -22,19 +22,20 @@ db.open((e, d)=>{
         console.log(e)
     } else {
         console.log('DB Connected: connected to: "'+dbName+'"')
-        // if (process.env.NODE_ENV == 'live') {
-        //     db.authenticate('dil', 'omera', (e, res)=> {
-        //         if (e) {
-        //            throw new Error('mongo :: error: not authenticated-User Details Error', e)
-        //         }
-        //         else {
-        //             throw new Error('mongo :: authenticated and connected to database :: "'+dbName+'"')
-        //         }
-        //     })
-        // }
-        // else{
-        //     log.info('DB Connected: connected to: "'+dbName+'"')
-        // }
+        /*
+        if (process.env.NODE_ENV == 'live') {
+            db.authenticate('dil', 'omera', (e, res)=> {
+                if (e) {
+                   throw new Error('mongo :: error: not authenticated-User Details Error', e)
+                }
+                else {
+                    throw new Error('mongo :: authenticated and connected to database :: "'+dbName+'"')
+                }
+            })
+        }
+        else{
+            log.info('DB Connected: connected to: "'+dbName+'"')
+        }*/
     }
 })
 
@@ -65,7 +66,8 @@ module.exports = {
             likes:1000000,
             topics:newData.topics,
             type:newData.type,
-            postID:_id
+            postID:_id,
+            author:newData.author
         }
         titles.findOne({title:thisPost.title}, (e, o)=> {
 
@@ -259,66 +261,49 @@ module.exports = {
         delete query.filter
         let validQuery = normalizeQuery(query)
         return new Promise(function (resolve,reject) {
-            titles.find(validQuery).toArray(function (e,o) {
-                if(e){
-                    reject(e)
-                }
-                else {
-                    let blogs =[]
-                    for(let i=0;i<o.length;i++){
-                        let filters = filter.split(' ')
-                        if(filters.length>1){
-                            for(let j=0;j<filters.length;j++){
-                                let index = o[i].title.toLowerCase().search(filters[j].toLowerCase())
+        titles.find(validQuery).toArray(function (e,o) {
+            if(e){
+                reject(e)
+            }
+            else {
+                let blogs =[]
+                for(let i=0;i<o.length;i++){
+                    let filters = filter.split(' ')
+                    if(filters.length>1){
+                        for(let j=0;j<filters.length;j++){
+                            let index = o[i].title.toLowerCase().search(filters[j].toLowerCase())
+                            if(index>0){
                                 o[i].title = toSentanceCase(o[i].title)
                                 blogs.push(o[i])
+                                break
                             }
                         }
-                        else {
-                            let index = o[i].title.toLowerCase().search(filters[0].toLowerCase())
-                            if(!(index<0)){
-                                o[i].title = toSentanceCase(o[i].title)
-                                blogs.push(o[i])
-                            }
-                        }
-                    }
-                    let filtered = []
-                    if(blogs.length<5){
-                        for(let i=0;i<blogs.length;i++){
-                            o[i].title = toSentanceCase(o[i].title)
-                            filtered.push(blogs[i])
-                        }
-                        resolve(shuffle(filtered))
                     }
                     else {
-                        for(let i=0;i<5;i++){
+                        let index = o[i].title.toLowerCase().search(filters[0].toLowerCase())
+                        if(!(index<0)){
                             o[i].title = toSentanceCase(o[i].title)
-                            filtered.push(blogs[i])
+                            blogs.push(o[i])
                         }
-                        resolve(shuffle(filtered))
                     }
                 }
-            })
+                let filtered = []
+                if(blogs.length<5){
+                    for(let i=0;i<blogs.length;i++){
+                        filtered.push(blogs[i])
+                    }
+                    resolve(shuffle(filtered))
+                }
+                else {
+                    for(let i=0;i<5;i++){
+                        filtered.push(blogs[i])
+                    }
+                    resolve(shuffle(filtered))
+                }
+            }
         })
+    })
 
     }
-}
-function shuffle(array) {
-    let currentIndex = array.length, temporaryValue, randomIndex;
-
-    // While there remain elements to shuffle...
-    while (0 !== currentIndex) {
-
-        // Pick a remaining element...
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-
-        // And swap it with the current element.
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
-    }
-
-    return array;
 }
 
