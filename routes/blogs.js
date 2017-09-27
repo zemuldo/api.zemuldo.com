@@ -11,19 +11,25 @@ router.use((req, res, next) => {
 });
 
 router.post('/',async (req,res)=>{
-    console.log(req.body)
-    if(Controllers[req.body.query]){
-        let state = await Controllers[req.body.query](req.body)
-        if(!state.error){
-            res.status(200).send(state)
-        }
-        else {
-            res.status(200).send(state)
-        }
+    if(req.body.query ==='getIp'){
+        res.send({ip:req.clientIp})
     }
     else {
-        res.status(200).send({error:"query method invalid"})
+        if(Controllers[req.body.query]){
+            let state = await Controllers[req.body.query](req.body)
+            if(!state.error){
+                res.status(200).send(state)
+            }
+            else {
+                res.status(200).send(state)
+            }
+        }
+        else {
+            console.log(req.body)
+            res.status(200).send({error:"query method invalid"})
+        }
     }
+
 })
 
 module.exports = router

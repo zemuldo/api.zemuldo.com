@@ -89,6 +89,41 @@ module.exports = {
             .catch(function (err) {
                 return err
             })
+    },
+    addNewVisitor:(data) =>{
+        console.log(data)
+        return new Promise(function (resolve,reject) {
+            let state  = addVisitor(data)
+            if(!state.error){
+                resolve(state)
+            }
+            else {
+                reject(false)
+            }
+        })
+            .then(function (succeed) {
+                return succeed
+            })
+            .catch(function (err) {
+                return err
+            })
+    },
+    getClientIp:(ip)=>{
+        return ip
+    },
+
+    addNewReview:(data)=>{
+        return new Promise(function (resolve,reject) {
+            let state = addReview(data)
+            if(!state.error){
+                resolve(state)
+            }
+            else {
+                reject({error:"error occured"})
+            }
+        })
+
     }
+
 
 }
