@@ -270,6 +270,34 @@ module.exports = {
         })
 
     },
+    getBlogsByTopics: (queryParam)=> {
+        console.log(queryParam)
+        return new Promise(function (resolve,reject) {
+            titles.find({topics:queryParam.topic}).toArray(function (e,o) {
+                if(e){
+                    reject({error:'could not find'})
+                }
+                else {
+                    let filtered = []
+                    if(o.length<5){
+                        for(let i=0;i<o.length;i++){
+                            o[i].title = toSentanceCase(o[i].title)
+                            filtered.push(o[i])
+                        }
+                        resolve(filtered)
+                    }
+                    else {
+                        for(let i=0;i<5;i++){
+                            o[i].title = toSentanceCase(o[i].title)
+                            filtered.push(o[i])
+                        }
+                        resolve(filtered)
+                    }
+                }
+            });
+        })
+
+    },
     getFilterBlogs: (query)=> {
         if(query.query){
             delete query.query

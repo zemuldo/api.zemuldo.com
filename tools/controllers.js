@@ -1,5 +1,5 @@
 'use strict'
-let {addReview,getFilterBlogs,getAllBlogs,getBlog,addNewBlog,getBlogs,addVisitor} = require('./database')
+let {addReview,getFilterBlogs,getAllBlogs,getBlog,addNewBlog,getBlogs,addVisitor,getBlogsByTopics} = require('./database')
 let {validatePost} = require('../tools/utilities')
 
 
@@ -81,6 +81,25 @@ module.exports = {
             }
             else {
                 reject(false)
+            }
+        })
+            .then(function (succeed) {
+                return succeed
+            })
+            .catch(function (err) {
+                return err
+            })
+    },
+    getPostsTopic:(query) =>{
+        console.log("----------------")
+        console.log(query)
+        return new Promise(function (resolve,reject) {
+            let state  = getBlogsByTopics(query.queryParam)
+            if(!state.error){
+                resolve(state)
+            }
+            else {
+                reject(state)
             }
         })
             .then(function (succeed) {
