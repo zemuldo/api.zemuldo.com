@@ -47,6 +47,9 @@ let reviews = db.collection('reviews')
 /* login validation methods */
 module.exports = {
     addNewBlog: (newData) => {
+        if(newData.query){
+            delete newData.query
+        }
         return new Promise(function (resolve,reject) {
         let date = new Date().toDateString()
         let _id = new ObjectID()
@@ -70,7 +73,6 @@ module.exports = {
             author:newData.author
         }
         titles.findOne({title:thisPost.title}, (e, o)=> {
-
                 if (e){
                     reject({error:e})
                 }	else{
@@ -105,6 +107,9 @@ module.exports = {
             })
     },
     addVisitor: (newData) => {
+        if(newData.query){
+            delete newData.query
+        }
         return new Promise(function (resolve,reject) {
             let visitor = {
                 sessionID:newData.sessionID,
@@ -173,6 +178,9 @@ module.exports = {
             })
     },
     getBlog: (queryParam)=> {
+        if(queryParam.query){
+            delete queryParam.query
+        }
         let validQuery = normalizeQuery(queryParam)
         return new Promise(function (resolve,reject) {
             posts.findOne(validQuery, (e, o)=> {
@@ -193,6 +201,9 @@ module.exports = {
 
     },
     addReview: (review)=> {
+        if(review.query){
+            delete review.query
+        }
         return new Promise(function (resolve,reject) {
             reviews.insertOne(review, {safe: true}, function (e,o) {
                 if(e){
@@ -206,6 +217,9 @@ module.exports = {
 
     },
     getBlogs: (queryParam)=> {
+        if(queryParam.query){
+            delete queryParam.query
+        }
         let validQuery = normalizeQuery(queryParam)
         return new Promise(function (resolve,reject) {
             titles.find(validQuery).toArray(function (e,ot) {
@@ -257,6 +271,9 @@ module.exports = {
 
     },
     getFilterBlogs: (query)=> {
+        if(query.query){
+            delete query.query
+        }
         let filter = query.filter
         delete query.filter
         let validQuery = normalizeQuery(query)

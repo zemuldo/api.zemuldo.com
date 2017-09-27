@@ -91,7 +91,6 @@ module.exports = {
             })
     },
     addNewVisitor:(data) =>{
-        console.log(data)
         return new Promise(function (resolve,reject) {
             let state  = addVisitor(data)
             if(!state.error){
