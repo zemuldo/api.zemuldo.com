@@ -216,6 +216,20 @@ module.exports = {
         })
 
     },
+    updateBlogLikes: (queryParam)=> {
+        return new Promise(function (resolve,reject) {
+            if (queryParam.query) {
+                delete queryParam.query
+            }
+            titles.updateOne(queryParam, {$inc: {"likes": 1}})
+                .then(function (success) {
+                    resolve(success)
+                })
+                .catch(function (err) {
+                    reject(err)
+                })
+        })
+    },
     getBlogs: (queryParam)=> {
         if(queryParam.query){
             delete queryParam.query
@@ -245,7 +259,7 @@ module.exports = {
     },
     getAllBlogs: ()=> {
         return new Promise(function (resolve,reject) {
-            titles.find({}).toArray(function (e,o) {
+            titles.find({}).sort({likes: -1}).limit(10).toArray(function (e,o) {
                 if(e){
                     reject(e)
                 }

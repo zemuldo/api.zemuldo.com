@@ -16,13 +16,13 @@ router.post('/',async (req,res)=>{
     }
     else {
         if(Controllers[req.body.query]){
-            let state = await Controllers[req.body.query](req.body)
-            if(!state.error){
-                res.status(200).send(state)
-            }
-            else {
-                res.status(200).send(state)
-            }
+            await Controllers[req.body.query](req.body)
+                .then(function (success) {
+                    res.status(200).send(success)
+                })
+                .catch(function (err) {
+                    res.status(200).send(err)
+                })
         }
         else {
             res.status(200).send({error:"query method invalid"})

@@ -1,5 +1,5 @@
 'use strict'
-let {addReview,getFilterBlogs,getAllBlogs,getBlog,addNewBlog,getBlogs,addVisitor,getBlogsByTopics} = require('./database')
+let {addReview,getFilterBlogs,getAllBlogs,getBlog,addNewBlog,getBlogs,addVisitor,getBlogsByTopics,updateBlogLikes} = require('./database')
 let {validatePost} = require('../tools/utilities')
 
 
@@ -139,6 +139,17 @@ module.exports = {
             }
         })
 
+    },
+    updateLikes:(query)=>{
+        return new Promise(function (resolve,reject) {
+            let state = updateBlogLikes(query.queryParam)
+            if (!state.error) {
+                resolve(state)
+            }
+            else {
+                reject("djfhdushfjdsf")
+            }
+        })
     }
 
 
