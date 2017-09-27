@@ -91,8 +91,6 @@ module.exports = {
             })
     },
     getPostsTopic:(query) =>{
-        console.log("----------------")
-        console.log(query)
         return new Promise(function (resolve,reject) {
             let state  = getBlogsByTopics(query.queryParam)
             if(!state.error){

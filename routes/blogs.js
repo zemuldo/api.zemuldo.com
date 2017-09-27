@@ -25,7 +25,6 @@ router.post('/',async (req,res)=>{
             }
         }
         else {
-            console.log(req.body)
             res.status(200).send({error:"query method invalid"})
         }
     }

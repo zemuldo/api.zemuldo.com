@@ -271,7 +271,6 @@ module.exports = {
 
     },
     getBlogsByTopics: (queryParam)=> {
-        console.log(queryParam)
         return new Promise(function (resolve,reject) {
             titles.find({topics:queryParam.topic}).toArray(function (e,o) {
                 if(e){
