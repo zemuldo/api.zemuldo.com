@@ -1,5 +1,5 @@
 'use strict'
-let {addReview,getFilterBlogs,getAllBlogs,getBlog,addNewBlog,getBlogs,addVisitor,getBlogsByTopics,updateBlogLikes} = require('./database')
+let {addReview,getFilterBlogs,getAllBlogs,getBlog,addNewBlog,getBlogs,addVisitor,getBlogsByTopics,updateBlogLikes,insertRichText,FetchRichText} = require('./database')
 let {validatePost} = require('../tools/utilities')
 
 
@@ -147,7 +147,29 @@ module.exports = {
                 resolve(state)
             }
             else {
-                reject("djfhdushfjdsf")
+                reject(state)
+            }
+        })
+    },
+    addRichText:(query)=>{
+        return new Promise(function (resolve,reject) {
+            let state = insertRichText(query.queryParam)
+            if (!state.error) {
+                resolve(state)
+            }
+            else {
+                reject(state)
+            }
+        })
+    },
+    getRichText:(query)=>{
+        return new Promise(function (resolve,reject) {
+            let state = FetchRichText()
+            if (!state.error) {
+                resolve(state)
+            }
+            else {
+                reject(state)
             }
         })
     }

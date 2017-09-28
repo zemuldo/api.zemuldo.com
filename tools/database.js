@@ -43,6 +43,7 @@ let posts = db.collection('posts')
 let titles = db.collection('titles')
 let visitors = db.collection('visitors')
 let reviews = db.collection('reviews')
+let richText = db.collection('richText')
 
 /* login validation methods */
 module.exports = {
@@ -310,6 +311,33 @@ module.exports = {
             });
         })
 
+    },
+    insertRichText: (queryParam)=> {
+        return new Promise(function (resolve,reject) {
+            if (queryParam.query) {
+                delete queryParam.query
+            }
+            richText.insertOne(queryParam,{safe: true})
+                .then(function (success) {
+                    resolve(success)
+                })
+                .catch(function (err) {
+                    reject(err)
+                })
+        })
+    },
+    FetchRichText: ()=> {
+        return new Promise(function (resolve,reject) {
+
+            richText.find().toArray(function (e,o) {
+               if(e){
+                   reject(e)
+               }
+               else {
+                   resolve(o)
+               }
+            });
+        })
     },
     getFilterBlogs: (query)=> {
         if(query.query){

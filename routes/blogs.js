@@ -11,6 +11,7 @@ router.use((req, res, next) => {
 });
 
 router.post('/',async (req,res)=>{
+    console.log(req.body.query)
     if(req.body.query ==='getIp'){
         res.send({ip:req.clientIp})
     }

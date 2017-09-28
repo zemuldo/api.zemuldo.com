@@ -9,7 +9,7 @@ let helmet = require('helmet')
 let checkMe = require('cookie-session')
 const compression = require('compression');
 const wsserver = require('./ws');
-let wss = require('./ws/websocket')
+//let wss = require('./ws/websocket')
 let ENV = require('./config/env');
 
 let config = ENV[process.env.NODE_ENV]
