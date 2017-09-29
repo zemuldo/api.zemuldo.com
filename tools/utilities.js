@@ -34,10 +34,6 @@ module.exports ={
                     if(!(validator.type[post.type])){
                         return {error:"No category "+post.type}
                     }
-                    let bodyWords = post.body.split(' ').length
-                    if(!(bodyWords>validator.body.minLen && bodyWords<validator.body.maxLen)){
-                        return {error:"Body must be between "+validator.body.minLen+" and "+validator.body.maxLen +' words'}
-                    }
                     if(post.author!=="Danstan Onyango"){
                         return {error:"User  "+post.author+" doesn't exist"}
                     }

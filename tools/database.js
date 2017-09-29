@@ -59,7 +59,7 @@ module.exports = {
             title:newData.title.toLocaleLowerCase(),
             date:date,
             body:newData.body,
-            likes:1000000,
+            likes:0,
             type:newData.type,
             images:newData.images,
             author:newData.author
@@ -67,7 +67,7 @@ module.exports = {
         let thisTitle = {
             title:newData.title.toLocaleLowerCase(),
             date:date,
-            likes:1000000,
+            likes:0,
             topics:newData.topics,
             type:newData.type,
             postID:_id,
@@ -279,6 +279,25 @@ module.exports = {
                             filtered.push(o[i])
                         }
                         resolve(shuffle(filtered))
+                    }
+                }
+            });
+        })
+
+    },
+    fetchMostPop: (queryParam)=> {
+        return new Promise(function (resolve,reject) {
+            posts.find(queryParam).sort({likes: -1}).limit(1).toArray(function (e,o) {
+                if(e){
+                    reject(e)
+                }
+                else {
+                    if(o){
+                        resolve(shuffle(o))
+
+                    }
+                    else {
+                        resolve(shuffle({error:'not found'}))
                     }
                 }
             });
