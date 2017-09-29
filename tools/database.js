@@ -11,17 +11,79 @@ const Server=server.Server
 	ESTABLISH DATABASE CONNECTION
 */
 
-
+let indexCounters = {
+    blogIndex:{
+        name:'blogIndex',
+        description:'This document contains the index of each unique BLOG in db. and stores the next Index in nextIndex',
+        initDate:new Date()
+    },
+    userIndex:{
+        name:'userIndex',
+        description:'This document contains the index of each unique USER in db. and stores the next Index in nextIndex',
+        initDate:new Date()
+    },
+    addsIndex:{
+        name:'userIndex',
+        description:'This document contains the index of each unique ADVERTS in db. and stores the next Index in nextIndex',
+        initDate:new Date()
+    }
+}
 let dbName = process.env.DB_NAME || 'Zemuldo-Main-Site';
 let dbHost = process.env.DB_HOST || 'localhost'
 let dbPort = process.env.DB_PORT || 27017
 
 let db = new MongoDB(dbName, new Server(dbHost, dbPort, {auto_reconnect: true}), {w: 1})
+let posts = db.collection('posts')
+let titles = db.collection('titles')
+let visitors = db.collection('visitors')
+let reviews = db.collection('reviews')
+let richText = db.collection('richText')
+let counters = db.collection('counters')
+
+function InitCounter(indexObj){
+    return  Promise.all([
+        counters.findOneAndUpdate(
+            { "name" : indexObj.name },
+            { $set: { "name" : indexObj.name, initDate:new Date() ,"description":indexObj.description,important:'!!!!!!!NEVER DELETE THIS DOCUMENT'}},
+            { sort: { "nextIndex" : 1 }, upsert:true, returnNewDocument : true },
+            function (e,o) {
+                if(e){
+                    return (e)
+                }
+                else {
+                    return (o)
+                }
+            })
+    ])
+
+}
+
+function getNextIndex(indexObj) {
+    return new Promise(function (resolve,reject) {
+        counters.findOneAndUpdate(
+            { "name" : indexObj.name },
+            { $set: { "name" : indexObj.name, initDate:new Date() ,"description":indexObj.description,important:'!!!!!!!NEVER DELETE THIS DOCUMENT'}, $inc : { "nextIndex" : 1 } },
+            { sort: { "nextIndex" : 1 }, upsert:true, returnNewDocument : true },
+            function (e,o) {
+                if(e){
+                    reject (e)
+
+                }
+                else {
+                    resolve(o)
+
+                }
+            });
+    })
+}
+
+
+
 db.open((e, d)=>{
+    console.log("****Connecting to DB****")
     if (e) {
         console.log(e)
     } else {
-        console.log('DB Connected: connected to: "'+dbName+'"')
         /*
         if (process.env.NODE_ENV == 'live') {
             db.authenticate('dil', 'omera', (e, res)=> {
@@ -37,379 +99,77 @@ db.open((e, d)=>{
             log.info('DB Connected: connected to: "'+dbName+'"')
         }*/
     }
+
+    console.log("****Initializing database Indexing****")
+    Object.keys(indexCounters).forEach(function(prop) {
+        InitCounter(indexCounters[prop])
+    })
+    console.log('DB Connected: connected to: "'+dbName+'"')
+
 })
 
-let posts = db.collection('posts')
-let titles = db.collection('titles')
-let visitors = db.collection('visitors')
-let reviews = db.collection('reviews')
-let richText = db.collection('richText')
 
-/* login validation methods */
-module.exports = {
-    addNewBlog: (newData) => {
-        if(newData.query){
-            delete newData.query
-        }
-        return new Promise(function (resolve,reject) {
-        let date = new Date().toDateString()
-        let _id = new ObjectID()
-        let thisPost = {
-            _id:_id,
-            title:newData.title.split(' '),
-            date:date,
-            body:newData.body,
-            likes:0,
-            type:newData.type,
-            images:newData.images,
-            author:newData.author,
-            topics:newData.topics,
-        }
-        let thisTitle = {
-            title:newData.title.split(' '),
-            date:date,
-            likes:0,
-            topics:newData.topics,
-            type:newData.type,
-            postID:_id,
-            author:newData.author
-        }
-        titles.findOne({title:thisPost.title}, (e, o)=> {
-                if (e){
-                    reject({error:e})
-                }	else{
-                    if(o){
-                        reject({error:'Title: ' + newData.title + ' Exists in ' + newData.type})
-                    }
-                    else {
-                        titles.insertOne(thisTitle, {safe: true}, function (e,o) {
-                            if(e){
-                                reject ({error:e})
-                            }
-                            else {
-                                posts.insertOne(thisPost, function (e,o) {
-                                    if(e){
-                                        reject({error:'database error'})
-                                    }
-                                    else {
-                                        resolve({state:'true'})
-                                    }
-                                });
-                            }
-                        });
-                    }
-                }
-            })
-        })
-    .then(function (success) {
-            return success
-        })
-            .catch(function (e) {
-                return e
-            })
-    },
-    addVisitor: (newData) => {
-        if(newData.query){
-            delete newData.query
-        }
-        return new Promise(function (resolve,reject) {
-            let visitor = {
-                sessionID:newData.sessionID,
-                country:newData.country,
-                countryCode:[newData.countryCode],
-                ipAddress:newData.query,
-                date:[new Date()],
-                region:[newData.regionName],
-                visits:1,
-                network:[newData.isp]
+let DB = {
+    newPost: (newData) => {
+            if (newData.query) {
+                delete newData.query
             }
-            visitors.findOne({sessionID:newData.sessionID},(e,o)=>{
-                if(e){
-                    reject(e)
-                }
-                else {
-                    if(o){
-                        let visits = o.visits +1
-                        //o.region.push(newData.regionName)
-                        o.visits +=1
-                        o.network.push(newData.isp)
-                        o.countryCode.push(newData.countryCode)
-                        visitors.updateOne({_id:o._id},o, {upsert: true}, function (e,o) {
-                            if(e){
-                                reject ({error:e})
-                            }
-                            else {
-                                let user = {
-                                    sessionID:newData.sessionID,
-                                    country:newData.country,
-                                    region:newData.regionName,
-                                    status:'known',
-                                    visits:visits
-                                }
-                                resolve(user)
-                            }
-                        });
-                    }
-                    else {
-                        visitors.insertOne(visitor, {safe: true}, function (e,o) {
-                            if(e){
-                                reject ({error:e})
-                            }
-                            else {
-                                let user = {
-                                    sessionID:newData.sessionID,
-                                    country:newData.country,
-                                    region:newData.regionName,
-                                    status:"new",
-                                    visits:1
-                                }
-                                resolve(user)
-                            }
-                        });
-                    }
+            let id = getNextIndex(indexCounters['blogIndex'])
+            console.log(id)
+            let date = new Date().toDateString()
+            let _id = new ObjectID()
 
-                }
-            })
-
-        })
-            .then(function (success) {
-                return success
-            })
-            .catch(function (e) {
-                return e
-            })
-    },
-    getBlog: (queryParam)=> {
-        if(queryParam._id){
-            delete queryParam.query
-        }
-       console.log(queryParam)
-        return new Promise(function (resolve,reject) {
-            posts.findOne({_id:ObjectID(queryParam._id)}, (e, o)=> {
-                if (e){
-                    reject({error:'error in db'})
-                }
-                else{
-                    if(o){
-                        o.title = o.title.join(' ')
-                        resolve(o)
-                    }
-                    else {
-                        reject({error:"not found"})
-                    }
-                }
-            });
-        })
-
-    },
-    addReview: (review)=> {
-        if(review.query){
-            delete review.query
-        }
-        return new Promise(function (resolve,reject) {
-            reviews.insertOne(review, {safe: true}, function (e,o) {
-                if(e){
-                    reject ({error:e})
-                }
-                else {
-                    resolve(true)
-                }
-            });
-        })
-
-    },
-    updateBlogLikes: (queryParam)=> {
-        return new Promise(function (resolve,reject) {
-            if (queryParam.query) {
-                delete queryParam.query
+            let thisPost = {
+                _id: _id,
+                title: newData.title.split(' '),
+                date: date,
+                body: newData.body,
+                likes: 0,
+                type: newData.type,
+                images: newData.images,
+                author: newData.author,
+                topics: newData.topics,
             }
-            titles.updateOne(queryParam, {$inc: {"likes": 1}})
+            let thisTitle = {
+                title: newData.title.split(' '),
+                date: date,
+                likes: 0,
+                topics: newData.topics,
+                type: newData.type,
+                postID: _id,
+                author: newData.author
+            }
+           return titles.findOne({title: thisPost.title})
+                .then(function (title) {
+                    if (title) {
+                        console.log(title)
+                        return {err: "Tittle " + newData.title + ' exists'}
+                    }
+                    else {
+                        return titles.insertOne(thisTitle, {safe: true})
+                    }
+                })
                 .then(function (success) {
-                    resolve(success)
-                })
-                .catch(function (err) {
-                    reject(err)
-                })
-        })
-    },
-    getBlogs: (queryParam)=> {
-        if(queryParam.query){
-            delete queryParam.query
-        }
-        let validQuery = normalizeQuery(queryParam)
-        return new Promise(function (resolve,reject) {
-            titles.find(validQuery).toArray(function (e,ot) {
-                let filtered = []
-                let o = shuffle(ot)
-                if(o.length<5){
-                    for(let i=0;i<o.length;i++){
-                        o[i].title =o[i].title.join(' ')
-                        filtered.push(o[i])
-                    }
-                    resolve(filtered)
-                }
-                else {
-                    for(let i=0;i<5;i++){
-                        o[i].title =o[i].title.join(' ')
-                        filtered.push(o[i])
-                    }
-                    resolve(filtered)
-                }
-            });
-        })
-
-    },
-    getAllBlogs: ()=> {
-        return new Promise(function (resolve,reject) {
-            titles.find({}).sort({likes: -1}).limit(10).toArray(function (e,o) {
-                if(e){
-                    reject(e)
-                }
-                else {
-                    let filtered = []
-                    if(o.length<5){
-                        for(let i=0;i<o.length;i++){
-                            o[i].title =o[i].title.join(' ')
-                            filtered.push(o[i])
-                        }
-                        resolve(shuffle(filtered))
+                    console.log(success)
+                    if (!success.err) {
+                        return posts.insertOne(thisPost, {safe: true})
                     }
                     else {
-                        for(let i=0;i<5;i++){
-                            o[i].title =o[i].title.join(' ')
-                            filtered.push(o[i])
-                        }
-                        resolve(shuffle(filtered))
+                        return success
                     }
-                }
-            });
-        })
-
-    },
-    fetchMostPop: (queryParam)=> {
-        return new Promise(function (resolve,reject) {
-            posts.find(queryParam).sort({likes: -1}).limit(1).toArray(function (e,o) {
-                if(e){
-                    reject(e)
-                }
-                else {
-                    if(o){
-                        resolve(shuffle(o))
-
-                    }
-                    else {
-                        resolve(shuffle({error:'not found'}))
-                    }
-                }
-            });
-        })
-
-    },
-    getBlogsByTopics: (queryParam)=> {
-        return new Promise(function (resolve,reject) {
-            titles.find({topics:queryParam.topic}).toArray(function (e,o) {
-                if(e){
-                    reject({error:'could not find'})
-                }
-                else {
-                    let filtered = []
-                    if(o.length<5){
-                        for(let i=0;i<o.length;i++){
-                            o[i].title =o[i].title.join(' ')
-                            filtered.push(o[i])
-                        }
-                        resolve(filtered)
-                    }
-                    else {
-                        for(let i=0;i<5;i++){
-                            o[i].title =o[i].title.join(' ')
-                            filtered.push(o[i])
-                        }
-                        resolve(filtered)
-                    }
-                }
-            });
-        })
-
-    },
-    insertRichText: (queryParam)=> {
-        return new Promise(function (resolve,reject) {
-            if (queryParam.query) {
-                delete queryParam.query
-            }
-            richText.insertOne(queryParam,{safe: true})
-                .then(function (success) {
-                    resolve(success)
                 })
-                .catch(function (err) {
-                    reject(err)
+                .then(function (final) {
+                    console.log(final)
+                    return final
+
                 })
-        })
-    },
-    FetchRichText: ()=> {
-        return new Promise(function (resolve,reject) {
+                .catch(function (e) {
+                    return e
+                })
 
-            richText.find().toArray(function (e,o) {
-               if(e){
-                   reject(e)
-               }
-               else {
-                   resolve(o)
-               }
-            });
-        })
     },
-    getFilterBlogs: (query)=> {
-        if(query.query){
-            delete query.query
-        }
-        let filter = query.filter
-        delete query.filter
-        let validQuery = normalizeQuery(query)
-        return new Promise(function (resolve,reject) {
-        titles.find(validQuery).toArray(function (e,o) {
-            if(e){
-                reject(e)
-            }
-            else {
-                let blogs =[]
-                for(let i=0;i<o.length;i++){
-                    let filters = filter.split(' ')
-                    if(filters.length>1){
-                        for(let j=0;j<filters.length;j++){
-                            let index = o[i].title.join(' ').search(filters[j].toLowerCase())
-                            if(index>0){
-                                o[i].title =o[i].title.join(' ')
-                                blogs.push(o[i])
-                                break
-                            }
-                        }
-                    }
-                    else {
-                        let index = o[i].title.join(' ').search(filters[0].toLowerCase())
-                        if(!(index<0)){
-                            o[i].title =o[i].title.join(' ')
-                            blogs.push(o[i])
-                        }
-                    }
-                }
-                let filtered = []
-                if(blogs.length<5){
-                    for(let i=0;i<blogs.length;i++){
-                        filtered.push(blogs[i])
-                    }
-                    resolve(shuffle(filtered))
-                }
-                else {
-                    for(let i=0;i<5;i++){
-                        filtered.push(blogs[i])
-                    }
-                    resolve(shuffle(filtered))
-                }
-            }
-        })
-    })
-
-    }
 }
+
+module.exports = DB
+
 

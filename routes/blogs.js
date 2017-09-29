@@ -1,7 +1,7 @@
 'use strict';
 const express = require("express");
 const router = express();
-let Controllers = require('../tools/controllers')
+let DB = require('../tools/database')
 
 router.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
@@ -15,17 +15,20 @@ router.post('/',async (req,res)=>{
         res.send({ip:req.clientIp})
     }
     else {
-        if(Controllers[req.body.query]){
-            await Controllers[req.body.query](req.body)
+        if(DB[req.body.query]){
+            await DB[req.body.query](req.body)
                 .then(function (success) {
-                    res.status(200).send(success)
+                    res.statusCode = 200
+                    res.send(success)
                 })
                 .catch(function (err) {
-                    res.status(200).send(err)
+                    res.statusCode = 200
+                    res.send(err)
                 })
         }
         else {
-            res.status(200).send({error:"query method invalid"})
+            res.statusCode = 200
+            res.send({error:"query method invalid"})
         }
     }
 
