@@ -56,16 +56,17 @@ module.exports = {
         let _id = new ObjectID()
         let thisPost = {
             _id:_id,
-            title:newData.title.toLocaleLowerCase(),
+            title:newData.title.split(' '),
             date:date,
             body:newData.body,
             likes:0,
             type:newData.type,
             images:newData.images,
-            author:newData.author
+            author:newData.author,
+            topics:newData.topics,
         }
         let thisTitle = {
-            title:newData.title.toLocaleLowerCase(),
+            title:newData.title.split(' '),
             date:date,
             likes:0,
             topics:newData.topics,
@@ -179,18 +180,18 @@ module.exports = {
             })
     },
     getBlog: (queryParam)=> {
-        if(queryParam.query){
+        if(queryParam._id){
             delete queryParam.query
         }
-        let validQuery = normalizeQuery(queryParam)
+       console.log(queryParam)
         return new Promise(function (resolve,reject) {
-            posts.findOne(validQuery, (e, o)=> {
+            posts.findOne({_id:ObjectID(queryParam._id)}, (e, o)=> {
                 if (e){
                     reject({error:'error in db'})
                 }
                 else{
                     if(o){
-                        o.title = toSentanceCase(o.title)
+                        o.title = o.title.join(' ')
                         resolve(o)
                     }
                     else {
@@ -242,14 +243,14 @@ module.exports = {
                 let o = shuffle(ot)
                 if(o.length<5){
                     for(let i=0;i<o.length;i++){
-                        o[i].title = toSentanceCase(o[i].title)
+                        o[i].title =o[i].title.join(' ')
                         filtered.push(o[i])
                     }
                     resolve(filtered)
                 }
                 else {
                     for(let i=0;i<5;i++){
-                        o[i].title = toSentanceCase(o[i].title)
+                        o[i].title =o[i].title.join(' ')
                         filtered.push(o[i])
                     }
                     resolve(filtered)
@@ -268,14 +269,14 @@ module.exports = {
                     let filtered = []
                     if(o.length<5){
                         for(let i=0;i<o.length;i++){
-                            o[i].title = toSentanceCase(o[i].title)
+                            o[i].title =o[i].title.join(' ')
                             filtered.push(o[i])
                         }
                         resolve(shuffle(filtered))
                     }
                     else {
                         for(let i=0;i<5;i++){
-                            o[i].title = toSentanceCase(o[i].title)
+                            o[i].title =o[i].title.join(' ')
                             filtered.push(o[i])
                         }
                         resolve(shuffle(filtered))
@@ -314,14 +315,14 @@ module.exports = {
                     let filtered = []
                     if(o.length<5){
                         for(let i=0;i<o.length;i++){
-                            o[i].title = toSentanceCase(o[i].title)
+                            o[i].title =o[i].title.join(' ')
                             filtered.push(o[i])
                         }
                         resolve(filtered)
                     }
                     else {
                         for(let i=0;i<5;i++){
-                            o[i].title = toSentanceCase(o[i].title)
+                            o[i].title =o[i].title.join(' ')
                             filtered.push(o[i])
                         }
                         resolve(filtered)
@@ -376,18 +377,18 @@ module.exports = {
                     let filters = filter.split(' ')
                     if(filters.length>1){
                         for(let j=0;j<filters.length;j++){
-                            let index = o[i].title.toLowerCase().search(filters[j].toLowerCase())
+                            let index = o[i].title.join(' ').search(filters[j].toLowerCase())
                             if(index>0){
-                                o[i].title = toSentanceCase(o[i].title)
+                                o[i].title =o[i].title.join(' ')
                                 blogs.push(o[i])
                                 break
                             }
                         }
                     }
                     else {
-                        let index = o[i].title.toLowerCase().search(filters[0].toLowerCase())
+                        let index = o[i].title.join(' ').search(filters[0].toLowerCase())
                         if(!(index<0)){
-                            o[i].title = toSentanceCase(o[i].title)
+                            o[i].title =o[i].title.join(' ')
                             blogs.push(o[i])
                         }
                     }

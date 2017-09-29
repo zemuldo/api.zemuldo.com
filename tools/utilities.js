@@ -43,18 +43,21 @@ module.exports ={
             .catch(function (err) {
                 return err
             })
-
     },
     toSentanceCase:lower=>{
         let arr =  lower.split(' ')
         let o = []
         arr.forEach(function (elem) {
-            let letters = elem.split('')
-            letters[0]= letters[0].toUpperCase()
-            elem = letters.join('')
-            o.push(elem)
+           if(elem){
+               let letters = elem.split('')
+               letters[0]= letters[0]
+               elem = letters.join('')
+               o.push(elem)
+           }
+           else {
+               console.log("----------------------------")
+           }
         })
-
         return o.join(' ')
     },
     normalizeQuery:query=>{
