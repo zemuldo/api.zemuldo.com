@@ -15,8 +15,8 @@ router.post('/',async (req,res)=>{
         res.send({ip:req.clientIp})
     }
     else {
-        if(DB[req.body.query]){
-            await DB[req.body.query](req.body)
+        if(DB[req.body.queryMethod] && req.body.queryData){
+            await DB[req.body.queryMethod](req.body.queryData)
                 .then(function (success) {
                     res.statusCode = 200
                     res.send(success)
@@ -28,7 +28,7 @@ router.post('/',async (req,res)=>{
         }
         else {
             res.statusCode = 200
-            res.send({error:"query method invalid"})
+            res.send({error:"query method or data invalid"})
         }
     }
 
