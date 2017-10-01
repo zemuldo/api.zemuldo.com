@@ -23,7 +23,7 @@ let indexCounters = {
         initDate:new Date()
     },
     addsIndex:{
-        name:'userIndex',
+        name:'addsIndex',
         description:'This document contains the index of each unique ADVERTS in db. and stores the next Index in nextIndex',
         initDate:new Date()
     }
@@ -150,7 +150,8 @@ let DB = {
             topics: queryData.topics,
             type: queryData.type,
             post_ID: _id,
-            author: queryData.author
+            author: queryData.author,
+            userName:queryData.userName
         }
          return getNextIndex(indexCounters['blogIndex'])
              .then(function (counter) {
@@ -172,6 +173,8 @@ let DB = {
                  else {
                      thisPost.id = nextID.value
                      thisTitle.id = nextID.value
+                     console.log(thisTitle)
+                     console.log(thisPost)
                     return titles.insertOne(thisTitle)
                  }
              })
@@ -332,9 +335,12 @@ let DB = {
             }
         })
 
-            .then(function (posts) {
-                if(posts){
-                    return posts
+            .then(function (o) {
+                if(o){
+                    for(let i=0;i<o.length;i++){
+                        o[i].title =o[i].title.join(' ')
+                    }
+                    return o
                 }else {
                     return {error:"not found"}
                 }
@@ -429,6 +435,9 @@ let DB = {
             resolve (titles.find({topics:queryParam.topic}).toArray())
         })
             .then(function (o) {
+                for(let j=0;j<o.length;j++){
+                    o[j].title =o[j].title.join(' ')
+                }
                 return o
             })
             .catch(function (e) {
