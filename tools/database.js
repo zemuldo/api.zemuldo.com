@@ -75,6 +75,13 @@ function getNextIndex(indexObj) {
                 }
             });
     })
+
+        .then(function (success) {
+            return success
+        })
+        .catch(function (err) {
+            return err
+        })
 }
 
 
@@ -110,62 +117,97 @@ db.open((e, d)=>{
 
 
 let DB = {
-    newPost: (newData) => {
+    publish: async (newData) => {
             if (newData.query) {
                 delete newData.query
             }
-            let id = getNextIndex(indexCounters['blogIndex'])
-            console.log(id)
-            let date = new Date().toDateString()
-            let _id = new ObjectID()
+        let date = new Date().toDateString()
+        let _id = new ObjectID()
+        let thisPost = {
+            _id: _id,
+            title: newData.title.split(' '),
+            date: date,
+            body: newData.body,
+            likes: 0,
+            type: newData.type,
+            images: newData.images,
+            author: newData.author,
+            topics: newData.topics,
+        }
+        let thisTitle = {
+            title: newData.title.split(' '),
+            date: date,
+            likes: 0,
+            topics: newData.topics,
+            type: newData.type,
+            postID: _id,
+            author: newData.author
+        }
+         return getNextIndex(indexCounters['blogIndex'])
+             .then(function (counter) {
+                 if(counter.error || counter.exeption){
+                     return {error:"internal server error"}
+                 }
+                 if(!counter.value){
+                     return {value:0}
+                 }
+                 else {
+                     let nextIndexValue = counter.value
+                     return {value:nextIndexValue.nextIndex}
+                 }
+             })
+             .then(function (nextID) {
+                 if(nextID.error){
+                     return nextID
+                 }
+                 else {
+                     thisPost.id = nextID.value
+                     titles.id = nextID.value
+                    return titles.insertOne(thisTitle)
+                 }
+             })
+             .then(function (success) {
+                 if(!success.error || success.exception){
+                     return posts.insertOne(thisPost)
+                 }
+                 else {
+                     return success
+                 }
+             })
+             .then(function (final) {
+                 if(!final.error || final.exception){
+                     if(final){
+                         return {state:true}
+                     }
+                 }
+             })
+             .catch(function (error) {
+                 return error
+             })
 
-            let thisPost = {
-                _id: _id,
-                title: newData.title.split(' '),
-                date: date,
-                body: newData.body,
-                likes: 0,
-                type: newData.type,
-                images: newData.images,
-                author: newData.author,
-                topics: newData.topics,
-            }
-            let thisTitle = {
-                title: newData.title.split(' '),
-                date: date,
-                likes: 0,
-                topics: newData.topics,
-                type: newData.type,
-                postID: _id,
-                author: newData.author
-            }
-           return titles.findOne({title: thisPost.title})
-                .then(function (title) {
-                    if (title) {
-                        console.log(title)
-                        return {err: "Tittle " + newData.title + ' exists'}
+    },
+
+    getBlog: (queryParam)=> {
+        if(queryParam._id){
+            queryParam._id = ObjectID(queryParam._id)
+        }
+       
+        return new Promise(function (resolve,reject) {
+            posts.findOne({_id:ObjectID(queryParam._id)}, (e, o)=> {
+                if (e){
+                    reject({error:'error in db'})
+                }
+                else{
+                    if(o){
+                        o.title = o.title.join(' ')
+                        resolve(o)
                     }
                     else {
-                        return titles.insertOne(thisTitle, {safe: true})
+                        reject({error:"not found"})
                     }
-                })
-                .then(function (success) {
-                    console.log(success)
-                    if (!success.err) {
-                        return posts.insertOne(thisPost, {safe: true})
-                    }
-                    else {
-                        return success
-                    }
-                })
-                .then(function (final) {
-                    console.log(final)
-                    return final
-
-                })
-                .catch(function (e) {
-                    return e
-                })
+                }
+            });
+        })
 
     },
 }
