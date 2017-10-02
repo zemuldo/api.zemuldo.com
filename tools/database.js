@@ -320,6 +320,33 @@ let DB = {
                 return error
             })
     },
+    getPostDetails: (queryParam)=> {
+        return new Promise(function (resolve,reject) {
+            if(!queryParam){
+                reject({error:"invalid query params"})
+            }
+            if (queryParam._id) {
+                queryParam._id = ObjectID(queryParam._id)
+            }
+            if(queryParam.id){
+                queryParam.id = Number(queryParam.id)
+            }
+            resolve(titles.findOne(queryParam))
+
+        })
+            .then(function (o) {
+                if(o){
+                    let out = o
+                    out.title =o.title.join(' ')
+                    return out
+                }else {
+                    return {error:"not found"}
+                }
+            })
+            .catch(function (error) {
+                return error
+            })
+    },
     getPosts: (queryParam)=> {
         return new Promise(function (resolve,reject) {
             if(!queryParam){
