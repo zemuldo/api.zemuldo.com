@@ -173,8 +173,6 @@ let DB = {
                  else {
                      thisPost.id = nextID.value
                      thisTitle.id = nextID.value
-                     console.log(thisTitle)
-                     console.log(thisPost)
                     return titles.insertOne(thisTitle)
                  }
              })
@@ -365,56 +363,19 @@ let DB = {
                 reject ({error:'unique supplied'})
             }
             else {
-                const filters = queryParam.filter.split(' ')
-                delete queryParam.filter
-                let unfiltered = await titles.find(queryParam).sort({likes:1}).limit(10).toArray()
-                resolve([unfiltered,filters])
+                let  r = new RegExp(queryParam.filter, "i");
+                resolve(titles.find({ title: { $regex: r } }).toArray())
+
             }
         })
-            .then(function (array) {
-                let o = array[0]
-                let filters =array[1]
-                if(!o[0]){
-                    return {data:[]}
+            .then(function (o) {
+                for(let j=0;j<o.length;j++){
+                    o[j].title =o[j].title.join(' ')
                 }
-                else{
-                    let blogs =[]
-                    for(let i=0;i<o.length;i++){
-                        if(filters.length>1){
-                            for(let j=0;j<filters.length;j++){
-                                let index = o[i].title.join(' ').search(filters[j].toLowerCase())
-                                if(index>0){
-                                    o[i].title =o[i].title.join(' ')
-                                    blogs.push(o[i])
-                                    break
-                                }
-                            }
-                        }
-                        else {
-                            let index = o[i].title.join(' ').search(filters[0].toLowerCase())
-                            if(!(index<0)){
-                                o[i].title =o[i].title.join(' ')
-                                blogs.push(o[i])
-                            }
-                        }
-                    }
-                    let filtered = []
-                    if(blogs.length<5){
-                        for(let i=0;i<blogs.length;i++){
-                            filtered.push(blogs[i])
-                        }
-                        return (shuffle(filtered))
-                    }
-                    else {
-                        for(let i=0;i<5;i++){
-                            filtered.push(blogs[i])
-                        }
-                        return (shuffle(filtered))
-                    }
-                }
+                return o
             })
-            .catch(function (err) {
-                return {error:err}
+            .catch(function (e) {
+                return e
             })
 
     },
