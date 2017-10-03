@@ -44,7 +44,7 @@ function InitCounter(indexObj){
     return  Promise.all([
         counters.findOneAndUpdate(
             { "name" : indexObj.name },
-            { $set: { "name" : indexObj.name, initDate:new Date() ,"description":indexObj.description,important:'!!!!!!!NEVER DELETE THIS DOCUMENT'}},
+            { $set: { "name" : indexObj.name, initDate:new Date() ,"description":indexObj.description,important:'!!!!!!!NEVER DELETE THIS DOCUMENT',nextIndex:1}},
             { sort: { "nextIndex" : 1 }, upsert:true, returnNewDocument : true },
             function (e,o) {
                 if(e){
@@ -159,7 +159,7 @@ let DB = {
                      return {error:"internal server error"}
                  }
                  if(!counter.value){
-                     return {value:0}
+                     return {value:1}
                  }
                  else {
                      let nextIndexValue = counter.value
