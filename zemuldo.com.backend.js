@@ -15,6 +15,7 @@ let ENV = require('./config/env');
 let config = ENV[process.env.NODE_ENV]
 let app = express();
 
+app.use(bodyParser.json({limit: '50mb'}));
 app.use(compression());
 app.use(bodyParser.json());
 app.use(helmet())
@@ -40,16 +41,10 @@ app.use(checkMe({
     }
 }))
 
-let athRoute = require('./routes/auth');
-let fetchRoute = require('./routes/fetch');
+
 let blogsRoute = require('./routes/blogs');
-let analyticsRoute = require('./routes/analytics');
 
-
-app.use(athRoute);
-app.use(fetchRoute);
 app.use(blogsRoute);
-app.use(analyticsRoute);
 wsserver.on('request', app);
 wsserver.listen(config.httpPort, () => {
     console.info(`Web server started at http://localhost:${config.httpPort}`);

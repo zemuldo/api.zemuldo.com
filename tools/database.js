@@ -34,6 +34,7 @@ let dbPort = process.env.DB_PORT || 27017
 
 let db = new MongoDB(dbName, new Server(dbHost, dbPort, {auto_reconnect: true}), {w: 1})
 let posts = db.collection('posts')
+let users = db.collection('users')
 let titles = db.collection('titles')
 let visitors = db.collection('visitors')
 let reviews = db.collection('reviews')
@@ -62,20 +63,17 @@ function getNextIndex(indexObj) {
     return new Promise(function (resolve,reject) {
         counters.findOneAndUpdate(
             { "name" : indexObj.name },
-            { $set: { "name" : indexObj.name, initDate:new Date() ,"description":indexObj.description,important:'!!!!!!!NEVER DELETE THIS DOCUMENT'}, $inc : { "nextIndex" : 1 } },
+            { $set: { "name" : indexObj.name, initDate:new Date() ,"description":indexObj.description,important:'!!!!!!!NEVER DELETE THIS DOCUMENT'}, $inc : { nextIndex : 1 } },
             { sort: { "nextIndex" : 1 }, upsert:true, returnNewDocument : true },
             function (e,o) {
                 if(e){
                     reject (e)
-
                 }
                 else {
                     resolve(o)
-
                 }
             });
     })
-
         .then(function (success) {
             return success
         })
@@ -117,6 +115,119 @@ db.open((e, d)=>{
 
 
 let DB = {
+    registerUser:(queryData)=>{
+        let user = null
+        return new Promise(async function (resolve,reject) {
+            if(!queryData) {
+                reject({error: "invalid query params"})
+            }
+            if (!queryData.firstName) {
+                reject ({error:"no firstName sent"})
+            }
+            if (!queryData.lastName) {
+                reject ({error:"no lastName sent"})
+            }
+            if(!queryData.userName){
+                reject ({error:'invalid userName data'})
+            }
+            if(!queryData.email){
+                reject ({error:'invalid email data'})
+            }
+            if(!queryData.password){
+                reject ({error:'invalid password data'})
+            }
+            if(!queryData.avatar){
+                reject ({error:'invalid imagePreviewUrl data'})
+            }
+            let date = new Date().toDateString()
+            let _id = new ObjectID()
+            user = {
+                _id:_id,
+                firstName: queryData.firstName,
+                lastName:queryData.lastName,
+                userName:queryData.userName,
+                email:queryData.email,
+                password:queryData.password,
+                avatar:queryData.avatar,
+                created:date
+            }
+            resolve (getNextIndex(indexCounters['userIndex']))
+        })
+            .then(function (counter) {
+                if(counter.error || counter.exeption){
+                    return {error:"internal server error"}
+                }
+                if(!counter.value){
+                    return {value:1}
+                }
+                else {
+                    let nextIndexValue = counter.value
+                    return {value:nextIndexValue.nextIndex}
+                }
+            })
+            .then(function (nextID) {
+                if(nextID.error){
+                    return nextID
+                }
+                else {
+                    user.id = nextID.value
+                    return Promise.all([users.findOne({email:user.email}),users.findOne({userName:user.userName})])
+                }
+            })
+            .then(function (success) {
+                if(success[0]){
+                    return {error:"email taken"}
+                }
+                if(success[1]){
+                    return {error:"username taken"}
+                }
+                if(!success[0] && !success[1] && !success.err){
+                    return users.insertOne(user)
+                }
+                else {
+                    return {error:"username or email taken"}
+                }
+            })
+            .then(function (final) {
+                if(!final.error || final.exception){
+                    if(final){
+                        return {state:true}
+                    }
+                }
+                else {
+                    return final
+                }
+            })
+            .catch(function (error) {
+                return error
+            })
+    },
+    loginUser:(queryParam)=>{
+        return new Promise(function (resolve,reject) {
+            if(!queryParam){
+                reject({error:"invalid query params"})
+            }
+            if (queryParam._id) {
+                queryParam._id = ObjectID(queryParam._id)
+            }
+            if(queryParam.id){
+                queryParam.id = Number(queryParam.id)
+            }
+            resolve(users.findOne(queryParam))
+
+        })
+            .then(function (success) {
+                if(success){
+                    return success
+                }
+                else{
+                    return {error:'no matches found'}
+                }
+            })
+            .catch(function (error) {
+                return error
+            })
+    },
     publish: async (queryData) => {
         if(!queryData){
             return ({error:"invalid query params"})
