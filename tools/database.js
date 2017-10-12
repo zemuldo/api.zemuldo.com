@@ -145,8 +145,8 @@ let DB = {
                 _id:_id,
                 firstName: queryData.firstName,
                 lastName:queryData.lastName,
-                userName:queryData.userName,
-                email:queryData.email,
+                userName:queryData.userName.toLowerCase(),
+                email:queryData.email.toLowerCase(),
                 password:queryData.password,
                 avatar:queryData.avatar,
                 created:date
@@ -155,7 +155,7 @@ let DB = {
         })
             .then(function (counter) {
                 if(counter.error || counter.exeption){
-                    return {error:"internal server error"}
+                    return {error:"internal server error",code:500}
                 }
                 if(!counter.value){
                     return {value:1}
@@ -176,22 +176,22 @@ let DB = {
             })
             .then(function (success) {
                 if(success[0]){
-                    return {error:"email taken"}
+                    return {error:"email taken",code:406}
                 }
                 if(success[1]){
-                    return {error:"username taken"}
+                    return {error:"username taken",code:406}
                 }
                 if(!success[0] && !success[1] && !success.err){
                     return users.insertOne(user)
                 }
                 else {
-                    return {error:"username or email taken"}
+                    return {error:"username or email taken",code:406}
                 }
             })
             .then(function (final) {
                 if(!final.error || final.exception){
                     if(final){
-                        return {state:true}
+                        return {state:true,code:200}
                     }
                 }
                 else {
@@ -199,13 +199,19 @@ let DB = {
                 }
             })
             .catch(function (error) {
-                return error
+                if(error.code){
+                    return error
+                }
+                else {
+                    error.code = 500;
+                    return error
+                }
             })
     },
     loginUser:(queryParam)=>{
         return new Promise(function (resolve,reject) {
             if(!queryParam){
-                reject({error:"invalid query params"})
+                reject({error:"invalid query params",code:500})
             }
             if (queryParam._id) {
                 queryParam._id = ObjectID(queryParam._id)
@@ -213,7 +219,10 @@ let DB = {
             if(queryParam.id){
                 queryParam.id = Number(queryParam.id)
             }
-            resolve(users.findOne(queryParam))
+            if(queryParam.userName){
+                queryParam.userName = queryParam.userName.toLowerCase()
+            }
+            resolve(users.findOne({userName:queryParam.userName}))
 
         })
             .then(function (success) {
@@ -221,11 +230,17 @@ let DB = {
                     return success
                 }
                 else{
-                    return {error:'no matches found'}
+                    return {error:'Account not found, Signup Now',code:404}
                 }
             })
             .catch(function (error) {
-                return error
+                if(error.code){
+                    return error
+                }
+                else {
+                    error.code = 500
+                    return error
+                }
             })
     },
     publish: async (queryData) => {
@@ -308,9 +323,6 @@ let DB = {
 
     },
     addVisitor: (newData) => {
-        if(newData.query){
-            delete newData.query
-        }
         return new Promise(function (resolve,reject) {
             if(!newData){
                 reject ({error:"invalid data"})
@@ -358,7 +370,7 @@ let DB = {
                 }
             })
             .then(function (success) {
-                return success
+                return {sessionID:newData.sessionID,}
             })
             .catch(function (err) {
                 return {error:err}
