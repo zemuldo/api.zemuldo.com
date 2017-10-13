@@ -35,6 +35,7 @@ let dbPort = process.env.DB_PORT || 27017
 let db = new MongoDB(dbName, new Server(dbHost, dbPort, {auto_reconnect: true}), {w: 1})
 let posts = db.collection('posts')
 let users = db.collection('users')
+let avatars = db.collection('avatars')
 let titles = db.collection('titles')
 let visitors = db.collection('visitors')
 let reviews = db.collection('reviews')
@@ -82,7 +83,26 @@ function getNextIndex(indexObj) {
         })
 }
 
+function dataURItoBlob(dataURI, callback) {
+    // convert base64 to raw binary data held in a string
+    // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+    let byteString = atob(dataURI.split(',')[1]);
 
+    // separate out the mime component
+    let mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+
+    // write the bytes of the string to an ArrayBuffer
+    let ab = new ArrayBuffer(byteString.length);
+    let ia = new Uint8Array(ab);
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+
+    // write the ArrayBuffer to a blob, and you're done
+    let bb = new Blob([ab]);
+    console.log(bb)
+    return bb;
+}
 
 db.open((e, d)=>{
     console.log("****Connecting to DB****")
@@ -170,7 +190,8 @@ let DB = {
                     return nextID
                 }
                 else {
-                    user.id = nextID.value
+                    queryData.id=nextID.value
+                    user.id = nextID.value;
                     return Promise.all([users.findOne({email:user.email}),users.findOne({userName:user.userName})])
                 }
             })
@@ -182,7 +203,14 @@ let DB = {
                     return {error:"username taken",code:406}
                 }
                 if(!success[0] && !success[1] && !success.err){
-                    return users.insertOne(user)
+                    let avatar = {
+                        imageURL:queryData.avatar,
+                        user:{
+                            userName:queryData.userName,
+                            id:queryData.id
+                        }
+                    }
+                    return Promise.all([users.insertOne(user),avatars.insertOne(avatar)])
                 }
                 else {
                     return {error:"username or email taken",code:406}
@@ -350,6 +378,14 @@ let DB = {
             .then(function (o) {
                 if (o) {
                     let update = o
+                    if(!o.user){
+                        if(o.user.id===0)
+                        update.user = newData.user
+                        else {
+                            update['account'+new Date().toDateString()] = newData.user
+                        }
+                    }
+
                     update.visits += 1
                     update.network.push(newData.isp)
                     update.countryCode.push(newData.countryCode)
@@ -357,6 +393,7 @@ let DB = {
                 }
                 else {
                     let visitor = {
+                        user:newData.user,
                         sessionID: newData.sessionID,
                         country: newData.country,
                         countryCode: [newData.countryCode],
