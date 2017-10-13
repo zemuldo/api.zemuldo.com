@@ -1,6 +1,8 @@
 'use strict';
 const express = require("express");
+const requestIp = require('request-ip');
 const router = express();
+router.use(requestIp.mw())
 let DB = require('../tools/database')
 
 router.use((req, res, next) => {
@@ -11,7 +13,7 @@ router.use((req, res, next) => {
 });
 
 router.post('/',async (req,res)=>{
-    if(req.body.query ==='getIp'){
+    if(req.body.queryMethod ==='getIp'){
         res.send({ip:req.clientIp})
     }
     else {
@@ -27,7 +29,7 @@ router.post('/',async (req,res)=>{
                 })
         }
         else {
-            res.statusCode = 200
+            res.statusCode = 200;
             res.send({error:"query method or data invalid"})
         }
     }
