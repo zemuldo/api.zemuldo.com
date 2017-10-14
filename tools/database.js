@@ -41,6 +41,7 @@ let visitors = db.collection('visitors')
 let reviews = db.collection('reviews')
 let richText = db.collection('richText')
 let counters = db.collection('counters')
+let userLikes = db.collection('userLikes')
 
 function InitCounter(indexObj){
     return  Promise.all([
@@ -619,8 +620,14 @@ let DB = {
             if(!queryParam ){
                 reject ({error:"invalid query params"})
             }
+            if (!queryParam.title) {
+                reject ({error:"error in blog tittle"})
+            }
             if (queryParam._id || !queryParam.id) {
                 reject ({error:"no unique supplied  for one"})
+            }
+            if (!queryParam.userID) {
+                reject ({error:"unauthorized user"})
             }
             if (queryParam._id) {
                 queryParam._id = ObjectID(queryParam._id)
@@ -628,14 +635,44 @@ let DB = {
             if(queryParam.id){
                 queryParam.id = Number(queryParam.id)
             }
-            resolve(titles.updateOne(queryParam, {$inc: {"likes": 1}}))
-
+            resolve(userLikes.findOne({userID:queryParam.userID}))
         })
             .then(function (success) {
-                return success
+                if(!success){
+                    let like = {
+                        userID:queryParam.userID,
+                        blogs:{[queryParam.id]:{date:new Date().toDateString(),titles:queryParam.title}}
+                    }
+                    return userLikes.insertOne(like)
+                }
+                else {
+
+                    if(success.blogs[queryParam.id]){
+                        return {state:false}
+                    }
+                    else {
+                        success.blogs[queryParam.id]={date:new Date().toDateString(),titles:queryParam.title}
+                        return userLikes.updateOne(
+                            { userID: queryParam.userID },
+                            { $set:success }
+                        )
+                    }
+                }
+            })
+            .then(function (success) {
+                if(!success){
+                    return {state:false}
+                }
+                if(success.state===false){
+                    return success
+                }
+                return titles.updateOne({id:queryParam.id}, {$inc: {"likes": 1}})
+            })
+            .then(function (final) {
+                return final
             })
             .catch(function (err) {
-                return err
+                return {error:err,code:500}
             })
     }
 
