@@ -635,6 +635,9 @@ let DB = {
             if(queryParam.id){
                 queryParam.id = Number(queryParam.id)
             }
+            if(queryParam.userID){
+                queryParam.userID = Number(queryParam.userID)
+            }
             resolve(userLikes.findOne({userID:queryParam.userID}))
         })
             .then(function (success) {
@@ -674,6 +677,44 @@ let DB = {
             .catch(function (err) {
                 return {error:err,code:500}
             })
+    },
+    getLike: (queryParam)=> {
+        return new Promise(function (resolve,reject) {
+            if(!queryParam ){
+                reject ({error:"invalid query params"})
+            }
+            if (!queryParam.postID) {
+                reject ({error:"error in blog tittle"})
+            }
+            if (!queryParam.userID) {
+                reject ({error:"no unique supplied  for one"})
+            }
+            if (queryParam.user_ID) {
+                queryParam.user_ID = ObjectID(queryParam.user_ID)
+            }
+            if(queryParam.userID){
+                queryParam.userID = Number(queryParam.userID)
+            }
+            if(queryParam.postID){
+                queryParam.postID = Number(queryParam.postID)
+            }
+            resolve(userLikes.findOne({userID:queryParam.userID}))
+        })
+            .then(function (success) {
+                if (!success) {
+                    return {state: false}
+                }
+                if (success.blogs[queryParam.postID]) {
+                    return {state: true}
+                }
+                else {
+                    return {state:false}
+                }
+            })
+            .catch(function (err) {
+                return err
+            })
+
     }
 
 }
