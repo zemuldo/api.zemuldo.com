@@ -44,20 +44,16 @@ let counters = db.collection('counters')
 let userLikes = db.collection('userLikes')
 
 function InitCounter(indexObj){
-    return  Promise.all([
-        counters.findOneAndUpdate(
-            { "name" : indexObj.name },
-            { $set: { "name" : indexObj.name, initDate:new Date() ,"description":indexObj.description,important:'!!!!!!!NEVER DELETE THIS DOCUMENT',nextIndex:1}},
-            { sort: { "nextIndex" : 1 }, upsert:true, returnNewDocument : true },
-            function (e,o) {
-                if(e){
-                    return (e)
-                }
-                else {
-                    return (o)
-                }
-            })
-    ])
+    counters.findOneAndUpdate(
+        { "name" : indexObj.name },
+        { $set: { "name" : indexObj.name, initDate:new Date() ,"description":indexObj.description,important:'!!!!!!!NEVER DELETE THIS DOCUMENT',nextIndex : 1}},
+        { $sort: { "nextIndex" : 1 }, upsert:true, returnNewDocument : true })
+        .then(function (success) {
+            return success
+        })
+        .catch(function (err) {
+            return err
+        })
 
 }
 
@@ -83,6 +79,51 @@ function getNextIndex(indexObj) {
             return err
         })
 }
+function checkCounters() {
+    let query = { $or: [ ] }
+    let i =0;
+    return new Promise(function (resolve,reject) {
+        Object.keys(indexCounters).forEach(function(prop) {
+            i++
+            query.$or.push({
+                name:indexCounters[prop].name
+            });
+        })
+        resolve(query)
+        })
+        .then(function (query) {
+            return counters.find(query).toArray()
+        })
+        .then(function (o) {
+            console.log('\x1b[36m%s\x1b[0m',"****Checking database Indexing****")
+            if(o.length===0){
+                console.log('\x1b[37m%s\x1b[0m',"****Database Indexing not initialized****")
+                console.log('\x1b[38m%s\x1b[0m',"****Initializing database Indexing****")
+                Object.keys(indexCounters).forEach(function(prop) {
+                    InitCounter(indexCounters[prop])
+                })
+                console.log("----------------------------------------DB Connected")
+                console.log('\x1b[36m%s\x1b[0m',"Ram Used: ",process.memoryUsage())
+                console.log('\x1b[36m%s\x1b[0m',"PID: ",process.pid)
+                return true
+            }
+            else if(i===o.length){
+                console.log('\x1b[32m%s\x1b[0m',"***DB counter initailaized already and fine****")
+                console.log("----------------------------------------DB Connected")
+                console.log('\x1b[36m%s\x1b[0m',"Ram Used: ",process.memoryUsage())
+                console.log('\x1b[36m%s\x1b[0m',"PID: ",process.pid)
+            }
+            else {
+               console.log("***db counter init error***")
+                console.log("----------------------------------------Exit with Error")
+                process.exit(12);
+            }
+        })
+        .catch(function (err) {
+            throw {error:"db counter init error"}
+        })
+
+}
 
 function dataURItoBlob(dataURI, callback) {
     // convert base64 to raw binary data held in a string
@@ -106,7 +147,10 @@ function dataURItoBlob(dataURI, callback) {
 }
 
 db.open((e, d)=>{
-    console.log("****Connecting to DB****")
+    console.log("----------------------------------------Connecting to DB")
+    let date = new Date().toString()
+    console.log('\x1b[37m%s\x1b[0m',"****Connecting to DB****")
+    console.log('\x1b[36m%s\x1b[0m', date);
     if (e) {
         console.log(e)
     } else {
@@ -125,12 +169,8 @@ db.open((e, d)=>{
             log.info('DB Connected: connected to: "'+dbName+'"')
         }*/
     }
-
-    console.log("****Initializing database Indexing****")
-    Object.keys(indexCounters).forEach(function(prop) {
-        InitCounter(indexCounters[prop])
-    })
-    console.log('DB Connected: connected to: "'+dbName+'"')
+    checkCounters()
+    console.log('\x1b[33m%s\x1b[0m','DB Connected: connected to: "'+dbName+'"')
 
 })
 
@@ -251,6 +291,9 @@ let DB = {
             if(queryParam.userName){
                 queryParam.userName = queryParam.userName.toLowerCase()
             }
+            if(queryParam.id.toString()==='NaN'){
+                return {error:'invalid id data'}
+            }
             resolve(users.findOne({userName:queryParam.userName}))
 
         })
@@ -288,13 +331,27 @@ let DB = {
         if(!queryData.type){
             return {error:'invalid type data'}
         }
+        if(!queryData.authorID){
+            return {error:'invalid author data'}
+        }
+        if(!queryData.userName){
+            return {error:'invalid user data'}
+        }
         if(!queryData.author){
             return {error:'invalid author data'}
         }
+        if(queryData.authorID){
+            queryData.authorID = Number(queryData.authorID)
+        }
+        if(queryData.authorID.toString()==='NaN'){
+            return {error:'invalid author data'}
+        }
+
         let date = new Date().toDateString()
         let _id = new ObjectID()
         let thisPost = {
             _id: _id,
+            authorID:queryData.authorID,
             date: date,
             body: queryData.body,
         }
@@ -304,6 +361,7 @@ let DB = {
             likes: 0,
             topics: queryData.topics,
             type: queryData.type,
+            authorID:queryData.authorID,
             post_ID: _id,
             author: queryData.author,
             userName:queryData.userName
