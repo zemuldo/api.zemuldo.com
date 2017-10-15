@@ -291,13 +291,11 @@ let DB = {
             if(queryParam.userName){
                 queryParam.userName = queryParam.userName.toLowerCase()
             }
-            if(queryParam.id.toString()==='NaN'){
-                return {error:'invalid id data'}
-            }
             resolve(users.findOne({userName:queryParam.userName}))
 
         })
             .then(function (success) {
+                console.log(success)
                 if(success){
                     return success
                 }
@@ -312,6 +310,53 @@ let DB = {
                 else {
                     error.code = 500
                     return error
+                }
+            })
+    },
+    validateUser:(queryParam)=>{
+        return new Promise(function (resolve,reject) {
+            if(!queryParam){
+                reject({error:"invalid query params",code:500})
+            }
+            if(!queryParam._id){
+                reject({error:"invalid query params",code:500})
+            }
+            if(!queryParam.id){
+                reject({error:"invalid query params",code:500})
+            }
+            if(!queryParam.userName){
+                reject({error:"invalid query params",code:500})
+            }
+            if (queryParam._id) {
+                queryParam._id = ObjectID(queryParam._id)
+            }
+            if(queryParam.id){
+                queryParam.id = Number(queryParam.id)
+            }
+            if(queryParam.userName){
+                queryParam.userName = queryParam.userName.toLowerCase()
+            }
+            if(queryParam.id.toString()==='NaN'){
+                return {error:'invalid id data'}
+            }
+            resolve(users.findOne({userName:queryParam.userName,id:queryParam.id,_id:queryParam._id}))
+
+        })
+            .then(function (success) {
+                if(success){
+                    return {state:true}
+                }
+                else{
+                    return {state:false}
+                }
+            })
+            .catch(function (error) {
+                if(error.code){
+                    return error
+                }
+                else {
+                    error.code = 500
+                    return {state:false}
                 }
             })
     },
