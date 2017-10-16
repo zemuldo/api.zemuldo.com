@@ -246,10 +246,8 @@ let DB = {
                 if(!success[0] && !success[1] && !success.err){
                     let avatar = {
                         imageURL:queryData.avatar,
-                        user:{
-                            userName:queryData.userName,
-                            id:queryData.id
-                        }
+                        userName:queryData.userName,
+                        id:queryData.id
                     }
                     return Promise.all([users.insertOne(user),avatars.insertOne(avatar)])
                 }
@@ -295,7 +293,6 @@ let DB = {
 
         })
             .then(function (success) {
-                console.log(success)
                 if(success){
                     return success
                 }
@@ -818,7 +815,36 @@ let DB = {
                 return err
             })
 
-    }
+    },
+    getAvatar: (queryParam)=> {
+        return new Promise(function (resolve,reject) {
+            if(!queryParam){
+                reject({error:"invalid query params"})
+            }
+            if (!queryParam._id && !queryParam.id) {
+                reject({error:"invalid query params"})
+            }
+            if (queryParam._id) {
+                queryParam._id = ObjectID(queryParam._id)
+            }
+            if(queryParam.id){
+                queryParam.id = Number(queryParam.id)
+            }
+            resolve(avatars.findOne(queryParam))
+
+        })
+            .then(function (success) {
+                if(success){
+                    return success
+                }
+                else{
+                    return {error:'no matches found'}
+                }
+            })
+            .catch(function (error) {
+                return error
+            })
+    },
 
 }
 
