@@ -115,8 +115,8 @@ function checkCounters() {
             }
             else {
                console.log("***db counter init error***")
-                console.log("----------------------------------------Exit with Error")
-                process.exit(12);
+               console.log("----------------------------------------Exit with Error")
+               process.exit(12);
             }
         })
         .catch(function (err) {
@@ -537,12 +537,52 @@ let DB = {
             })
 
     },
-    getAllPosts: ()=> {
-        return titles.find({}).sort({likes: -1}).limit(10).toArray()
+    getAllPosts: (queryParam)=> {
+        return new Promise(function (resolve,reject) {
+            if(!queryParam){
+                reject({error:"invalid query params"})
+            }
+            if(queryParam.start){
+                queryParam.start = Number(queryParam.start)
+            }
+            let start = !queryParam.start?0:queryParam.start.toString()==='NaN'?0:queryParam.start
+            delete queryParam.start
+            resolve(titles.find(queryParam).skip(start > 0 ? start : 0).limit(5).toArray())
+        })
             .then(function (o) {
                 if(o){
                     for(let i=0;i<o.length;i++){
                         o[i].title =o[i].title.join(' ')
+                    }
+                    return o
+                }
+                else {
+                    return [];
+                }
+            })
+            .catch(function (err) {
+                return err
+            })
+    },
+    getPagedPosts: (queryParam)=> {
+        return new Promise(function (resolve,reject) {
+            if(!queryParam){
+                reject({error:"invalid query params"})
+            }
+            if(!queryParam){
+                reject({error:"invalid query params"})
+            }
+            if(queryParam.start){
+                queryParam.start = Number(queryParam.start)
+            }
+            let start = !queryParam.start?0:queryParam.start.toString()==='NaN'?0:queryParam.start
+            delete queryParam.start
+            resolve(titles.find(queryParam).skip(start > 0 ? start : 0).limit(5).toArray())
+        })
+            .then(function (o) {
+                if (o) {
+                    for (let i = 0; i < o.length; i++) {
+                        o[i].title = o[i].title.join(' ')
                     }
                     return o
                 }
@@ -554,7 +594,6 @@ let DB = {
                 return err
             })
     },
-
     getPost: (queryParam)=> {
        return new Promise(function (resolve,reject) {
            if(!queryParam){
@@ -616,11 +655,13 @@ let DB = {
             if(queryParam._id || queryParam.id){
                 reject ({error:'unique supplied'})
             }
-            else {
-                resolve(titles.find(queryParam).toArray())
+            if(queryParam.start){
+                queryParam.start = Number(queryParam.start)
             }
+            let start = !queryParam.start?0:queryParam.start.toString()==='NaN'?0:queryParam.start
+            delete queryParam.start
+            resolve(titles.find(queryParam).skip(start > 0 ? start : 0).limit(5).toArray())
         })
-
             .then(function (o) {
                 if(o){
                     for(let i=0;i<o.length;i++){
@@ -650,11 +691,16 @@ let DB = {
             if(queryParam._id || queryParam.id || typeof queryParam.filter!=='string'){
                 reject ({error:'unique supplied'})
             }
-            else {
-                let  r = new RegExp(queryParam.filter, "i");
-                resolve(titles.find({ title: { $regex: r } }).toArray())
 
+            let  r = new RegExp(queryParam.filter, "i");
+            if(queryParam.start){
+                queryParam.start = Number(queryParam.start)
             }
+            let start = !queryParam.start?0:queryParam.start.toString()==='NaN'?0:queryParam.start
+            delete queryParam.start
+            resolve(titles.find({ title: { $regex: r } }).skip(start > 0 ? start : 0).limit(5).toArray())
+
+
         })
             .then(function (o) {
                 for(let j=0;j<o.length;j++){
@@ -681,7 +727,12 @@ let DB = {
             if(!queryParam.topic){
                 reject ({error:'topic unspecified'})
             }
-            resolve (titles.find({topics:queryParam.topic}).toArray())
+            if(queryParam.start){
+                queryParam.start = Number(queryParam.start)
+            }
+            let start = !queryParam.start?0:queryParam.start.toString()==='NaN'?0:queryParam.start
+            delete queryParam.start
+            resolve (titles.find({topics:queryParam.topic}).skip(start > 0 ? start : 0).limit(5).toArray())
         })
             .then(function (o) {
                 for(let j=0;j<o.length;j++){
