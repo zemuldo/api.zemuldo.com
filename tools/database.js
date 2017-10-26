@@ -900,6 +900,30 @@ let DB = {
                 return error
             })
     },
+    deleteBlog: (queryParam)=> {
+        return new Promise(function (resolve,reject) {
+            if(!queryParam){
+                reject({error:"invalid query params"})
+            }
+            if(!queryParam.id){
+                reject({error:"invalid query params"})
+            }
+            if(queryParam.id){
+                queryParam.id = Number(queryParam.id)
+            }
+            if(queryParam.id.toString()==='NaN'){
+                return {error:'invalid id data'}
+            }
+            resolve(Promise.all([titles.removeOne(queryParam),posts.removeOne(queryParam)]))
+
+        })
+            .then(function (success) {
+                return success
+            })
+            .catch(function (error) {
+                return error
+            })
+    },
 }
 module.exports = DB
 
