@@ -388,7 +388,6 @@ let DB = {
         if(queryData.authorID.toString()==='NaN'){
             return {error:'invalid author data'}
         }
-
         let date = new Date().toDateString()
         let _id = new ObjectID()
         let thisPost = {
@@ -449,7 +448,6 @@ let DB = {
              .catch(function (error) {
                  return error
              })
-
     },
     addVisitor: (newData) => {
         return new Promise(function (resolve,reject) {
@@ -575,8 +573,11 @@ let DB = {
             if(queryParam.start){
                 queryParam.start = Number(queryParam.start)
             }
-            let start = !queryParam.start?0:queryParam.start.toString()==='NaN'?0:queryParam.start
-            delete queryParam.start
+            let start = !queryParam.start?0:queryParam.start.toString()==='NaN'?0:queryParam.start;
+            delete queryParam.start;
+            if(queryParam.topics==='all'){
+                delete queryParam.topics
+            }
             resolve(titles.find(queryParam).skip(start > 0 ? start : 0).limit(5).toArray())
         })
             .then(function (o) {
@@ -632,7 +633,6 @@ let DB = {
                 queryParam.id = Number(queryParam.id)
             }
             resolve(titles.findOne(queryParam))
-
         })
             .then(function (o) {
                 if(o){
@@ -657,6 +657,9 @@ let DB = {
             }
             if(queryParam.start){
                 queryParam.start = Number(queryParam.start)
+            }
+            if(queryParam.topics==='all'){
+                delete queryParam.topics
             }
             let start = !queryParam.start?0:queryParam.start.toString()==='NaN'?0:queryParam.start
             delete queryParam.start
@@ -691,16 +694,16 @@ let DB = {
             if(queryParam._id || queryParam.id || typeof queryParam.filter!=='string'){
                 reject ({error:'unique supplied'})
             }
-
             let  r = new RegExp(queryParam.filter, "i");
             if(queryParam.start){
                 queryParam.start = Number(queryParam.start)
             }
+            if(queryParam.topics==='all'){
+                delete queryParam.topics
+            }
             let start = !queryParam.start?0:queryParam.start.toString()==='NaN'?0:queryParam.start
             delete queryParam.start
             resolve(titles.find({ title: { $regex: r } }).skip(start > 0 ? start : 0).limit(5).toArray())
-
-
         })
             .then(function (o) {
                 for(let j=0;j<o.length;j++){
@@ -711,7 +714,6 @@ let DB = {
             .catch(function (e) {
                 return e
             })
-
     },
     getPostsTopic: (queryParam)=> {
         return new Promise(function (resolve,reject) {
@@ -730,6 +732,9 @@ let DB = {
             if(queryParam.start){
                 queryParam.start = Number(queryParam.start)
             }
+            if(queryParam.topics==='all'){
+                delete queryParam.topics
+            }
             let start = !queryParam.start?0:queryParam.start.toString()==='NaN'?0:queryParam.start
             delete queryParam.start
             resolve (titles.find({topics:queryParam.topic}).skip(start > 0 ? start : 0).limit(5).toArray())
@@ -743,7 +748,6 @@ let DB = {
             .catch(function (e) {
                 return e
             })
-
     },
     getMostPop: (queryParam)=> {
         return new Promise(function (resolve,reject) {
@@ -896,9 +900,7 @@ let DB = {
                 return error
             })
     },
-
 }
-
 module.exports = DB
 
 
