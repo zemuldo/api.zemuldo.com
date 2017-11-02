@@ -1,6 +1,6 @@
 {
   "name": "zemuldo.com.backend",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Backend for Zemuldo.com",
   "main": "app.js",
   "scripts": {
