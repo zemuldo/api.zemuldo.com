@@ -10,7 +10,32 @@ const Server=server.Server
 /*
 	ESTABLISH DATABASE CONNECTION
 */
-
+const types = {
+    dev:{
+        name:'Development',
+        icon:'code',
+        topTitle:"Dev articles"
+    },
+    tech:{
+        name:'Technology',
+        icon:'server',
+        topTitle:" Featured in Technology"
+    },
+    business:{
+        name:'Business',
+        icon:'creative commons',
+        topTitle:" Popular in Bsuness"
+    },
+    reviews:{
+        name:'Reviews',
+        icon:'circle notched'
+    },
+    tuts:{
+        name:'Tutorials',
+        icon:'code',
+        topTitle:" Popular Tutorials"
+    }
+}
 let indexCounters = {
     blogIndex:{
         name:'blogIndex',
@@ -729,6 +754,9 @@ let DB = {
             if(!queryParam.topic){
                 reject ({error:'topic unspecified'})
             }
+            if(!types[queryParam.type]){
+                delete queryParam.type
+            }
             if(queryParam.start){
                 queryParam.start = Number(queryParam.start)
             }
@@ -737,7 +765,7 @@ let DB = {
             }
             let start = !queryParam.start?0:queryParam.start.toString()==='NaN'?0:queryParam.start
             delete queryParam.start
-            resolve (titles.find({topics:queryParam.topic}).skip(start > 0 ? start : 0).limit(5).toArray())
+            resolve (titles.find({topics:queryParam.topic,type:queryParam.type}).skip(start > 0 ? start : 0).limit(5).toArray())
         })
             .then(function (o) {
                 for(let j=0;j<o.length;j++){
