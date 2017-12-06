@@ -395,6 +395,9 @@ let DB = {
         if(!queryData.topics){
             return {error:'invalid topics data'}
         }
+        if(!queryData.about){
+            return {error:'invalid about data'}
+        }
         if(!queryData.type){
             return {error:'invalid type data'}
         }
@@ -426,6 +429,7 @@ let DB = {
             date: date,
             likes: 0,
             topics: queryData.topics,
+            about:queryData.about,
             type: queryData.type,
             authorID:queryData.authorID,
             post_ID: _id,
@@ -685,6 +689,9 @@ let DB = {
             }
             if(queryParam.topics==='all'){
                 delete queryParam.topics
+            }
+            if(queryParam.type==='home'){
+                delete queryParam.type
             }
             let start = !queryParam.start?0:queryParam.start.toString()==='NaN'?0:queryParam.start
             delete queryParam.start
