@@ -1,5 +1,5 @@
 'use strict'
-let schemas = require('../schemas/index')
+let schemas = require('../db/schemas/index')
 
 module.exports ={
     validatePost: (post)=> {

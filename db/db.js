@@ -4,7 +4,7 @@ let moment = require('moment')
 let mongodb = require('mongodb')
 let ObjectID = require('mongodb').ObjectID
 
-let {toSentanceCase,normalizeQuery,shuffle} = require('./utilities')
+let {toSentanceCase,normalizeQuery,shuffle} = require('../tools/utilities')
 const MongoDB=mongodb.Db
 const Server=server.Server
 /*

@@ -36,6 +36,9 @@
     "request": "^2.82.0",
     "request-ip": "^2.0.2",
     "uuid": "^3.1.0",
-    "ws": "^3.2.0"
+    "ws": "^3.3.3"
+  },
+  "devDependencies": {
+    "standard": "^10.0.3"
   }
 }
