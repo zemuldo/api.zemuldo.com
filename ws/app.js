@@ -1,32 +1,36 @@
 'use strict';
 
 let WSServer = require('ws').Server;
-let server = require('http').createServer();
-let app = require('../httpServer/app');
+let wss_http_server = require('http').createServer();
+let app = require('../http/app');
+let processRequest = require('./intents')
 
 // Create web socket server on top of a regular http server
 let wss = new WSServer({
 
-    server: server
+    server: wss_http_server
 });
 
 // Also mount the app here
-server.on('request', app);
+wss_http_server.on('request', app);
 
 wss.on('connection', function connection(ws) {
 
     ws.on('message', function incoming(message) {
 
         console.log(`received: ${message}`);
-
-        ws.send(JSON.stringify({
-            answer: 42
-        }));
+        processRequest(message)
+            .then(function (o) {
+                ws.send(JSON.stringify({
+                    answer: o
+                }));
+            })
+            .catch(function (e) {
+                ws.send(JSON.stringify({
+                    answer: e
+                }));
+            })
     });
 });
 
-
-server.listen(8090, function() {
-
-    console.log(`http/ws server listening on 8090}`);
-});
+module.exports = wss_http_server;
