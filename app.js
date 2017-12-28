@@ -18,8 +18,8 @@ const dotenv = require('dotenv').config({
 });
 
 const server = require('./server/app');
-const express = require('./http/app');
-const socket = require('./ws/websocket');
+const express = require('./express/app');
+const socket = require('./ws/app');
 
 server.on('request', express);
 let ENV = require('./config/env');
