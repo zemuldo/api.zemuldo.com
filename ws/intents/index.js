@@ -40,29 +40,24 @@ const handleUnknownAnswer = (err) => {
   return msgs[~~(Math.random() * msgs.length)];
 };
 
-const processRequest = function (msg) {
-    return new Promise((resolve, reject) => {
-        const input = JSON.parse(msg);
-        if (input.type === 'user' && input.msg) {
-            resolve(JSON.parse(msg));
-            const sessionId = input.sessionId || uuidv4();
-            const tz = input.tz;
+const processRequest = (msg) => new Promise((resolve, reject) => {
+  // try/catch to make sure we don't crush on invalid JSON msgs
+  try {
+    const input = JSON.parse(msg);
 
-            resolve([callApiAi(input.msg, sessionId, tz),tz])
-        }else {
-            resolve(handleUnknownAnswer(err));
-        }
-    })
-        .then(function (o) {
-            doIntent(o[0], o[1])
-        })
-        .then(function (answer) {
-            return answer
-        })
-        .catch(function (err) {
-            return handleUnknownAnswer(err)
-        })
+    // process our users' request only
+    if (input.type === 'user' && input.msg) {
+      const sessionId = input.sessionId || uuidv4();
+      const tz = input.tz;
 
-}
+      callApiAi(input.msg, sessionId, tz)
+        .then(response => doIntent(response, tz))
+        .then(answer => resolve(answer))
+        .catch(err => resolve(handleUnknownAnswer(err)))
+    }
+  } catch (err) {
+    resolve(handleUnknownAnswer(err));
+  }
+});
 
 module.exports = processRequest;

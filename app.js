@@ -17,7 +17,11 @@ const dotenv = require('dotenv').config({
         (process.env.NODE_ENV === 'production' ? 'production.env' : '.env')
 });
 
-let app = require('./ws/app')
+const server = require('./server/app');
+const express = require('./http/app');
+const socket = require('./ws/websocket');
+
+server.on('request', express);
 let ENV = require('./config/env');
 
 const errorCode = {
@@ -33,7 +37,7 @@ const errorCode = {
 
 let config = ENV[process.env.NODE_ENV]
 
-app.listen(config.httpPort, () => {
+server.listen(config.httpPort, () => {
     console.info('\x1b[37m%s\x1b[0m',`Web server started at http://localhost:${config.httpPort}`);
     console.info('\x1b[37m%s\x1b[0m',`Web Socket started at  ws://localhost:${config.httpPort}`);
 });
