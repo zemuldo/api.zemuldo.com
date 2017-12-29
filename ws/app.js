@@ -5,14 +5,40 @@ const uuidv4 = require('uuid/v4');
 
 const wss = new WebSocket.Server({server: server});
 
-wss.on('connection', (ws) => {
-  ws.on('message', (msg) =>
-    processRequest(msg)
-      .then(answer => ws.send(JSON.stringify({type: 'bot', msg: answer})))
-  );
+let sessions = {};
 
-  // Generate sessionId
-  ws.send(JSON.stringify({type: 'sessionId', msg: uuidv4()}));
+wss.on('connection', (ws) => {
+  let sessionId = uuidv4();
+
+  setTimeout(function () {
+      if(!sessions[sessionId]){
+          ws.send(JSON.stringify({"type":"bot","msg":"Hi its good to have you here, You can find more info about me through my profile bot."}));
+      }
+      else {
+          console.log(sessions)
+      }
+  },8000);
+
+  ws.on('message', function (msg) {
+          sessions[sessionId] = {
+              id:sessionId,
+              date:new Date()
+          };
+      if(JSON.parse(msg).sessionId && !sessions[JSON.parse(msg).sessionId].messages){
+          sessions[JSON.parse(msg).sessionId].messages=true
+      }
+          processRequest(msg)
+              .then(answer => ws.send(JSON.stringify({type: 'bot', msg: answer})))
+              .catch(function (err) {
+                  console.log(err)
+              })
+  }
+
+  );
+  ws.on('error',(err)=>{
+    console.log(err)
+  });
+  ws.send(JSON.stringify({type: 'sessionId', msg: sessionId}));
 });
 
 module.exports = wss;

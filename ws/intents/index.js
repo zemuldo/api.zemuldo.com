@@ -40,24 +40,31 @@ const handleUnknownAnswer = (err) => {
   return msgs[~~(Math.random() * msgs.length)];
 };
 
-const processRequest = (msg) => new Promise((resolve, reject) => {
-  // try/catch to make sure we don't crush on invalid JSON msgs
-  try {
-    const input = JSON.parse(msg);
-
-    // process our users' request only
-    if (input.type === 'user' && input.msg) {
-      const sessionId = input.sessionId || uuidv4();
-      const tz = input.tz;
-
-      callApiAi(input.msg, sessionId, tz)
-        .then(response => doIntent(response, tz))
-        .then(answer => resolve(answer))
-        .catch(err => resolve(handleUnknownAnswer(err)))
-    }
-  } catch (err) {
-    resolve(handleUnknownAnswer(err));
-  }
-});
+function  processRequest (msg){
+    let input = null;
+  return new Promise(function (resolve,reject) {
+      input = JSON.parse(msg);
+      if(!input.sessionId){
+        reject({err:'no session id'})
+      }
+      resolve(JSON.parse(msg))
+  })
+      .then(function (input) {
+          const sessionId = input.sessionId || uuidv4();
+          const tz = input.tz;
+          console.log(input)
+          return callApiAi(input.msg, sessionId, tz)
+      })
+      .then(function (res) {
+          return doIntent(res, input.tz)
+      })
+      .then(function (answer) {
+        console.log(answer)
+          return answer
+      })
+      .catch(function (err) {
+          return handleUnknownAnswer(err)
+      })
+}
 
 module.exports = processRequest;
