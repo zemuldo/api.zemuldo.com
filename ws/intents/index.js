@@ -40,7 +40,7 @@ const handleUnknownAnswer = (err) => {
   return msgs[~~(Math.random() * msgs.length)];
 };
 
-function  processRequest (msg){
+let   processRequest = (msg)=>{
     let input = null;
   return new Promise(function (resolve,reject) {
       input = JSON.parse(msg);

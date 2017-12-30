@@ -24,11 +24,13 @@ wss.on('connection', (ws) => {
               id:sessionId,
               date:new Date()
           };
-      if(JSON.parse(msg).sessionId && !sessions[JSON.parse(msg).sessionId].messages){
-          sessions[JSON.parse(msg).sessionId].messages=true
-      }
+          if(JSON.parse(msg).sessionId && !sessions[JSON.parse(msg).sessionId].messages){
+              sessions[JSON.parse(msg).sessionId].messages=true
+          }
           processRequest(msg)
-              .then(answer => ws.send(JSON.stringify({type: 'bot', msg: answer})))
+              .then(function (answer) {
+                  ws.send(JSON.stringify({type: 'bot', msg: answer}))
+              })
               .catch(function (err) {
                   console.log(err)
               })
