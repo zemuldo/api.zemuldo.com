@@ -12,7 +12,9 @@ wss.on('connection', (ws) => {
 
   setTimeout(function () {
       if(!sessions[sessionId]){
-          ws.send(JSON.stringify({"type":"bot","msg":"Hi its good to have you here, You can find more info about me through my profile bot."}));
+          if(ws.readyState===1){
+              ws.send(JSON.stringify({"type":"bot","msg":"Hi its good to have you here, You can find more info about me through my profile bot."}));
+          }
       }
       else {
           console.log(sessions)
@@ -29,7 +31,9 @@ wss.on('connection', (ws) => {
           }
           processRequest(msg)
               .then(function (answer) {
-                  ws.send(JSON.stringify({type: 'bot', msg: answer}))
+                  if(ws.readyState===1){
+                      ws.send(JSON.stringify({type: 'bot', msg: answer}))
+                  }
               })
               .catch(function (err) {
                   console.log(err)
