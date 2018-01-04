@@ -19,7 +19,7 @@ wss.on('connection', (ws) => {
       else {
           console.log(sessions)
       }
-  },8000);
+  },30000);
 
   ws.on('message', function (msg) {
           sessions[sessionId] = {
