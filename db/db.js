@@ -960,6 +960,6 @@ let DB = {
             })
     },
 }
-module.exports = DB
+module.exports = {db: DB, posts: posts, titles: titles};
 
 
