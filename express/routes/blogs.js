@@ -3,7 +3,7 @@ const express = require("express");
 const requestIp = require('request-ip');
 const router = express();
 router.use(requestIp.mw())
-let DB = require('../../db/db')
+let {db} = require('../../db/db')
 
 router.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
@@ -17,8 +17,8 @@ router.post('/',async (req,res)=>{
         res.send({ip:req.clientIp})
     }
     else {
-        if(DB[req.body.queryMethod] && req.body.queryData){
-            await DB[req.body.queryMethod](req.body.queryData)
+        if(db[req.body.queryMethod] && req.body.queryData){
+            await db[req.body.queryMethod](req.body.queryData)
                 .then(function (success) {
                     res.statusCode = 200;
                     res.send(success)
