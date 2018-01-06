@@ -574,7 +574,7 @@ let DB = {
             }
             let start = !queryParam.start?0:queryParam.start.toString()==='NaN'?0:queryParam.start
             delete queryParam.start
-            resolve(titles.find(queryParam).skip(start > 0 ? start : 0).limit(5).toArray())
+            resolve(titles.find(queryParam).skip(start > 0 ? start : 0).limit(6).toArray())
         })
             .then(function (o) {
                 if(o){
@@ -607,7 +607,7 @@ let DB = {
             if(queryParam.topics==='all'){
                 delete queryParam.topics
             }
-            resolve(titles.find(queryParam).skip(start > 0 ? start : 0).limit(5).toArray())
+            resolve(titles.find(queryParam).skip(start > 0 ? start : 0).limit(6).toArray())
         })
             .then(function (o) {
                 if (o) {
@@ -695,7 +695,7 @@ let DB = {
             }
             let start = !queryParam.start?0:queryParam.start.toString()==='NaN'?0:queryParam.start
             delete queryParam.start
-            resolve(titles.find(queryParam).skip(start > 0 ? start : 0).limit(5).toArray())
+            resolve(titles.find(queryParam).skip(start > 0 ? start : 0).limit(6).toArray())
         })
             .then(function (o) {
                 if(o){
@@ -735,7 +735,7 @@ let DB = {
             }
             let start = !queryParam.start?0:queryParam.start.toString()==='NaN'?0:queryParam.start
             delete queryParam.start
-            resolve(titles.find({ title: { $regex: r } }).skip(start > 0 ? start : 0).limit(5).toArray())
+            resolve(titles.find({ title: { $regex: r } }).skip(start > 0 ? start : 0).limit(6).toArray())
         })
             .then(function (o) {
                 for(let j=0;j<o.length;j++){
@@ -772,7 +772,7 @@ let DB = {
             }
             let start = !queryParam.start?0:queryParam.start.toString()==='NaN'?0:queryParam.start
             delete queryParam.start
-            resolve (titles.find({topics:queryParam.topic,type:queryParam.type}).skip(start > 0 ? start : 0).limit(5).toArray())
+            resolve (titles.find({topics:queryParam.topic,type:queryParam.type}).skip(start > 0 ? start : 0).limit(6).toArray())
         })
             .then(function (o) {
                 for(let j=0;j<o.length;j++){
