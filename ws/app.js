@@ -29,6 +29,9 @@ wss.on('connection', (ws) => {
 
     ws.on('message', function (msg) {
             let o = JSON.parse(msg);
+            if(!o){
+                return false
+            }
             sessions[sessionId] = {
                 id: sessionId,
                 date: new Date()
@@ -36,7 +39,6 @@ wss.on('connection', (ws) => {
             if (o.sessionId && !sessions[o.sessionId].messages) {
                 sessions[o.sessionId].messages = true
             }
-            console.log(o.pups)
             switch (o.pups) {
                 case 'chat':
                     processRequest(msg)
