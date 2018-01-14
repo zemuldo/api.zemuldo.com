@@ -9,8 +9,17 @@ const wss = new WebSocket.Server({server: server});
 
 let sessions = {};
 
+function noop() {}
+
+function heartbeat() {
+    this.isAlive = true;
+}
+
+
 wss.on('connection', (ws) => {
     let sessionId = uuidv4();
+
+    ws.sessionId = sessionId;
 
     setTimeout(function () {
         if (!sessions[sessionId]) {
@@ -82,6 +91,14 @@ wss.on('connection', (ws) => {
     ws.on('error', (err) => {
         console.log(err)
     });
+    const interval = setInterval(function ping() {
+        wss.clients.forEach(function each(ws) {
+            if (ws.isAlive === false) return ws.terminate();
+            ws.isAlive = false;
+            ws.ping(noop);
+        });
+    }, 30000);
+
     ws.send(JSON.stringify({type: 'sessionId', msg: sessionId}));
 });
 
