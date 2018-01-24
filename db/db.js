@@ -340,6 +340,9 @@ let DB = {
                 let password = crypto.createHash('sha256').update(queryParam.password).digest().toString('hex');
                 if (success) {
                     if(success.password == password){
+                        let user = {};
+                        Object.assign(user,success)
+                        user.password=null
                         return success
                     }
                     else{
