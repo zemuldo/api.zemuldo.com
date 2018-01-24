@@ -1,4 +1,5 @@
 'use strict'
+let crypto = require('crypto');
 let server = require('mongodb')
 let moment = require('moment')
 let mongodb = require('mongodb')
@@ -242,6 +243,7 @@ let DB = {
                 reject({error: 'invalid imagePreviewUrl data'})
             }
             let date = new Date().toDateString()
+            let password = crypto.createHash('sha256').update(queryData.password).digest().toString('hex');
             let _id = new ObjectID()
             user = {
                 _id: _id,
@@ -249,7 +251,7 @@ let DB = {
                 lastName: queryData.lastName,
                 userName: queryData.userName.toLowerCase(),
                 email: queryData.email.toLowerCase(),
-                password: queryData.password,
+                password: password,
                 avatar: queryData.avatar,
                 created: date
             }
@@ -318,8 +320,8 @@ let DB = {
     },
     loginUser: (queryParam) => {
         return new Promise(function (resolve, reject) {
-            if (!queryParam) {
-                reject({error: "invalid query params", code: 500})
+            if (!queryParam && !queryParam.dara) {
+                reject({error: "invalid query params", code: 304})
             }
             if (queryParam._id) {
                 queryParam._id = ObjectID(queryParam._id)
@@ -330,12 +332,19 @@ let DB = {
             if (queryParam.userName) {
                 queryParam.userName = queryParam.userName.toLowerCase()
             }
+            
             resolve(users.findOne({userName: queryParam.userName}))
 
         })
             .then(function (success) {
+                let password = crypto.createHash('sha256').update(queryParam.password).digest().toString('hex');
                 if (success) {
-                    return success
+                    if(success.password == password){
+                        return success
+                    }
+                    else{
+                        return {error: 'Invalid Username or password', code: 404}
+                    }
                 }
                 else {
                     return {error: 'Account not found, Signup Now', code: 404}
@@ -346,7 +355,7 @@ let DB = {
                     return error
                 }
                 else {
-                    error.code = 500
+                    return {error: 'Internal Server Error, try later', code: 500}
                     return error
                 }
             })
@@ -438,6 +447,9 @@ let DB = {
         if (!queryData.type) {
             return {error: 'invalid type data'}
         }
+        if (!queryData.wordCount) {
+            return {error: 'invalid type data'}
+        }
         if (!queryData.authorID) {
             return {error: 'invalid author data'}
         }
@@ -460,6 +472,7 @@ let DB = {
             authorID: queryData.authorID,
             date: date,
             body: queryData.body,
+            wordCount:queryData.wordCount
         }
         let thisTitle = {
             title: queryData.title,
