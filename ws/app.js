@@ -22,6 +22,8 @@ wss.on('connection', (ws) => {
         date: new Date(),
     };
 
+    ws.sessionId = sessionId
+
     setTimeout(function () {
         if (!sessions[sessionId].messages) {
             if (ws.readyState === 1) {
@@ -30,6 +32,7 @@ wss.on('connection', (ws) => {
                     type: 'bot',
                     msg: 'Hi its good to have you here, You can find more info about me through my profile bot.'
                 }));
+                sessions[ws.sessionId].message = true
             }
         } else {
             //console.log(sessions)
@@ -39,12 +42,12 @@ wss.on('connection', (ws) => {
     ws.on('message', function (msg) {
         let o = JSON.parse(msg);
         console.log(o)
+        if(o.pups==='bot'){
+            sessions[ws.sessionId].message = true
+        }
         console.log(o.pups)
         switch (o.pups) {
             case 'chat':
-                if (o.sessionId && !sessions[o.sessionId].messages) {
-                    sessions[o.sessionId].messages = true
-                }
                 processRequest(msg)
                     .then(function (answer) {
                         if (ws.readyState === 1) {
