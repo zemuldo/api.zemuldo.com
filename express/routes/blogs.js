@@ -8,31 +8,28 @@ let {db} = require('../../db/db')
 router.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, Authorization, X-Requested-With, Content-Type, Accept");
-    res.header("Allow-Control-Access-Method", "POST", "GET");
+    res.header("Allow-Control-Access-Method", "POST");
     next();
 });
 
-router.post('/',async (req,res)=>{
-    if(req.body.queryMethod ==='getIp'){
-        res.send({ip:req.clientIp})
-    }
-    else {
+router.post('/', (req,res)=>{
+    return new Promise(function(resolve,reject){
         if(db[req.body.queryMethod] && req.body.queryData){
-            await db[req.body.queryMethod](req.body.queryData)
-                .then(function (success) {
-                    res.statusCode = 200;
-                    res.send(success)
-                })
-                .catch(function (err) {
-                    res.statusCode = 200;
-                    res.send(err)
-                })
-        }
-        else {
-            res.statusCode = 200;
-            res.send({error:"query method or data invalid"})
-        }
-    }
+            resolve(db[req.body.queryMethod](req.body.queryData))
+       }
+       else {
+           res.statusCode = 401;
+           reject({error:"query method or data invalid"})
+       }
+    })
+    .then((o)=>{
+        res.statusCode = 200;
+        res.send(o)
+    })
+    .catch((e)=>{
+        res.statusCode = 401;
+        res.send(e)
+    })
 
 })
 

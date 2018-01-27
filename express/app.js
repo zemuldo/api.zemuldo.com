@@ -40,20 +40,8 @@ app.use(blogsRoute);
 app.use(bodyParser.json());
 
 // Let's create the regular HTTP request and response
-app.get('/test', function(req, res) {
-
-    console.log('Get index');
-
-});
-
-app.post('/test', function(req, res) {
-
-    let message = req.body.message;
-    console.log('Regular POST message: ', message);
-    return res.json({
-
-        answer: 44
-    });
+app.get('/*', function(req, res) {
+    res.redirect('https://zemuldo.com')
 });
 
 module.exports = app;
