@@ -32,7 +32,7 @@ wss.on('connection', (ws) => {
                     type: 'bot',
                     msg: 'Hi its good to have you here, You can find more info about me through my profile bot.'
                 }));
-                sessions[ws.sessionId].message = true
+                sessions[sessionId].message = true
             }
         } else {
             //console.log(sessions)
