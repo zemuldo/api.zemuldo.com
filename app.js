@@ -37,9 +37,9 @@ const errorCode = {
 
 let config = ENV[process.env.NODE_ENV]
 
-server.listen(config.httpPort, () => {
-    console.info('\x1b[37m%s\x1b[0m',`Web server started at http://localhost:${config.httpPort}`);
-    console.info('\x1b[37m%s\x1b[0m',`Web Socket started at  ws://localhost:${config.httpPort}`);
+server.listen(process.env.PORT, () => {
+    console.info('\x1b[37m%s\x1b[0m',`Web server started at http://localhost:${process.env.PORT}`);
+    console.info('\x1b[37m%s\x1b[0m',`Web Socket started at  ws://localhost:${process.env.PORT}`);
 });
 process.on('exit', (code) => {
     console.log("----------------------------------------App started")

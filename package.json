@@ -1,16 +1,18 @@
 {
-  "name": "zemuldo.com.backend",
+  "name": "api.zemuldo.com",
   "version": "0.0.6",
-  "description": "Backend for Zemuldo.com",
+  "description": "Api for Zemuldo.COM",
   "main": "app.js",
   "scripts": {
     "test": "nodemon mocha",
-    "dev": "nodemon app.js",
-    "start": "pm2 start app.js --name ZEMULDO_API"
+    "dev": "PORT=8090 nodemon app.js",
+    "start": "pm2 start ecosystem.config.js --env production",
+    "reload":"pm2 reload ecosystem.config.js --update-env",
+    "restart":"pm2 restart ecosystem.config.js --update-env"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/zemuldo/zemuldo.com.backend.git"
+    "url": "git+ssh://git@github.com/zemuldo/api.zemuldo.com.git"
   },
   "keywords": [
     "zemuldo"
@@ -18,9 +20,9 @@
   "author": "Danstan Otieno Onyango",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/zemuldo/zemuldo.com.backend/issues"
+    "url": "https://github.com/zemuldo/api.zemuldo.com/issues"
   },
-  "homepage": "https://github.com/zemuldo/zemuldo.com.backend#readme",
+  "homepage": "https://github.com/zemuldo/api.zemuldo.com#readme",
   "dependencies": {
     "apiai": "^4.0.3",
     "body-parser": "^1.18.0",
