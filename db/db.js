@@ -451,7 +451,7 @@ let DB = {
             return {error: 'invalid type data'}
         }
         if (!queryData.wordCount) {
-            return {error: 'invalid type data'}
+            return {error: 'invalid count data'}
         }
         if (!queryData.authorID) {
             return {error: 'invalid author data'}
