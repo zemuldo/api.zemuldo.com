@@ -415,6 +415,7 @@ let DB = {
         let tu = {}
         if (queryData.update.body) {
             bu.body = queryData.update.body
+            bu.wordCount = queryData.update.wordCount
         }
         if (queryData.update.body) {
             tu.title = queryData.update.title
