@@ -419,6 +419,7 @@ let DB = {
         }
         if (queryData.update.body) {
             tu.title = queryData.update.title
+            tu.about = queryData.update.about
         }
 
         return Promise.all([
