@@ -420,6 +420,7 @@ let DB = {
         if (queryData.update.body) {
             tu.title = queryData.update.title
             tu.about = queryData.update.about
+            tu.wordCount = queryData.update.wordCount
         }
 
         return Promise.all([
@@ -476,8 +477,7 @@ let DB = {
             _id: _id,
             authorID: queryData.authorID,
             date: date,
-            body: queryData.body,
-            wordCount:queryData.wordCount
+            body: queryData.body
         }
         let thisTitle = {
             title: queryData.title,
@@ -489,7 +489,8 @@ let DB = {
             authorID: queryData.authorID,
             post_ID: _id,
             author: queryData.author,
-            userName: queryData.userName
+            userName: queryData.userName,
+            wordCount:queryData.wordCount
         }
         return getNextIndex(indexCounters['blogIndex'])
             .then(function (counter) {
