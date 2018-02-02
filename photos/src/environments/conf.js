@@ -1,0 +1,22 @@
+module.exports = {
+    live:{
+        httpPort:8093,
+        wsURL:'ws://photos.zemuldo.com:8093',
+        serverURL:'https://photos.zemuldo.com'
+    },
+    production:{
+        httpPort:8093,
+        wsURL:'ws://photos.zemuldo.com:8093',
+        serverURL:'https://photos.zemuldo.com'
+    },
+    dev:{
+        httpPort:8093,
+        wsURL:'ws://localhost:8093',
+        serverURL:'https://localhost:8093'
+    },
+    development:{
+        httpPort:8093,
+        wsURL:'ws://localhost:8093',
+        serverURL:'https://localhost:8093'
+    }
+}
