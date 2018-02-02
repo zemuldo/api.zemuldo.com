@@ -1,9 +1,11 @@
 'use strict'
+const fs = require("fs")
 let crypto = require('crypto');
 let server = require('mongodb')
 let moment = require('moment')
 let mongodb = require('mongodb')
 let ObjectID = require('mongodb').ObjectID
+
 
 let {toSentanceCase, normalizeQuery, shuffle} = require('../tools/utilities')
 const MongoDB = mongodb.Db
@@ -253,7 +255,8 @@ let DB = {
                 email: queryData.email.toLowerCase(),
                 password: password,
                 avatar: queryData.avatar,
-                created: date
+                created: date,
+                errors:{}
             }
             resolve(getNextIndex(indexCounters['userIndex']))
         })
@@ -292,6 +295,15 @@ let DB = {
                         userName: queryData.userName,
                         id: queryData.id
                     }
+                    let imgStr = JSON.parse(queryData.avatar).img
+                    let format = imgStr.split(';base64')[0].split('/')[1]
+                    let file = './pics/avatars/'+queryData.userName.toLowerCase()+'.'+format
+                    fs.writeFile(file,imgStr.split(';base64,').pop(), 'base64', function(e) {
+                        if(e){
+                            console.log(e);
+                            user.errors.pics = false
+                        }
+                    });
                     return Promise.all([users.insertOne(user), avatars.insertOne(avatar)])
                 }
                 else {
@@ -314,6 +326,7 @@ let DB = {
                 }
                 else {
                     error.code = 500;
+                    error.info = 'internal server error'
                     return error
                 }
             })

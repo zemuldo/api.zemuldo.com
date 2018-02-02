@@ -39,6 +39,8 @@ let blogsRoute = require('./routes/blogs');
 app.use(blogsRoute);
 app.use(bodyParser.json());
 
+
+
 // Let's create the regular HTTP request and response
 app.get('/*', function(req, res) {
     res.redirect('https://zemuldo.com')

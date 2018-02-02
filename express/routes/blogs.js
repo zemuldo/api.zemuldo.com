@@ -3,7 +3,7 @@ const express = require("express");
 const requestIp = require('request-ip');
 const router = express();
 router.use(requestIp.mw())
-let {db} = require('../../db/db')
+let {db} = require('../../db/mongo')
 
 router.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
