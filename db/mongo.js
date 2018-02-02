@@ -297,15 +297,8 @@ let DB = {
                     }
                     let imgStr = JSON.parse(queryData.avatar).img
                     let format = imgStr.split(';base64')[0].split('/')[1]
-                    let file1 = 'photos.zemuldo.com/public/avatars/'+_id+'.'+format
-                    let file2 = 'photos.zemuldo.com/public/avatars/'+_id+'.'+format
-                    fs.writeFile(file1,imgStr.split(';base64,').pop(), 'base64', function(e) {
-                        if(e){
-                            console.log(e);
-                            user.errors.pics = false
-                        }
-                    });
-                    fs.writeFile(file2,imgStr.split(';base64,').pop(), 'base64', function(e) {
+                    let file = './avatars/'+_id+'.'+format
+                    fs.writeFile(file,imgStr.split(';base64,').pop(), 'base64', function(e) {
                         if(e){
                             console.log(e);
                             user.errors.pics = false

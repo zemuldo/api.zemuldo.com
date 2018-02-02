@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "nodemon mocha",
-    "dev": "pm2 start ecosystem.test.config.js --env development",
+    "dev": "PORT=8090 nodemon app.js",
     "dev-restart": "pm2 restart ecosystem.test.config.js --env development",
     "start": "pm2 start ecosystem.config.js --env production",
     "reload":"pm2 reload ecosystem.config.js --update-env",
