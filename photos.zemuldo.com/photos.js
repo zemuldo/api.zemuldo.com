@@ -10,9 +10,6 @@ const options = {
     key: fs.readFileSync(__dirname + '/keys/server.key'),
     cert: fs.readFileSync(__dirname + '/keys/server.crt')
 };
-let ENV = require('./config/env');
-let env = ENV().raw.NODE_ENV
-const conf = require('./src/environments/conf')
 
 app.use(bodyParser.json());
 app.use(helmet())
@@ -72,13 +69,18 @@ app.use(function(req, res, next) {
 app.get("/*", async function (req, res) {
     res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
-spdy
-    .createServer(options, app)
-    .listen(conf[env].httpPort, (error) => {
-        if (error) {
-            console.error(error)
-            return process.exit(1)
-        } else {
-            console.log('Listening on port: ' + conf[env].httpPort + '.')
-        }
+
+(process.env.NODE_ENV ==='live' || process.env.NODE_ENV ==='production')?
+    spdy
+        .createServer(options, app)
+        .listen(process.env.PORT, (error) => {
+            if (error) {
+                console.error(error)
+                return process.exit(1)
+            } else {
+                console.info('\x1b[37m%s\x1b[0m',`Photos App Started on https://localhost:${process.env.PORT}`);
+            }
+        }):
+    app.listen(process.env.PORT, () => {
+        console.info('\x1b[37m%s\x1b[0m',`Photos App Started on http://localhost:${process.env.PORT}`);
     })

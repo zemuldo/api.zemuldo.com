@@ -222,6 +222,7 @@ db.open((e, d) => {
 let DB = {
     registerUser: (queryData) => {
         let user = null;
+        let _id = new ObjectID()
         return new Promise(async function (resolve, reject) {
             if (!queryData) {
                 reject({error: "invalid query params"})
@@ -246,7 +247,6 @@ let DB = {
             }
             let date = new Date().toDateString()
             let password = crypto.createHash('sha256').update(queryData.password).digest().toString('hex');
-            let _id = new ObjectID()
             user = {
                 _id: _id,
                 firstName: queryData.firstName,
@@ -297,8 +297,15 @@ let DB = {
                     }
                     let imgStr = JSON.parse(queryData.avatar).img
                     let format = imgStr.split(';base64')[0].split('/')[1]
-                    let file = './pics/avatars/'+queryData.userName.toLowerCase()+'.'+format
-                    fs.writeFile(file,imgStr.split(';base64,').pop(), 'base64', function(e) {
+                    let file1 = 'photos.zemuldo.com/public/avatars/'+_id+'.'+format
+                    let file2 = 'photos.zemuldo.com/public/avatars/'+_id+'.'+format
+                    fs.writeFile(file1,imgStr.split(';base64,').pop(), 'base64', function(e) {
+                        if(e){
+                            console.log(e);
+                            user.errors.pics = false
+                        }
+                    });
+                    fs.writeFile(file2,imgStr.split(';base64,').pop(), 'base64', function(e) {
                         if(e){
                             console.log(e);
                             user.errors.pics = false

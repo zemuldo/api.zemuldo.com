@@ -3,3 +3,5 @@ node_modules
 .DS_Store
 .gitmodules
 *.env
+photos.zemuldo.com/node_modules
+photos.zemuldo.com/build

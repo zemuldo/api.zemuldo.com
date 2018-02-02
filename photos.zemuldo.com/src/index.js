@@ -8,4 +8,4 @@ ReactDOM.render(
     <BrowserRouter>
         <App />
     </BrowserRouter>,
-    document.getElementById('photos.zemuldo.com'));
+    document.getElementById('app'));
