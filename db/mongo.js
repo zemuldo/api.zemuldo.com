@@ -221,8 +221,10 @@ db.open((e, d) => {
 
 let DB = {
     registerUser: (queryData) => {
-        let user = null;
+        let user;
         let _id = new ObjectID()
+        let avatar;
+        let imgStr;
         return new Promise(async function (resolve, reject) {
             if (!queryData) {
                 reject({error: "invalid query params"})
@@ -247,6 +249,14 @@ let DB = {
             }
             let date = new Date().toDateString()
             let password = crypto.createHash('sha256').update(queryData.password).digest().toString('hex');
+            imgStr = JSON.parse(queryData.avatar)
+            let av = {
+                rect:imgStr.rect,
+                width:imgStr.width,
+                height:imgStr.height,
+                borderRadius:imgStr.borderRadius,
+                scale:imgStr.scale
+            };
             user = {
                 _id: _id,
                 firstName: queryData.firstName,
@@ -254,10 +264,16 @@ let DB = {
                 userName: queryData.userName.toLowerCase(),
                 email: queryData.email.toLowerCase(),
                 password: password,
-                avatar: queryData.avatar,
+                avatar: av,
                 created: date,
                 errors:{}
             }
+            avatar = {
+                imageURL: queryData.avatar,
+                userName: queryData.userName,
+                id: queryData.id
+            }
+
             resolve(getNextIndex(indexCounters['userIndex']))
         })
             .then(function (counter) {
@@ -290,15 +306,10 @@ let DB = {
                     return {error: "username taken", code: 406}
                 }
                 if (!success[0] && !success[1] && !success.err) {
-                    let avatar = {
-                        imageURL: queryData.avatar,
-                        userName: queryData.userName,
-                        id: queryData.id
-                    }
-                    let imgStr = JSON.parse(queryData.avatar).img
-                    let format = imgStr.split(';base64')[0].split('/')[1]
-                    let file = './avatars/'+_id+'.'+format
-                    fs.writeFile(file,imgStr.split(';base64,').pop(), 'base64', function(e) {
+                    let format = imgStr.img.split(';base64')[0].split('/')[1]
+                    let file = './express/public/avatars/'+_id+'.'+format
+                    user.avatarURL = '/avatars/'+_id+'.'+format
+                    fs.writeFile(file,imgStr.img.split(';base64,').pop(), 'base64', function(e) {
                         if(e){
                             console.log(e);
                             user.errors.pics = false

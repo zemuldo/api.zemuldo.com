@@ -1,5 +1,5 @@
 'use strict';
-
+let path = require('path')
 let fs = require('fs');
 let express = require("express");
 let bodyParser = require('body-parser');
@@ -21,6 +21,9 @@ app.use(helmet({
     frameguard: false,
     noCache:true
 }));
+
+app.use(express.static(path.join(__dirname, 'public')))
+
 let expiryDate = new Date(Date.now() + 60 * 60 * 1000);
 app.use(checkMe({
     name: 'checkMe',
