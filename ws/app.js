@@ -25,7 +25,7 @@ wss.on('connection', (ws) => {
     ws.sessionId = sessionId
 
     setTimeout(function () {
-        if (!sessions[sessionId].messages) {
+        if (!sessions[sessionId].message) {
             if (ws.readyState === 1) {
                 ws.send(JSON.stringify({
                     pups: 'bot',
@@ -37,15 +37,14 @@ wss.on('connection', (ws) => {
         } else {
             //console.log(sessions)
         }
-    }, 30000);
+    }, 8000);
 
     ws.on('message', function (msg) {
+        console.log(sessions[ws.sessionId])
         let o = JSON.parse(msg);
-        console.log(o)
-        if(o.pups==='bot'){
+        if(o.pups==='chat'){
             sessions[ws.sessionId].message = true
         }
-        console.log(o.pups)
         switch (o.pups) {
             case 'chat':
                 processRequest(msg)
