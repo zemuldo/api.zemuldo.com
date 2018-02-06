@@ -27,8 +27,9 @@ router.post('/', (req,res)=>{
         res.send(o)
     })
     .catch((e)=>{
-        res.statusCode = 401;
-        res.send(e)
+        console.log(e)
+        res.statusCode = 500;
+        res.send({error:'Internal server error'})
     })
 
 })
