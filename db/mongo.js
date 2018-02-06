@@ -445,11 +445,12 @@ let DB = {
             tu.title = queryData.update.title
             tu.about = queryData.update.about
             tu.wordCount = queryData.update.wordCount
+            tu.updated = new Date()
         }
 
         return Promise.all([
             posts.updateOne({_id: ObjectID(queryData._id)}, {$set: bu}, {upsert: false}),
-            titles.updateOne({post_ID: ObjectID(queryData._id)},{$set: tu},{upsert: false})
+            titles.updateOne({postID: ObjectID(queryData._id)},{$set: tu},{upsert: false})
         ])
             .then(function (o) {
                 return o
@@ -480,26 +481,13 @@ let DB = {
         if (!queryData.wordCount) {
             return {error: 'invalid count data'}
         }
-        if (!queryData.authorID) {
-            return {error: 'invalid author data'}
-        }
-        if (!queryData.userName) {
-            return {error: 'invalid user data'}
-        }
         if (!queryData.author) {
             return {error: 'invalid author data'}
         }
-        if (queryData.authorID) {
-            queryData.authorID = Number(queryData.authorID)
-        }
-        if (queryData.authorID.toString() === 'NaN') {
-            return {error: 'invalid author data'}
-        }
-        let date = new Date().toDateString()
+        let date = new Date()
         let _id = new ObjectID()
         let thisPost = {
             _id: _id,
-            authorID: queryData.authorID,
             date: date,
             body: queryData.body
         }
@@ -510,12 +498,12 @@ let DB = {
             topics: queryData.topics,
             about: queryData.about,
             type: queryData.type,
-            authorID: queryData.authorID,
-            post_ID: _id,
+            postID: _id,
             author: queryData.author,
-            userName: queryData.userName,
             wordCount:queryData.wordCount
         }
+        console.log(thisPost)
+        console.log(thisPost)
         return getNextIndex(indexCounters['blogIndex'])
             .then(function (counter) {
                 if (counter.error || counter.exeption) {
