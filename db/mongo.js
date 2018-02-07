@@ -507,7 +507,7 @@ let DB = {
         return getNextIndex(indexCounters['blogIndex'])
             .then(function (counter) {
                 if (counter.error || counter.exeption) {
-                    return {error: "internal server error"}
+                    return {error: "database indexing error"}
                 }
                 if (!counter.value) {
                     return {value: 1}
@@ -737,6 +737,7 @@ let DB = {
             })
     },
     getPosts: (queryParam) => {
+        console.log(queryParam)
         return new Promise(function (resolve, reject) {
             if (!queryParam) {
                 reject({error: "invalid query params"})
