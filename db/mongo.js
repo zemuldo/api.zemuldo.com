@@ -737,7 +737,6 @@ let DB = {
             })
     },
     getPosts: (queryParam) => {
-        console.log(queryParam)
         return new Promise(function (resolve, reject) {
             if (!queryParam) {
                 reject({error: "invalid query params"})
