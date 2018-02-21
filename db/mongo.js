@@ -7,7 +7,7 @@ let mongodb = require('mongodb')
 let ObjectID = require('mongodb').ObjectID
 
 
-let {toSentanceCase, normalizeQuery, shuffle} = require('../tools/utilities')
+let {updateReplies} = require('../tools/utilities')
 const MongoDB = mongodb.Db
 const Server = server.Server
 /*
@@ -67,7 +67,7 @@ let avatars = db.collection('avatars')
 let titles = db.collection('titles')
 let visitors = db.collection('visitors')
 let reviews = db.collection('reviews')
-let richText = db.collection('richText')
+let comments = db.collection('comments')
 let counters = db.collection('counters')
 let userLikes = db.collection('userLikes')
 
@@ -247,15 +247,15 @@ let DB = {
             if (!queryData.avatar) {
                 reject({error: 'invalid imagePreviewUrl data'})
             }
-            let date = new Date().toDateString()
+            let date = new Date()
             let password = crypto.createHash('sha256').update(queryData.password).digest().toString('hex');
             imgStr = JSON.parse(queryData.avatar)
             let av = {
-                rect:imgStr.rect,
-                width:imgStr.width,
-                height:imgStr.height,
-                borderRadius:imgStr.borderRadius,
-                scale:imgStr.scale
+                rect: imgStr.rect,
+                width: imgStr.width,
+                height: imgStr.height,
+                borderRadius: imgStr.borderRadius,
+                scale: imgStr.scale
             };
             user = {
                 _id: _id,
@@ -266,7 +266,7 @@ let DB = {
                 password: password,
                 avatar: av,
                 created: date,
-                errors:{}
+                errors: {}
             }
             avatar = {
                 imageURL: queryData.avatar,
@@ -307,10 +307,10 @@ let DB = {
                 }
                 if (!success[0] && !success[1] && !success.err) {
                     let format = imgStr.img.split(';base64')[0].split('/')[1]
-                    let file = './express/public/avatars/'+_id+'.'+format
-                    user.avatarURL = '/avatars/'+_id+'.'+format
-                    fs.writeFile(file,imgStr.img.split(';base64,').pop(), 'base64', function(e) {
-                        if(e){
+                    let file = './express/public/avatars/' + _id + '.' + format
+                    user.avatarURL = '/avatars/' + _id + '.' + format
+                    fs.writeFile(file, imgStr.img.split(';base64,').pop(), 'base64', function (e) {
+                        if (e) {
                             console.log(e);
                             user.errors.pics = false
                         }
@@ -356,20 +356,20 @@ let DB = {
             if (queryParam.userName) {
                 queryParam.userName = queryParam.userName.toLowerCase()
             }
-            
+
             resolve(users.findOne({userName: queryParam.userName}))
 
         })
             .then(function (success) {
                 let password = crypto.createHash('sha256').update(queryParam.password).digest().toString('hex');
                 if (success) {
-                    if(success.password == password){
+                    if (success.password == password) {
                         let user = {};
-                        Object.assign(user,success)
-                        user.password=null
+                        Object.assign(user, success)
+                        user.password = null
                         return success
                     }
-                    else{
+                    else {
                         return {error: 'Invalid Username or password', code: 404}
                     }
                 }
@@ -450,7 +450,7 @@ let DB = {
 
         return Promise.all([
             posts.updateOne({_id: ObjectID(queryData._id)}, {$set: bu}, {upsert: false}),
-            titles.updateOne({postID: ObjectID(queryData._id)},{$set: tu},{upsert: false})
+            titles.updateOne({postID: ObjectID(queryData._id)}, {$set: tu}, {upsert: false})
         ])
             .then(function (o) {
                 return o
@@ -500,10 +500,8 @@ let DB = {
             type: queryData.type,
             postID: _id,
             author: queryData.author,
-            wordCount:queryData.wordCount
+            wordCount: queryData.wordCount
         }
-        console.log(thisPost)
-        console.log(thisPost)
         return getNextIndex(indexCounters['blogIndex'])
             .then(function (counter) {
                 if (counter.error || counter.exeption) {
@@ -1013,6 +1011,106 @@ let DB = {
                 return error
             })
     },
+    comment: (queryData) => {
+        let postID
+        let c
+        return new Promise(function (resolve, reject) {
+            if (!queryData.postID || !queryData.mess || !queryData.author) {
+                reject({error: 'invalid or missing data, check docs'})
+            }
+            c = {
+                author:queryData.author,
+                mess:queryData.mess,
+                date:new Date(),
+                _id: new ObjectID(),
+                userID:queryData.userID
+            }
+            postID = ObjectID(queryData.postID)
+            queryData.date = new Date()
+            resolve(comments.findOne({postID: ObjectID(queryData.postID)}))
+
+        })
+
+            .then(function (o) {
+                if (o) {
+                    return comments.updateOne(
+                        {postID: postID},
+                        {$push:{comments:c}}
+                )
+                }
+                else {
+                    return comments.insertOne({comments:[c],postID:postID})
+                }
+            })
+            .then(o=>{
+                return c
+            })
+            .catch(function (e) {
+                console.log(e)
+                return e
+            })
+    },
+    replyComment: (queryData) => {
+        let postID
+        let c
+        let _id = new ObjectID()
+        return new Promise(function (resolve, reject) {
+            if (!queryData.postID || !queryData.mess || !queryData.author) {
+                reject({error: 'invalid or missing data, check docs'})
+            }
+            c = {
+                author:queryData.author,
+                mess:queryData.mess,
+                date:new Date(),
+                _id: _id,
+                parent_id:queryData.parent_id,
+                userID:queryData.userID
+            }
+            postID = ObjectID(queryData.postID)
+            resolve(comments.findOne({postID: ObjectID(queryData.postID)}))
+        })
+
+            .then(function (o) {
+                if (!o) {
+                    return{'error':'non existing comment'}
+                }
+                else {
+                    let comments = o.comments
+                    return updateReplies(c,comments)
+                }
+            })
+            .then(o=>{
+                return comments.updateOne({postID:postID},{$set: {comments:o}},{upsert:false})
+            })
+            .then(o=>{
+                return {_id:_id}
+            })
+            .catch(function (e) {
+                console.log(e)
+                return e
+            })
+    },
+    getComments: (queryData) => {
+        if (queryData.postID) {
+            queryData.postID = ObjectID(queryData.postID)
+        }
+
+        return comments.findOne(queryData)
+
+            .then(function (o) {
+                if (!o) {
+                    return{'error':'non existing comment'}
+                }
+                else {
+                    return o
+                }
+            })
+            .catch(function (e) {
+                console.log(e)
+                return e
+            })
+    }
+
 }
 module.exports = {db: DB, posts: posts, titles: titles};
 
