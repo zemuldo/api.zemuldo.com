@@ -2,13 +2,10 @@
 let schemas = require('../db/schemas/index')
 
 function updateReplies(c, cs){
-    console.log(c)
     return new Promise(function (resolve, reject) {
         cs.forEach(function (thisC) {
             if (thisC._id == c.parent_id) {
-                console.log("++++++++++++++++found")
                 if(thisC.chat){
-                    console.log("++++++++++++++++concating")
                     thisC.chat.comments.push({
                         author: c.author,
                         mess: c.mess,
@@ -18,7 +15,6 @@ function updateReplies(c, cs){
                     })
                 }
                 else{
-                    console.log("++++++++++++++++creating")
                     thisC.chat = {
                         comments: [
                             {
@@ -46,15 +42,15 @@ function updateReplies(c, cs){
         })
 }
 
-function deleteComments (id, cs) {
+function deleteComments (_id, cs) {
     return new Promise(function (resolve, reject) {
         cs.map(function (thisC, index) {
-            if (thisC._id === id) {
+            if (thisC._id == _id) {
                 cs.splice(index, 1)
                 return true
             }
             if (thisC.chat) {
-                deleteComments(id, thisC.chat.comments)
+                deleteComments(_id, thisC.chat.comments)
             }
         })
         resolve(cs)

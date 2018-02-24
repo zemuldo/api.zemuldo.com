@@ -7,7 +7,7 @@ let mongodb = require('mongodb')
 let ObjectID = require('mongodb').ObjectID
 
 
-let {updateReplies} = require('../tools/utilities')
+let {updateReplies,deleteComments} = require('../tools/utilities')
 const MongoDB = mongodb.Db
 const Server = server.Server
 /*
@@ -1090,6 +1090,36 @@ let DB = {
                 return e
             })
     },
+    deleteComment: (queryData) => {
+        let postID;
+        return new Promise(function (resolve, reject) {
+            if (!queryData.postID || !queryData._id) {
+                reject({error: 'invalid or missing data, check docs'})
+            }
+            postID = ObjectID(queryData.postID)
+            resolve(comments.findOne({postID:postID}))
+        })
+
+            .then(function (o) {
+                if (!o) {
+                    return{'error':'non existing comment'}
+                }
+                else {
+                    let comments = o.comments
+                    return deleteComments(queryData._id,comments)
+                }
+            })
+            .then(o=>{
+                return comments.updateOne({postID:postID},{$set: {comments:o}},{upsert:false})
+            })
+            .then(o=>{
+                return o
+            })
+            .catch(function (e) {
+                console.log(e)
+                return e
+            })
+    },
     getComments: (queryData) => {
         if (queryData.postID) {
             queryData.postID = ObjectID(queryData.postID)
@@ -1099,7 +1129,7 @@ let DB = {
 
             .then(function (o) {
                 if (!o) {
-                    return{'error':'non existing comment'}
+                    return {comments:[]};
                 }
                 else {
                     return o
