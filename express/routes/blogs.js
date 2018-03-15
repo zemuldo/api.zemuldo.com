@@ -3,12 +3,9 @@ const express = require("express");
 const requestIp = require('request-ip');
 let router = express();
 let db = require('../../db')
-const {redisClient, redisUtil} = require('../../redisclient/app')
-const {setCors} = require('../../tools/utilities')
+const {redisUtil} = require('../../redisclient/app')
 
 router.use(requestIp.mw())
-
-router.use(setCors);
 
 router.use(redisUtil)
 
@@ -18,12 +15,15 @@ router.post('/', (req,res)=>{
             resolve(db[req.body.queryMethod](req.body.queryData,`${JSON.stringify(req.body)}`))
        }
        else {
-           res.statusCode = 401;
+           res.statusCode = 404;
            reject({error:"query method or data invalid"})
        }
     })
     .then((o)=>{
-        redisClient.set(`${JSON.stringify(req.body)}`,JSON.stringify(o),'EX', 60)
+        if(o.code && o.code===401){
+            res.send(o)
+            return false
+        }
         res.statusCode = 200;
         res.send(o)
     })

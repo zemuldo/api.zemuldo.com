@@ -1,5 +1,6 @@
 const {db, getNextIndex} = require('../mongo')
 const ObjectID = require('mongodb').ObjectID
+const {redisClient} = require('../../redisclient/app')
 
 const types = {
     dev: {
@@ -55,21 +56,23 @@ module.exports = {
     updateBlog: (queryData) => {
         let bu = {};
         let tu = {}
-        if (queryData.update.body) {
-            bu.body = queryData.update.body
-            bu.wordCount = queryData.update.wordCount
-        }
-        if (queryData.update.body) {
-            tu.title = queryData.update.title
-            tu.about = queryData.update.about
-            tu.wordCount = queryData.update.wordCount
-            tu.updated = new Date()
-        }
+        return new Promise((resolve,reject) => {
+            if (queryData.update.body) {
+                bu.body = queryData.update.body
+                bu.wordCount = queryData.update.wordCount
+            }
+            if (queryData.update.body) {
+                tu.title = queryData.update.title
+                tu.about = queryData.update.about
+                tu.wordCount = queryData.update.wordCount
+                tu.updated = new Date()
+            }
 
-        return Promise.all([
-            posts.updateOne({_id: ObjectID(queryData._id)}, {$set: bu}, {upsert: false}),
-            titles.updateOne({postID: ObjectID(queryData._id)}, {$set: tu}, {upsert: false})
-        ])
+            resolve(Promise.all([
+                posts.updateOne({_id: ObjectID(queryData._id)}, {$set: bu}, {upsert: false}),
+                titles.updateOne({postID: ObjectID(queryData._id)}, {$set: tu}, {upsert: false})
+            ]))
+        })
             .then(function (o) {
                 return o
             })
@@ -186,7 +189,7 @@ module.exports = {
                 return error
             })
     },
-    getPosts: (queryParam,querykey) => {
+    getPosts: (queryParam, querykey) => {
         return new Promise(function (resolve, reject) {
             if (!queryParam) {
                 reject({error: "invalid query params"})
@@ -209,6 +212,7 @@ module.exports = {
         })
             .then(function (o) {
                 if (o) {
+                    redisClient.set(querykey, JSON.stringify(o),)
                     return o
                 } else {
                     return {error: "not found"}
@@ -219,7 +223,7 @@ module.exports = {
             })
 
     },
-    getAllPosts: (queryParam,querykey) => {
+    getAllPosts: (queryParam, querykey) => {
         return new Promise(function (resolve, reject) {
             if (!queryParam) {
                 reject({error: "invalid query params"})
@@ -233,6 +237,7 @@ module.exports = {
         })
             .then(function (o) {
                 if (o) {
+                    redisClient.set(querykey, JSON.stringify(o))
                     return o
                 }
                 else {
@@ -244,7 +249,7 @@ module.exports = {
                 return err
             })
     },
-    getPagedPosts: (queryParam) => {
+    getPagedPosts: (queryParam, querykey) => {
         return new Promise(function (resolve, reject) {
             if (!queryParam) {
                 reject({error: "invalid query params"})
@@ -263,6 +268,7 @@ module.exports = {
             resolve(titles.find(queryParam).skip(start > 0 ? start : 0).limit(6).toArray())
         })
             .then(function (o) {
+                redisClient.set(querykey, JSON.stringify(o), 'EX', 60)
                 if (o) {
                     return o
                 }
@@ -274,7 +280,7 @@ module.exports = {
                 return err
             })
     },
-    getPost: (queryParam) => {
+    getPost: (queryParam, querykey) => {
         return new Promise(function (resolve, reject) {
             if (!queryParam) {
                 reject({error: "invalid query params"})
@@ -290,6 +296,7 @@ module.exports = {
         })
             .then(function (success) {
                 if (success) {
+                    redisClient.set(querykey, JSON.stringify(success), 'EX', 60)
                     return success
                 }
                 else {
@@ -300,7 +307,7 @@ module.exports = {
                 return error
             })
     },
-    getPostDetails: (queryParam) => {
+    getPostDetails: (queryParam, querykey) => {
         return new Promise(function (resolve, reject) {
             if (!queryParam) {
                 reject({error: "invalid query params"})
@@ -315,6 +322,7 @@ module.exports = {
         })
             .then(function (o) {
                 if (o) {
+                    redisClient.set(querykey, JSON.stringify(o), 'EX', 60)
                     return o
                 } else {
                     return {error: "not found"}

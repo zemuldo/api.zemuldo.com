@@ -6,8 +6,10 @@ let bodyParser = require('body-parser');
 let helmet = require('helmet')
 let checkMe = require('cookie-session')
 const compression = require('compression');
+const {setCors} = require('../tools/utilities')
 let app = express();
 
+app.use(setCors);
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(compression());
 app.use(bodyParser.json());
