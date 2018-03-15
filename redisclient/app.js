@@ -7,11 +7,12 @@ module.exports = {
         if (req.body.queryMethod) {
             client.get(`${JSON.stringify(req.body)}`, function (err, data) {
                 if (data) {
-                    console.log(data)
+                    console.log('serving from redis by middleware')
                     res.send(data)
                     return data
                 }
                 else {
+                    console.log('this endpoint not catched')
                     next()
                 }
             });

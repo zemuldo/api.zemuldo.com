@@ -1,6 +1,5 @@
 const {db, getNextIndex} = require('../mongo')
 const ObjectID = require('mongodb').ObjectID
-const {redisClient} = require('../../redisclient/app')
 
 const types = {
     dev: {
@@ -210,7 +209,6 @@ module.exports = {
         })
             .then(function (o) {
                 if (o) {
-                    redisClient.set(querykey,JSON.stringify(o))
                     return o
                 } else {
                     return {error: "not found"}
@@ -235,7 +233,6 @@ module.exports = {
         })
             .then(function (o) {
                 if (o) {
-                    redisClient.set(querykey,JSON.stringify(o))
                     return o
                 }
                 else {

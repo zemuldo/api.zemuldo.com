@@ -1,11 +1,11 @@
 'use strict'
 let schemas = require('../db/schemas/index')
 
-function updateReplies(c, cs){
+function updateReplies(c, cs) {
     return new Promise(function (resolve, reject) {
         cs.forEach(function (thisC) {
             if (thisC._id == c.parent_id) {
-                if(thisC.chat){
+                if (thisC.chat) {
                     thisC.chat.comments.push({
                         author: c.author,
                         mess: c.mess,
@@ -14,7 +14,7 @@ function updateReplies(c, cs){
                         userID: c.userID
                     })
                 }
-                else{
+                else {
                     thisC.chat = {
                         comments: [
                             {
@@ -42,7 +42,7 @@ function updateReplies(c, cs){
         })
 }
 
-function deleteComments (_id, cs) {
+function deleteComments(_id, cs) {
     return new Promise(function (resolve, reject) {
         cs.map(function (thisC, index) {
             if (thisC._id == _id) {
@@ -149,8 +149,14 @@ module.exports = {
 
         return array;
     },
-    updateReplies:updateReplies,
-    deleteComments:deleteComments
+    updateReplies: updateReplies,
+    deleteComments: deleteComments,
+    setCors: (req, res, next) => {
+        res.header('Access-Control-Allow-Origin', '*');
+        res.header('Access-Control-Allow-Headers', 'Origin, Authorization, X-Requested-With, Content-Type, Accept');
+        res.header('Allow-Control-Access-Method', 'POST');
+        next();
+    }
 
 
 }
