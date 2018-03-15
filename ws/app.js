@@ -4,7 +4,7 @@ const WebSocket = require('ws');
 const uuidv4 = require('uuid/v4');
 const {
     titles
-} = require('../db/mongo');
+} = require('../db/mongo').collections;
 const {
     topics
 } = require('../config/env')
