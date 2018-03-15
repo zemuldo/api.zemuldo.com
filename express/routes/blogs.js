@@ -1,9 +1,11 @@
 'use strict';
 const express = require("express");
 const requestIp = require('request-ip');
-const router = express();
-router.use(requestIp.mw())
+let router = express();
 let db = require('../../db')
+const {redisClient, redisUtil} = require('../../redisclient/app')
+
+router.use(requestIp.mw())
 
 router.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
@@ -12,10 +14,23 @@ router.use((req, res, next) => {
     next();
 });
 
+router.use(redisUtil)
+
 router.post('/', (req,res)=>{
     return new Promise(function(resolve,reject){
         if(db[req.body.queryMethod] && req.body.queryData){
-            resolve(db[req.body.queryMethod](req.body.queryData))
+            redisClient.get(`${JSON.stringify(req.body)}`, function (err, data) {
+                if (data) {
+                    console.log('serving from reddis')
+                    console.log(data)
+                    resolve(data)
+                    return data
+                }
+                else {
+                    resolve(db[req.body.queryMethod](req.body.queryData,`${JSON.stringify(req.body)}`))
+                    return true
+                }
+            });
        }
        else {
            res.statusCode = 401;

@@ -9,7 +9,7 @@ const Server = server.Server
 	ESTABLISH DATABASE CONNECTION
 */
 
-let indexCounters = {
+const indexCounters = {
     blogIndex: {
         name: 'blogIndex',
         description: 'This document contains the index of each unique BLOG in db. and stores the next Index in nextIndex',
@@ -204,7 +204,8 @@ db.open((e, d) => {
 
 module.exports = {
     db: db,
-    getNextIndex: getNextIndex, collections: collections
+    getNextIndex: getNextIndex,
+    collections: collections
 };
 
 

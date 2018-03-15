@@ -1,5 +1,6 @@
 const {db, getNextIndex} = require('../mongo')
 const ObjectID = require('mongodb').ObjectID
+const {redisClient} = require('../../redisclient/app')
 
 const types = {
     dev: {
@@ -186,7 +187,7 @@ module.exports = {
                 return error
             })
     },
-    getPosts: (queryParam) => {
+    getPosts: (queryParam,querykey) => {
         return new Promise(function (resolve, reject) {
             if (!queryParam) {
                 reject({error: "invalid query params"})
@@ -209,6 +210,7 @@ module.exports = {
         })
             .then(function (o) {
                 if (o) {
+                    redisClient.set(querykey,JSON.stringify(o))
                     return o
                 } else {
                     return {error: "not found"}
@@ -219,7 +221,7 @@ module.exports = {
             })
 
     },
-    getAllPosts: (queryParam) => {
+    getAllPosts: (queryParam,querykey) => {
         return new Promise(function (resolve, reject) {
             if (!queryParam) {
                 reject({error: "invalid query params"})
@@ -233,11 +235,13 @@ module.exports = {
         })
             .then(function (o) {
                 if (o) {
+                    redisClient.set(querykey,JSON.stringify(o))
                     return o
                 }
                 else {
                     return [];
                 }
+
             })
             .catch(function (err) {
                 return err
