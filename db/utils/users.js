@@ -55,7 +55,8 @@ module.exports = {
                 email: queryData.email.toLowerCase(),
                 password: password,
                 avatar: av,
-                created: date,
+                created: date.toISOString(),
+                date:new Date(),
                 errors: {}
             }
             avatar = {

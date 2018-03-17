@@ -105,7 +105,7 @@ module.exports = {
         if (!queryData.author) {
             return {error: 'invalid author data'}
         }
-        let date = new Date()
+        let date = new Date().toISOString()
         let _id = new ObjectID()
         let thisPost = {
             _id: _id,
@@ -522,5 +522,5 @@ module.exports = {
                 return err
             })
 
-    },
+    }
 }
