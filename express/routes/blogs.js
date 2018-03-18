@@ -2,13 +2,13 @@
 const express = require("express");
 const requestIp = require('request-ip');
 let router = express();
-let db = require('../../db')
-const {redisUtil} = require('../../redisclient/app')
-const logger = require('../../tools/logger')
+let db = require('../../db');
+const {redisUtil} = require('../../redisclient/app');
+const logger = require('../../tools/logger');
 
-router.use(requestIp.mw())
+router.use(requestIp.mw());
 
-router.use(redisUtil)
+//router.use(redisUtil)
 
 router.post('/', (req, res) => {
     return new Promise(function (resolve, reject) {
@@ -38,4 +38,4 @@ router.post('/', (req, res) => {
 
 })
 
-module.exports = router
+module.exports = router;

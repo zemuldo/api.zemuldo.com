@@ -39,6 +39,18 @@ wss.on('connection', (ws) => {
         }
     }, 30000);
 
+    titles.find().limit(20).toArray()
+        .then(o=>{
+            ws.send(JSON.stringify({
+                type: 'blogs',
+                pups: 'blogs',
+                msg: o
+            }))
+        })
+        .catch(e=>{
+
+        })
+
     ws.on('message', function (msg) {
         console.log(sessions[ws.sessionId])
         let o = JSON.parse(msg);
@@ -97,6 +109,17 @@ wss.on('connection', (ws) => {
                 }
                 break;
             case 'blog':
+                titles.find().limit(20).toArray()
+                    .then(o=>{
+                        ws.send(JSON.stringify({
+                            type: 'blogs',
+                            pups: 'blogs',
+                            msg: o
+                        }))
+                    })
+                    .catch(e=>{
+
+                    })
                 break;
 
         }
