@@ -11,7 +11,6 @@ router.use(requestIp.mw())
 router.use(redisUtil)
 
 router.post('/', (req, res) => {
-    logger.status({date: new Date(), status: 'performing query for', body: req.body})
     return new Promise(function (resolve, reject) {
         if (db[req.body.queryMethod] && req.body.queryData) {
             resolve(db[req.body.queryMethod](req.body.queryData, `${JSON.stringify(req.body)}`))
@@ -22,6 +21,7 @@ router.post('/', (req, res) => {
         }
     })
         .then((o) => {
+            logger.success({date: new Date(), status: 'performed query for', body: req.body, from: req.headers['x-real-ip'] || req.connection.remoteAddress})
             if (o.code && o.code === 401) {
                 res.send(o)
                 return false
@@ -30,7 +30,8 @@ router.post('/', (req, res) => {
             res.send(o)
         })
         .catch((e) => {
-            console.log(e)
+            logger.error({date: new Date(), status: 'performed query for', body: req.body, from: req.headers['x-real-ip'] || req.connection.remoteAddress})
+            logger.error({date: new Date(), status: 'error', body: req.body, from: req.headers['x-real-ip'] || req.connection.remoteAddress,error:e})
             res.statusCode = 500;
             res.send({error: 'Internal server error'})
         })
