@@ -212,7 +212,7 @@ module.exports = {
         })
             .then(function (o) {
                 if (o) {
-                    redisClient.set(querykey, JSON.stringify(o),)
+                    redisClient.set(querykey, JSON.stringify(o),'EX', 3600)
                     return o
                 } else {
                     return {error: "not found"}
@@ -237,7 +237,7 @@ module.exports = {
         })
             .then(function (o) {
                 if (o) {
-                    redisClient.set(querykey, JSON.stringify(o))
+                    redisClient.set(querykey, JSON.stringify(o),'EX', 3600)
                     return o
                 }
                 else {
@@ -268,7 +268,7 @@ module.exports = {
             resolve(titles.find(queryParam).skip(start > 0 ? start : 0).limit(6).toArray())
         })
             .then(function (o) {
-                redisClient.set(querykey, JSON.stringify(o), 'EX', 60)
+                redisClient.set(querykey, JSON.stringify(o), 'EX', 3600)
                 if (o) {
                     return o
                 }
@@ -296,7 +296,7 @@ module.exports = {
         })
             .then(function (success) {
                 if (success) {
-                    redisClient.set(querykey, JSON.stringify(success), 'EX', 60)
+                    redisClient.set(querykey, JSON.stringify(success), 'EX', 3600)
                     return success
                 }
                 else {
@@ -322,7 +322,7 @@ module.exports = {
         })
             .then(function (o) {
                 if (o) {
-                    redisClient.set(querykey, JSON.stringify(o), 'EX', 60)
+                    redisClient.set(querykey, JSON.stringify(o), 'EX', 3600)
                     return o
                 } else {
                     return {error: "not found"}
