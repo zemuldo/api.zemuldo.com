@@ -88,9 +88,7 @@ wss.on('connection', (ws) => {
                 break;
             case 'topicDetails':
                 for (let i = 0; i < topics.length; i++) {
-                    titles.find({
-                            topics: topics[i].key
-                        }).count()
+                    titles.find({topics: topics[i].key}).count()
                         .then(function (n) {
                             if (n > 0) {
                                 ws.send(JSON.stringify({
