@@ -62,7 +62,7 @@ module.exports = {
             avatar = {
                 imageURL: queryData.avatar,
                 userName: queryData.userName,
-                id: queryData.id
+                user_id: _id
             }
 
             resolve(getNextIndex(indexCounters['userIndex']))
@@ -86,6 +86,7 @@ module.exports = {
                 else {
                     queryData.id = nextID.value
                     user.id = nextID.value;
+                    avatar.userId = nextID.value
                     return Promise.all([users.findOne({email: user.email}), users.findOne({userName: user.userName})])
                 }
             })
