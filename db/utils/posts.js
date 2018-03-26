@@ -1,4 +1,4 @@
-const {db, getNextIndex} = require('../mongo')
+const {db, getNextIndex, indexCounters} = require('../mongo')
 const ObjectID = require('mongodb').ObjectID
 const {redisClient} = require('../../redisclient/app')
 
@@ -29,28 +29,9 @@ const types = {
     }
 }
 
-
-let indexCounters = {
-    blogIndex: {
-        name: 'blogIndex',
-        description: 'This document contains the index of each unique BLOG in db. and stores the next Index in nextIndex',
-        initDate: new Date()
-    },
-    userIndex: {
-        name: 'userIndex',
-        description: 'This document contains the index of each unique USER in db. and stores the next Index in nextIndex',
-        initDate: new Date()
-    },
-    addsIndex: {
-        name: 'addsIndex',
-        description: 'This document contains the index of each unique ADVERTS in db. and stores the next Index in nextIndex',
-        initDate: new Date()
-    }
-}
-
 const posts = db.collection('posts')
 const titles = db.collection('titles')
-let userLikes = db.collection('userLikes')
+const userLikes = db.collection('userLikes')
 
 module.exports = {
     updateBlog: (queryData) => {

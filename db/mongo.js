@@ -204,6 +204,7 @@ db.open((e, d) => {
 
 module.exports = {
     db: db,
+    indexCounters:indexCounters,
     getNextIndex: getNextIndex,
     collections: collections
 };

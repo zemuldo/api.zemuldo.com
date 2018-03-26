@@ -1,5 +1,5 @@
 'use strict'
-const {db, getNextIndex} = require('../mongo')
+const {db, getNextIndex, indexCounters} = require('../mongo')
 const ObjectID = require('mongodb').ObjectID
 const crypto = require('crypto')
 const fs = require('fs')
