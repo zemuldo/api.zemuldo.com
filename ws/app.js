@@ -107,7 +107,7 @@ wss.on('connection', (ws) => {
                 }
                 break;
             case 'blog':
-                titles.find().limit(20).toArray()
+                titles.find().limit(30).toArray()
                     .then(o=>{
                         ws.send(JSON.stringify({
                             type: 'blogs',
