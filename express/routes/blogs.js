@@ -11,11 +11,10 @@ const multer = require('multer');
 const formData = multer({ dest: 'express/public/images/mixed/' });
 const type = formData.single('image');
 const fs = require('fs');
-console.log(db)
 
 router.use(requestIp.mw())
 
-router.use(redisUtil)
+//router.use(redisUtil)
 
 router.post('/', (req, res) => {
     return new Promise(function (resolve, reject) {
@@ -46,6 +45,12 @@ router.post('/', (req, res) => {
 })
 
 router.post('/uploads/images/:info', type, function (req, res) {
+    if(req.params.info ==='delete'){
+        console.log(req.body)
+        fs.unlinkSync(req.body.fullPath);
+        res.send({deleted:true})
+        return false
+    }
     let _id = new ObjectID()
     /** When using the "single"
     data come in "req.file" regardless of the attribute "name". **/
@@ -64,8 +69,8 @@ router.post('/uploads/images/:info', type, function (req, res) {
             return ;
         })
         .then(o => {
-            fs.unlinkSync(tmp_path);
-            res.send({ _id: _id,name:target_path.split('public')[1] })
+            
+            res.send({ _id: _id,name:target_path.split('public')[1] ,fullPath:target_path})
         })
         .then(o => {
             return db.insertPhoto({
@@ -74,6 +79,9 @@ router.post('/uploads/images/:info', type, function (req, res) {
                 info: req.params.info || 'info not specified',
                 date: new Date()
             })
+        })
+        .then(o=>{
+            fs.unlinkSync(tmp_path);
         })
         .catch(e => {
             console.log(e)

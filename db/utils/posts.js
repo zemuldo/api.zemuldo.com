@@ -100,6 +100,7 @@ module.exports = {
             likes: 0,
             topics: queryData.topics,
             about: queryData.about,
+            headerImage:queryData.headerImage,
             type: queryData.type,
             postID: _id,
             author: queryData.author,
@@ -506,7 +507,6 @@ module.exports = {
 
     },
     insertPhoto:(image)=>{
-        console.log(image)
         photos.insertOne(image)
         .then(o=>{
             return o
