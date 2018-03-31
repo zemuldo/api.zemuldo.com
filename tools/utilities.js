@@ -1,5 +1,6 @@
 'use strict'
 let schemas = require('../db/schemas/index')
+const fs = require('fs');
 
 function updateReplies(c, cs) {
     return new Promise(function (resolve, reject) {
@@ -64,6 +65,12 @@ function deleteComments(_id, cs) {
 }
 
 module.exports = {
+    base64_encode:(file)=> {
+        // read binary data
+        var bitmap = fs.readFileSync(file);
+        // convert binary data to base64 encoded string
+        return new Buffer(bitmap).toString('base64');
+    },
     validatePost: (post) => {
         let validator = schemas.post
         return new Promise(function (resolve, reject) {

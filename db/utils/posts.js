@@ -32,6 +32,7 @@ const types = {
 const posts = db.collection('posts')
 const titles = db.collection('titles')
 const userLikes = db.collection('userLikes')
+const photos = db.collection('photos')
 
 module.exports = {
     updateBlog: (queryData) => {
@@ -503,5 +504,15 @@ module.exports = {
                 return err
             })
 
+    },
+    insertPhoto:(image)=>{
+        console.log(image)
+        photos.insertOne(image)
+        .then(o=>{
+            return o
+        })
+        .catch(e=>{
+            return e
+        })
     }
 }
