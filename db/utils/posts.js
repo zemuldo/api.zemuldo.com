@@ -103,6 +103,7 @@ module.exports = {
             headerImage:queryData.headerImage,
             type: queryData.type,
             postID: _id,
+            views:0,
             author: queryData.author,
             wordCount: queryData.wordCount
         }
@@ -506,12 +507,30 @@ module.exports = {
             })
 
     },
+    updateViews:(queryData)=>{
+        return new Promise((resolve,reject)=>{
+            if(!queryData._id){
+                reject({error:'query params missing'})
+            }
+            if(queryData._id){
+                queryData._id = ObjectID(queryData._id)
+            }
+            resolve(titles.updateOne({_id: queryData._id}, {$inc: {'views': 1} },{upsert:true}))
+        })
+        .then(o=>{
+            return o
+        })
+        .catch(e=>{
+            return e
+        })
+    },
     insertPhoto:(image)=>{
         photos.insertOne(image)
         .then(o=>{
             return o
         })
         .catch(e=>{
+            console.log(e)
             return e
         })
     }
