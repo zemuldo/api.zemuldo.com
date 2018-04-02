@@ -1,6 +1,7 @@
 const {db} = require('../mongo')
 const comments = db.collection('comments')
 const ObjectID = require('mongodb').ObjectID
+const {updateReplies} = require('../../tools/utilities')
 
 module.exports = {
     comment: (queryData) => {

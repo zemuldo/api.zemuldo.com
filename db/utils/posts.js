@@ -82,7 +82,7 @@ module.exports = {
             return {error: 'invalid type data'}
         }
         if (!queryData.wordCount) {
-            return {error: 'invalid count data'}
+            return {error: 'invalid word count data'}
         }
         if (!queryData.author) {
             return {error: 'invalid author data'}

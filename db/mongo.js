@@ -1,8 +1,9 @@
 'use strict'
+const cluster = require('cluster')
 let server = require('mongodb')
 let mongodb = require('mongodb')
 
-let {updateReplies, deleteComments} = require('../tools/utilities')
+let { updateReplies, deleteComments } = require('../tools/utilities')
 const MongoDB = mongodb.Db
 const Server = server.Server
 /*
@@ -30,7 +31,7 @@ let dbName = process.env.DB_NAME || 'Zemuldo-Main-Site';
 let dbHost = process.env.DB_HOST || 'localhost'
 let dbPort = process.env.DB_PORT || 27017
 
-let db = new MongoDB(dbName, new Server(dbHost, dbPort, {auto_reconnect: true}), {w: 1})
+let db = new MongoDB(dbName, new Server(dbHost, dbPort, { auto_reconnect: true }), { w: 1 })
 
 let counters = db.collection('counters')
 
@@ -48,7 +49,7 @@ const collections = {
 
 function InitCounter(indexObj) {
     collections.counters.findOneAndUpdate(
-        {"name": indexObj.name},
+        { "name": indexObj.name },
         {
             $set: {
                 "name": indexObj.name,
@@ -58,7 +59,7 @@ function InitCounter(indexObj) {
                 nextIndex: 1
             }
         },
-        {$sort: {"nextIndex": 1}, upsert: true, returnNewDocument: true})
+        { $sort: { "nextIndex": 1 }, upsert: true, returnNewDocument: true })
         .then(function (success) {
             return success
         })
@@ -71,16 +72,16 @@ function InitCounter(indexObj) {
 function getNextIndex(indexObj) {
     return new Promise(function (resolve, reject) {
         collections.counters.findOneAndUpdate(
-            {"name": indexObj.name},
+            { "name": indexObj.name },
             {
                 $set: {
                     "name": indexObj.name,
                     initDate: new Date(),
                     "description": indexObj.description,
                     important: '!!!!!!!NEVER DELETE THIS DOCUMENT'
-                }, $inc: {nextIndex: 1}
+                }, $inc: { nextIndex: 1 }
             },
-            {sort: {"nextIndex": 1}, upsert: true, returnNewDocument: true},
+            { sort: { "nextIndex": 1 }, upsert: true, returnNewDocument: true },
             function (e, o) {
                 if (e) {
                     reject(e)
@@ -99,7 +100,7 @@ function getNextIndex(indexObj) {
 }
 
 function checkCounters() {
-    let query = {$or: []}
+    let query = { $or: [] }
     let i = 0;
     return new Promise(function (resolve, reject) {
         Object.keys(indexCounters).forEach(function (prop) {
@@ -114,42 +115,55 @@ function checkCounters() {
             return counters.find(query).toArray()
         })
         .then(function (o) {
-            console.log('\x1b[36m%s\x1b[0m', "****Checking database Indexing****")
+           if(cluster.isMaster) console.log('\x1b[36m%s\x1b[0m', "****Checking database Indexing****")
             if (o.length === 0) {
-                console.log('\x1b[37m%s\x1b[0m', "****Database Indexing not initialized****")
-                console.log('\x1b[38m%s\x1b[0m', "****Initializing database Indexing****")
-                Object.keys(indexCounters).forEach(function (prop) {
-                    InitCounter(indexCounters[prop])
-                })
-                console.log("----------------------------------------DB Connected")
-                console.log('\x1b[36m%s\x1b[0m', "Ram Used: ", process.memoryUsage())
-                console.log('\x1b[36m%s\x1b[0m', "PID: ", process.pid)
-                console.log('\x1b[33m%s\x1b[0m', 'DB Connected: connected to: "' + dbName + '"')
+                if (cluster.isMaster) {
+                    console.log('\x1b[37m%s\x1b[0m', "****Database Indexing not initialized****")
+                    console.log('\x1b[38m%s\x1b[0m', "****Initializing database Indexing****")
+                    Object.keys(indexCounters).forEach(function (prop) {
+                        InitCounter(indexCounters[prop])
+                    })
+                    console.log("----------------------------------------DB Connected")
+                    console.log('\x1b[36m%s\x1b[0m', "Ram Used: ", process.memoryUsage())
+                    console.log('\x1b[36m%s\x1b[0m', "PID: ", process.pid)
+                    console.log('\x1b[33m%s\x1b[0m', 'DB Connected: connected to: "' + dbName + '"')
+                }
                 return true
             }
             else if (i === o.length) {
-                console.log('\x1b[32m%s\x1b[0m', "***DB counter initailaized already and fine****")
-                console.log("----------------------------------------DB Connected")
-                console.log('\x1b[36m%s\x1b[0m', "Ram Used: ", process.memoryUsage())
-                console.log('\x1b[36m%s\x1b[0m', "PID: ", process.pid)
-                console.log('\x1b[33m%s\x1b[0m', 'DB Connected: connected to: "' + dbName + '"')
+                if (cluster.isMaster) {
+                    console.log('\x1b[32m%s\x1b[0m', "***DB counter initailaized already and fine****")
+                    console.log("----------------------------------------DB Connected")
+                    console.log('\x1b[36m%s\x1b[0m', "Ram Used: ", process.memoryUsage())
+                    console.log('\x1b[36m%s\x1b[0m', "PID: ", process.pid)
+                    console.log('\x1b[33m%s\x1b[0m', 'DB Connected: connected to: "' + dbName + '"')
+                }
+
             }
             else {
-                console.log("***db counter init error***")
-                console.log("----------------------------------------Exit with Error")
+                if (cluster.isMaster) {
+                    console.log("***db counter init error***")
+                    console.log("----------------------------------------Exit with Error")
+                }
+
                 process.exit(12);
             }
         })
         .then(o => {
-            console.log('\x1b[33m%s\x1b[0m', 'Creating Index on id field')
-            return Promise.all([collections.posts.createIndex({id: -1}), collections.titles.createIndex({id: -1})])
+            if (cluster.isMaster) {
+                console.log('\x1b[33m%s\x1b[0m', 'Creating Index on id field')
+            }
+            return Promise.all([collections.posts.createIndex({ id: -1 }), collections.titles.createIndex({ id: -1 })])
         })
         .then(o => {
-            console.log(o)
-            console.log('\x1b[33m%s\x1b[0m', 'Created Index on id field')
+            if (cluster.isMaster) {
+                console.log(o)
+                console.log('\x1b[33m%s\x1b[0m', 'Created Index on id field')
+            }
+
         })
         .catch(function (err) {
-            throw {error: "db counter init error"}
+            throw { error: "db counter init error" }
         })
 
 }
@@ -176,10 +190,12 @@ function dataURItoBlob(dataURI, callback) {
 }
 
 db.open((e, d) => {
-    console.log("----------------------------------------Connecting to DB")
-    let date = new Date().toString()
-    console.log('\x1b[37m%s\x1b[0m', "****Connecting to DB****")
-    console.log('\x1b[36m%s\x1b[0m', date);
+    if (cluster.isMaster) {
+        console.log("----------------------------------------Connecting to DB")
+        let date = new Date().toString()
+        console.log('\x1b[37m%s\x1b[0m', "****Connecting to DB****")
+        console.log('\x1b[36m%s\x1b[0m', date);
+    }
     if (e) {
         console.log(e)
     } else {
@@ -204,7 +220,7 @@ db.open((e, d) => {
 
 module.exports = {
     db: db,
-    indexCounters:indexCounters,
+    indexCounters: indexCounters,
     getNextIndex: getNextIndex,
     collections: collections
 };
