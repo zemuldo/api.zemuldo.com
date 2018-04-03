@@ -1,7 +1,7 @@
 module.exports = {
     apps : [
         {
-          name: "Backend 0",
+          name: "Zemuldo API Cluster 0 8090",
           script: "./app.js",
           watch: true,
           env: {
@@ -11,10 +11,12 @@ module.exports = {
           env_production: {
               "PORT": 8090,
               "NODE_ENV": "production",
-          }
+          },
+          instances:'2',
+          exec_mode:"cluster"
         },
         {
-            name: "Backend 1",
+            name: "Zemuldo API Cluster 1 8091",
             script: "./app.js",
             watch: true,
             env: {
@@ -24,10 +26,12 @@ module.exports = {
             env_production: {
                 "PORT": 8091,
                 "NODE_ENV": "production",
-            }
+            },
+            instances:'2',
+          exec_mode:"cluster"
         },
         {
-            name: "Backend 2",
+            name: "Zemuldo API Cluster 2 8092",
             script: "./app.js",
             watch: true,
             env: {
@@ -37,7 +41,9 @@ module.exports = {
             env_production: {
                 "PORT": 8092,
                 "NODE_ENV": "production",
-            }
+            },
+            instances:'2',
+          exec_mode:"cluster"
         }
     ]
   }

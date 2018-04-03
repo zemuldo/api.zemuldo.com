@@ -11,10 +11,11 @@ const multer = require('multer');
 const formData = multer({ dest: 'express/public/images/mixed/' });
 const type = formData.single('image');
 const fs = require('fs');
+const {redisClient, sub, pub} = require('../../redisclient/app')
 
 router.use(requestIp.mw())
 
-//router.use(redisUtil)
+router.use(redisUtil)
 
 router.post('/', (req, res) => {
     return new Promise(function (resolve, reject) {
