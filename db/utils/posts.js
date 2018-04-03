@@ -1,6 +1,6 @@
 const {db, getNextIndex, indexCounters} = require('../mongo')
 const ObjectID = require('mongodb').ObjectID
-const {redisClient} = require('../../redisclient/app')
+const {redisClient, sub, pub} = require('../../redisclient/app')
 
 const types = {
     dev: {
@@ -197,6 +197,7 @@ module.exports = {
             .then(function (o) {
                 if (o) {
                     redisClient.set(querykey, JSON.stringify(o),'EX', 3600)
+                    pub.publish("blogs_cache", JSON.stringify({type:'blogs_cache', key:querykey,data:o, ttl:3600}));
                     return o
                 } else {
                     return {error: "not found"}
@@ -222,6 +223,7 @@ module.exports = {
             .then(function (o) {
                 if (o) {
                     redisClient.set(querykey, JSON.stringify(o),'EX', 3600)
+                    pub.publish("blogs_cache", JSON.stringify({type:'blogs_cache', key:querykey,data:o, ttl:3600}));
                     return o
                 }
                 else {
