@@ -45,6 +45,8 @@ module.exports = {
             }
             if (queryData.update.body) {
                 tu.title = queryData.update.title
+                tu.topics = queryData.update.topics
+                tu.type = queryData.update.type
                 tu.about = queryData.update.about
                 tu.wordCount = queryData.update.wordCount
                 tu.updated = new Date()
