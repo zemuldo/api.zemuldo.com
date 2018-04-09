@@ -58,6 +58,7 @@ module.exports = {
             ]))
         })
             .then(function (o) {
+                redisClient.flushall()
                 return o
             })
             .catch(function (error) {
@@ -141,6 +142,7 @@ module.exports = {
                 }
             })
             .then(function (final) {
+                redisClient.flushdb()
                 if (!final.error || final.exception) {
                     if (final) {
                         return {state: true}
@@ -169,6 +171,7 @@ module.exports = {
 
         })
             .then(function (success) {
+                redisClient.flushdb()
                 return success
             })
             .catch(function (error) {
