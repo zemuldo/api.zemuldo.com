@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/zemuldo/api.zemuldo.com#readme",
   "dependencies": {
+    "ajv": "^6.5.0",
     "apiai": "^4.0.3",
     "body-parser": "^1.18.0",
     "cli-color": "^1.2.0",
@@ -34,6 +35,7 @@
     "express": "^4.15.4",
     "express-session": "^1.15.5",
     "helmet": "^3.8.1",
+    "jsonwebtoken": "^8.2.1",
     "moment": "^2.18.1",
     "moment-timezone": "^0.5.13",
     "mongodb": "^2.2.31",
@@ -43,10 +45,12 @@
     "request": "^2.82.0",
     "request-ip": "^2.0.2",
     "uuid": "^3.1.0",
+    "winston": "^2.4.2",
     "ws": "^3.3.3"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
+    "mocha": "^5.1.1",
     "standard": "^10.0.3"
   }
 }

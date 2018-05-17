@@ -7,6 +7,7 @@ let helmet = require('helmet')
 let checkMe = require('cookie-session')
 const compression = require('compression');
 const {setCors} = require('../tools/utilities')
+const signup = require('./routes/signup')
 let app = express();
 
 app.use(setCors);
@@ -43,6 +44,7 @@ let blogsRoute = require('./routes/blogs');
 
 app.use(blogsRoute);
 app.use(bodyParser.json());
+app.use(signup)
 
 
 

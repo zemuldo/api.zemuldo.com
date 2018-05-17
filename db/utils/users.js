@@ -15,47 +15,12 @@ const visitors = db.collection('visitors')
 let reviews = db.collection('reviews')
 
 module.exports = {
-    signup: (req, res) => {
+    signup: (queryData) => {
         let user;
         let _id = new ObjectID()
         let avatar;
         let imgStr;
         return new Promise(async function (resolve, reject) {
-                if (!queryData) {
-                    reject({
-                        error: "invalid query params"
-                    })
-                }
-                if (!queryData.firstName) {
-                    reject({
-                        error: "no firstName sent"
-                    })
-                }
-                if (!queryData.lastName) {
-                    reject({
-                        error: "no lastName sent"
-                    })
-                }
-                if (!queryData.userName) {
-                    reject({
-                        error: 'invalid userName data'
-                    })
-                }
-                if (!queryData.email) {
-                    reject({
-                        error: 'invalid email data'
-                    })
-                }
-                if (!queryData.password) {
-                    reject({
-                        error: 'invalid password data'
-                    })
-                }
-                if (!queryData.avatar) {
-                    reject({
-                        error: 'invalid imagePreviewUrl data'
-                    })
-                }
                 let date = new Date()
                 let password = crypto.createHash('sha256').update(queryData.password).digest().toString('hex');
                 imgStr = JSON.parse(queryData.avatar)
