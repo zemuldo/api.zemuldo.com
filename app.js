@@ -2,8 +2,9 @@
 const os = require('os')
 const cluster = require('cluster')
 const numCPUs = require('os').cpus().length
+const logger = require('./tools/logger')
 
-console.log("----------------------------------------Starting app")
+logger.info('Starting Zemuldo API Backend')
 let hostDetils = {
     hostname:os.hostname(),
     type:os.type(),
@@ -11,9 +12,7 @@ let hostDetils = {
     uptime:os.uptime()
 }
 let date = new Date().toString()
-console.log('\x1b[37m%s\x1b[0m',"****Staring app on ")
-console.log('\x1b[37m%s\x1b[0m',JSON.stringify(hostDetils))
-console.log('\x1b[36m%s\x1b[0m', date);
+logger.info(hostDetils)
 
 const dotenv = require('dotenv').config({
     path: process.env.NODE_ENV === 'test' ? 'test.env' :
@@ -31,9 +30,7 @@ const errorCode = {
     12:{
         logger:function () {
             let date = new Date().toString()
-            console.log('\x1b[31m%s\x1b[0m', 'Data base indexing failed, check database counter methods');
-            console.log('\x1b[31m%s\x1b[0m', date);
-            console.log("----------------------------------------")
+            logger.error({status:'Data base indexing failed, check database counter methods',date:date})
         }
     }
 }
@@ -41,17 +38,16 @@ const errorCode = {
 let config = ENV[process.env.NODE_ENV]
 
 server.listen(process.env.PORT, () => {
-    console.info('\x1b[37m%s\x1b[0m',`Web server started at http://localhost:${process.env.PORT}`);
-    console.info('\x1b[37m%s\x1b[0m',`Web Socket started at  ws://localhost:${process.env.PORT}`);
+    logger.info(`Web server started at http://localhost:${process.env.PORT}`);
+    logger.info(`Web Socket started at  ws://localhost:${process.env.PORT}`);
 });
 process.on('exit', (code) => {
-    console.log("----------------------------------------App started")
-    (errorCode[code])?errorCode[code].logger():console.info('\x1b[31m%s\x1b[0m',`Process error, unknown error`);
+    logger.info({status:`App exited with an error ${code}`,code:code});
 });
 process.on('warning', (warning) => {
-    console.log("----------------------------------------")
+    logger.warn(warning)
 
 });
 process.on('message', (message=>{
-    console.log(message)
+    logger.info(message)
 }))

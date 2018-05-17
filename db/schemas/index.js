@@ -1,33 +1,30 @@
 'use strict'
 module.exports = {
 
-    post:{
-        title:{
-            type: 'string',
-            maxLen:40,
-            minLen:6
-        },
-        body:{
-            type:'string',
-            maxLen:1500,
-            minLen:400
-        },
-        type:{
-            type:'string',
-            dev:'Developer Articles. Related to Programming and Software Development',
-            tech:'Technology based articles like BigData and AI',
-            business:'Business articles',
-            reviews:'Reviews',
-            tuts:'Tutorials'
+    user: {
+        additionalProperties: false,
+        type: "object",
+        required: ["firstName", "lastName", "userName", 'email', 'password', 'avatar'],
+        properties: {
+            firstName: {
+                type: 'string',
             },
-        author:{
-            type:'string'
-        },
-        topics:{
-            type:'object'
-        },
-        images:{
-            type:'object'
+            lastName: {
+                type: 'string'
+            },
+            userName: {
+                type: 'string'
+            },
+            email: {
+                type: "string",
+                format: "email"
+            },
+            password: {
+                type: 'string'
+            },
+            avatar: {
+                type: 'string'
+            }
         }
-    },
+    }
 }
