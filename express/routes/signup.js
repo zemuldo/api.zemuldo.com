@@ -2,20 +2,18 @@
 const express = require("express");
 const db = require('../../db')
 const logger = require('../../tools/logger')
-const {User} = require('../../db/schemas')
+const user = require('../../db/schemas')
 const {signup} = require('../../db/utils/users')
-const Ajv = require('ajv');
+const sjsv = require('sjsv');
 
-const ajv = new Ajv({allErrors: true});
 const router = express();
 
 router.post('/signup', (req, res) => {
     return new Promise((resolve,reject)=>{
-        let user = new User(req.body)
-        let check = ajv.compile(user.schema);
-        var valid = check(user.data);
-        if (valid) resolve({valid:true,error:ajv.errorsText(check.errors)})
-        else reject({valid:false,error:ajv.errorsText(check.errors)}) 
+       let validator = new sjsv(user)
+       let valid = validator.vaildate(req.body)
+        if (valid===true) resolve({valid:true,e:validator.getErrors()})
+        else reject({code:400,valid:false,e:validator.getErrors()}) 
     })
     .then(o => {
         if(o.valid) return signup(req.body) 
@@ -26,8 +24,8 @@ router.post('/signup', (req, res) => {
         res.send(o)
     })
     .catch(e => {
-        console.log(e)
-        res.statusCode(e.code || 500).send(e.e || {error: 'Internal server error'})
+        res.statusCode = e.code || 500
+        res.send({error: e.e || 'Internal server error'})
     })
 })
 
