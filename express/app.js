@@ -8,6 +8,7 @@ let checkMe = require('cookie-session')
 const compression = require('compression');
 const {setCors} = require('../tools/utilities')
 const signup = require('./routes/signup')
+const login = require('./routes/auth')
 let app = express();
 
 app.use(setCors);
@@ -45,6 +46,7 @@ let blogsRoute = require('./routes/blogs');
 app.use(blogsRoute);
 app.use(bodyParser.json());
 app.use(signup)
+app.use(login)
 
 
 

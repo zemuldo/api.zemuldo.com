@@ -2,7 +2,7 @@
 const express = require("express");
 const db = require('../../db')
 const logger = require('../../tools/logger')
-const user = require('../../db/schemas')
+const {userSchema} = require('../../db/schemas')
 const {signup} = require('../../db/utils/users')
 const sjsv = require('sjsv');
 
@@ -10,7 +10,7 @@ const router = express();
 
 router.post('/signup', (req, res) => {
     return new Promise((resolve,reject)=>{
-       let validator = new sjsv(user)
+       let validator = new sjsv(userSchema)
        let valid = validator.vaildate(req.body)
         if (valid===true) resolve({valid:true,e:validator.getErrors()})
         else reject({code:400,valid:false,e:validator.getErrors()}) 

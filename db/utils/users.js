@@ -131,7 +131,7 @@ module.exports = {
                 }
             })
     },
-    loginUser: (queryParam) => {
+    login: (queryParam) => {
         return new Promise(function (resolve, reject) {
                 if (!queryParam && !queryParam.dara) {
                     reject({

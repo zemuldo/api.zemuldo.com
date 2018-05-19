@@ -14,11 +14,6 @@ let hostDetils = {
 let date = new Date().toString()
 logger.info(hostDetils)
 
-const dotenv = require('dotenv').config({
-    path: process.env.NODE_ENV === 'test' ? 'test.env' :
-        (process.env.NODE_ENV === 'production' ? 'production.env' : '.env')
-});
-
 const server = require('./server/app');
 const express = require('./express/app');
 const socket = require('./ws/app');
@@ -26,6 +21,7 @@ const socket = require('./ws/app');
 server.on('request', express);
 let ENV = require('./config/env');
 
+if(!ENV.jwtKey) throw Error('jwt key cant be null')
 const errorCode = {
     12:{
         logger:function () {

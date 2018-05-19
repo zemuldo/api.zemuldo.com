@@ -1,4 +1,5 @@
 module.exports = {
+    jwtKey: process.env.JWT_KEY,
     live: {
         httpPort: 8090,
     },
