@@ -12,7 +12,8 @@ module.exports = {
                 type: 'string'
             },
             userName: {
-                type: 'string'
+                type: 'string',
+                dataType: 'a'
             },
             email: {
                 type: "string",
