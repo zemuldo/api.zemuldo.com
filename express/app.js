@@ -8,6 +8,7 @@ let checkMe = require('cookie-session')
 const compression = require('compression');
 const {setCors} = require('../tools/utilities')
 const signup = require('./routes/signup')
+const cookieParser = require('cookie-parser')
 const login = require('./routes/auth')
 let app = express();
 
@@ -25,6 +26,8 @@ app.use(helmet({
     frameguard: false,
     noCache:true
 }));
+
+app.use(cookieParser())
 
 app.use(express.static(path.join(__dirname, 'public')))
 

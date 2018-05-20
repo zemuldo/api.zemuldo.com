@@ -6,14 +6,12 @@ const {loginSchema} = require('../../db/schemas')
 const {login} = require('../../db/utils/users')
 const sjsv = require('sjsv');
 const jwt = require('jsonwebtoken');
-let expiry = 60 * 60
+let expiry = 60 * 5
 
 const router = express();
 
 function generateToken(user) {
-
-     ; // expires in 1 minute
-
+    
     user.token = jwt.sign(user, process.env.JWT_KEY, {
         expiresIn: expiry
      });
@@ -34,10 +32,11 @@ router.post('/login', (req, res) => {
         else throw {e:valid,code:400}
     })
     .then(o=>{
+        if(!o.id) throw o
         return generateToken(o)
     })
     .then(o=>{
-        res.cookie('ztoken',o.token, { maxAge: expiry});
+        res.cookie('ztoken',o.token,  { secure:false, maxAge: 60*60*24*1000});
         res.statusCode = o.code || 200
         res.send(o)
     })

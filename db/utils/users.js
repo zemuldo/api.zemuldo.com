@@ -13,6 +13,10 @@ const users = db.collection('users')
 const avatars = db.collection('avatars')
 const visitors = db.collection('visitors')
 let reviews = db.collection('reviews')
+const {
+    hash,
+    validate
+} = require('../../tools/crypt')
 
 module.exports = {
     signup: (queryData) => {
@@ -22,7 +26,6 @@ module.exports = {
         let imgStr;
         return new Promise(async function (resolve, reject) {
                 let date = new Date()
-                let password = crypto.createHash('sha256').update(queryData.password).digest().toString('hex');
                 imgStr = JSON.parse(queryData.avatar)
                 let av = {
                     rect: imgStr.rect,
@@ -37,7 +40,7 @@ module.exports = {
                     lastName: queryData.lastName,
                     userName: queryData.userName.toLowerCase(),
                     email: queryData.email.toLowerCase(),
-                    password: password,
+                    password: queryData.password,
                     avatar: av,
                     created: date.toISOString(),
                     date: new Date(),
@@ -132,6 +135,7 @@ module.exports = {
             })
     },
     login: (queryParam) => {
+        let user
         return new Promise(function (resolve, reject) {
                 if (!queryParam && !queryParam.dara) {
                     reject({
@@ -154,36 +158,37 @@ module.exports = {
                 }))
 
             })
-            .then(function (success) {
-                let password = crypto.createHash('sha256').update(queryParam.password).digest().toString('hex');
-                if (success) {
-                    if (success.password == password) {
-                        let user = {};
-                        Object.assign(user, success)
-                        user.password = null
-                        return success
-                    } else {
-                        return {
-                            error: 'Invalid Username or password',
-                            code: 404
-                        }
-                    }
+            .then(function (o) {
+                if (o) {
+                    user = o
+                    return validate(o.password,queryParam.password)
+
                 } else {
-                    return {
-                        error: 'Account not found, Signup Now',
+                    throw {
+                        e: 'Account not found, Signup Now',
                         code: 404
                     }
                 }
             })
-            .catch(function (error) {
-                if (error.code) {
-                    return error
+            .then(o => {
+                if (o) {
+                    return user
+                }
+                else {
+                    throw { e: 'invalid username or password', code: 401 }
+                }
+    
+            })
+            .catch(function (e) {
+                console.log(e)
+                if (e.code) {
+                    return e
                 } else {
                     return {
-                        error: 'Internal Server Error, try later',
+                        e: 'Internal Server Error, try later',
                         code: 500
                     }
-                    return error
+                    return e
                 }
             })
     },

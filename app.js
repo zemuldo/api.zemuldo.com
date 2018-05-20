@@ -22,6 +22,7 @@ server.on('request', express);
 let ENV = require('./config/env');
 
 if(!ENV.jwtKey) throw Error('jwt key cant be null')
+if(!process.env.PASSWORD_CRYPT_SALT_RANDOM) throw Error('password salt secret key cant be null')
 const errorCode = {
     12:{
         logger:function () {

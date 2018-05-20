@@ -4,6 +4,7 @@ const db = require('../../db')
 const logger = require('../../tools/logger')
 const {userSchema} = require('../../db/schemas')
 const {signup} = require('../../db/utils/users')
+const { hash, validate } = require('../../tools/crypt');
 const sjsv = require('sjsv');
 
 const router = express();
@@ -16,7 +17,9 @@ router.post('/signup', (req, res) => {
         else reject({code:400,valid:false,e:validator.getErrors()}) 
     })
     .then(o => {
-        if(o.valid) return signup(req.body) 
+        let user = req.body
+        user.password = hash(req.body.password)
+        if(o.valid) return signup(user) 
         else throw {e:valid,code:304}
     })
     .then(o=>{

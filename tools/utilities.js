@@ -123,9 +123,6 @@ module.exports = {
                 elem = letters.join('')
                 o.push(elem)
             }
-            else {
-                console.log("----------------------------")
-            }
         })
         return o.join(' ')
     },
