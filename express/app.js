@@ -10,6 +10,7 @@ const {setCors} = require('../tools/utilities')
 const signup = require('./routes/signup')
 const cookieParser = require('cookie-parser')
 const login = require('./routes/auth')
+const thumb = require('./routes/thumbnail')
 let app = express();
 
 app.use(setCors);
@@ -50,7 +51,7 @@ app.use(blogsRoute);
 app.use(bodyParser.json());
 app.use(signup)
 app.use(login)
-
+app.use(thumb)
 
 
 // Let's create the regular HTTP request and response
