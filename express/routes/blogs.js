@@ -18,7 +18,6 @@ router.use(requestIp.mw())
 router.use(redisUtil)
 
 router.post('/', (req, res) => {
-    console.log(req.cookies)
     return new Promise(function (resolve, reject) {
         if (db[req.body.queryMethod] && req.body.queryData) {
             resolve(db[req.body.queryMethod](req.body.queryData, `${JSON.stringify(req.body)}`))
@@ -48,7 +47,6 @@ router.post('/', (req, res) => {
 
 router.post('/uploads/images/:info', type, function (req, res) {
     if(req.params.info ==='delete'){
-        console.log(req.body)
         fs.unlinkSync(req.body.fullPath);
         res.send({deleted:true})
         return false

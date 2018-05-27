@@ -6,7 +6,6 @@ let msg_count = 0;
  
 sub.on("message", function (channel, message) {
     let {ttl, data, key} = JSON.parse(message)
-    console.log(channel)
     if(client.get('queries')){
         client.get('queries', function (err, data) {
             if (data) {

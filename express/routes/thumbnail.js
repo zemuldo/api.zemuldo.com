@@ -15,6 +15,7 @@ router.get('/image-thumbnail/:width/:height/:blurL/:blurR/:url(*)', function (re
             blurR = parseInt(req.params.blurR, 10),
             format = req.headers.accept.match(/(png|jpg|jpeg|gif)/)[0] || url.match(/(png|jpg|jpeg|gif)/)[0];
         res.set('Content-Type', `image/${format}`);
+        
         resolve(resize(request.get(url), format, toWidth, toHeight, blurL, blurR))
     })
         .then(o => {
