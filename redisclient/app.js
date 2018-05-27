@@ -9,12 +9,9 @@ sub.on("message", function (channel, message) {
     if(client.get('queries')){
         client.get('queries', function (err, data) {
             if (data) {
-                console.log('serving from redis by middleware')
-                console.log(data)
                 return data
             }
             else {
-                console.log('this endpoint not catched')
             }
         });
     }
@@ -32,12 +29,10 @@ module.exports = {
         if (req.body.queryMethod) {
             client.get(`${JSON.stringify(req.body)}`, function (err, data) {
                 if (data) {
-                    console.log('serving from redis by middleware')
                     res.send(data)
                     return data
                 }
                 else {
-                    console.log('this endpoint not catched')
                     next()
                 }
             });
