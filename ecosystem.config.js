@@ -12,8 +12,7 @@ module.exports = {
               "PORT": 8090,
               "NODE_ENV": "production",
           },
-          instances:'2',
-          exec_mode:"cluster"
+          instances:'2'
         },
         {
             name: "Zemuldo API Cluster 1 8091",
@@ -27,8 +26,7 @@ module.exports = {
                 "PORT": 8091,
                 "NODE_ENV": "production",
             },
-            instances:'2',
-          exec_mode:"cluster"
+            instances:'2'
         }
     ]
   }
