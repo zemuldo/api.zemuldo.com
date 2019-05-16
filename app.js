@@ -3,6 +3,7 @@ const os = require('os')
 const cluster = require('cluster')
 const numCPUs = require('os').cpus().length
 const logger = require('./tools/logger')
+require('dotenv').config()
 
 logger.info('Starting Zemuldo API Backend')
 let hostDetils = {
@@ -16,7 +17,6 @@ logger.info(hostDetils)
 
 const server = require('./server/app');
 const express = require('./express/app');
-const socket = require('./ws/app');
 
 server.on('request', express);
 let ENV = require('./config/env');
