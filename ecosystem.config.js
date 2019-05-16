@@ -29,21 +29,6 @@ module.exports = {
             },
             instances:'2',
           exec_mode:"cluster"
-        },
-        {
-            name: "Zemuldo API Cluster 2 8092",
-            script: "./app.js",
-            watch: true,
-            env: {
-                "PORT": 8092,
-                "NODE_ENV": "development"
-            },
-            env_production: {
-                "PORT": 8092,
-                "NODE_ENV": "production",
-            },
-            instances:'2',
-          exec_mode:"cluster"
         }
     ]
   }
