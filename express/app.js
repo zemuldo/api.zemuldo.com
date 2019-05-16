@@ -56,7 +56,7 @@ app.use(thumb)
 
 // Let's create the regular HTTP request and response
 app.get('/*', function(req, res) {
-    res.redirect('https://zemuldo.com')
+    res.send({status: 'Ok'})
 });
 
 module.exports = app;
