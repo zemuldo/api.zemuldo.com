@@ -2,6 +2,7 @@
 const os = require('os')
 const logger = require('./tools/logger')
 
+require('./db/mongoose')
 require("./ws/app.js")
 require('dotenv').config()
 
