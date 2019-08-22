@@ -1,0 +1,25 @@
+{
+  "name": "api.zemuldo.com",
+  "version": "1.0.0",
+  "description": "Zemuldo Website API",
+  "main": "app.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zemuldo/api.zemuldo.com.git"
+  },
+  "keywords": [
+    "zemuldo"
+  ],
+  "author": "Zemuldo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zemuldo/api.zemuldo.com/issues"
+  },
+  "homepage": "https://github.com/zemuldo/api.zemuldo.com#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
