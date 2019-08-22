@@ -15,8 +15,14 @@ router.get('/', async (req, res) => {
 router.get('/latest', (req, res) => {
     res.send("I will be sending the latest post")
 })
-router.get('/:postId', (req, res) => {
+router.get('/:postId', async (req, res) => {
     const { postId } = req.params
+    try {
+        const post = await posts.findById(postId)
+        res.send(post)
+    } catch (error) {
+        res.status(400).send([{errorType: "BAD_REQUEST", errorMessage: error.toString()}])
+    }
     res.send(`I will be sending one post with id ${postId}`)
 })
 
