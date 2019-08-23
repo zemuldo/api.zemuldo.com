@@ -6,6 +6,11 @@ module.exports = {
     get: async (params) => {
        return Post.find({}, [], { skip: parseInt(params.skip), limit: parseInt(params.limit) })
     },
+    getLatest: async () => {
+       const post = await Post.findOne({}).sort([['createdAt', -1]])
+       const postBody = await PostBody.findOne({postId: post._id})
+       return {post: post, postBody: postBody}
+    },
     findById: async (id) => {
        const post = await Post.findById(id)
        const postBody = await PostBody.find({postId: id})

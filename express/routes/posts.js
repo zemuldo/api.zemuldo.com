@@ -1,5 +1,5 @@
 const express = require("express");
-const posts = require('../../db/utils/posts')
+const posts = require('../../db/services/posts')
 
 const router = express()
 
@@ -12,8 +12,13 @@ router.get('/', async (req, res) => {
     }
 
 })
-router.get('/latest', (req, res) => {
-    res.send("I will be sending the latest post")
+router.get('/latest', async (req, res) => {
+    try {
+        const post = await posts.getLatest()
+        res.send(post)
+    } catch (error) {
+        res.status(400).send([{ errorType: "BAD_REQUEST", errorMessage: error.toString() }])
+    }
 })
 router.get('/:postId', async (req, res) => {
     const { postId } = req.params

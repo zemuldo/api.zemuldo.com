@@ -4,12 +4,11 @@ let express = require("express");
 let bodyParser = require('body-parser');
 let helmet = require('helmet')
 const compression = require('compression');
-const setCors = require('../tools/set_cors')
 const cookieParser = require('cookie-parser')
 
 const app = express();
 
-app.use(setCors);
+app.use(require('./plugs/cors'));
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(compression());
 app.use(bodyParser.json());
