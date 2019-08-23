@@ -1,10 +1,13 @@
 const Post = require('../models/post')
+const Draft = require('../models/draft')
 const PostBody = require('../models/postBody')
-const Q = require('q')
 
 module.exports = {
     get: async (params) => {
        return Post.find({}, [], { skip: parseInt(params.skip), limit: parseInt(params.limit) })
+    },
+    getDrafts:  async ()=>{
+      return Draft.find({})
     },
     getLatest: async () => {
        const post = await Post.findOne({}).sort([['createdAt', -1]])
@@ -22,5 +25,10 @@ module.exports = {
         await post.save()
         await postBody.save()
         return {post: post, body:  postBody}
+    },
+    createDraft: async (params) => {
+        const draft = new Draft(params)
+        await draft.save()
+        return draft
     }
 }
