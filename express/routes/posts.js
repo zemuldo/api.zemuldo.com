@@ -31,6 +31,15 @@ router.post('/drafts', async (req, res) => {
     }
 
 })
+router.put('/drafts', async (req, res) => {
+    try {
+        const draft = await posts.updateDraft(req.body)
+        res.send(draft)
+    } catch (error) {
+        res.status(400).send([{ errorType: "BAD_REQUEST", errorMessage: error.toString() }])
+    }
+
+})
 router.get('/latest', async (req, res) => {
     try {
         const post = await posts.getLatest()

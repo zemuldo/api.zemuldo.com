@@ -21,14 +21,24 @@ module.exports = {
     },
     create: async (params) => {
         const post = new Post(params)
-        const postBody = new PostBody({...params, postId: post._id})
+        const body = new PostBody({...params, postId: post._id})
         await post.save()
-        await postBody.save()
-        return {post: post, body:  postBody}
+        await body.save()
+        let draft = null
+        if(params.draftId){
+         draft = await Draft.remove({ _id: params.draftId })
+        }
+        return {post, body, draft}
     },
     createDraft: async (params) => {
         const draft = new Draft(params)
         await draft.save()
+        return draft
+    },
+    updateDraft: async (params) => {
+       if(!params._id) throw Error('Update must come with _id')
+       if(!params.update) throw Error('Update body must be sent')
+        const draft = await Draft.findOneAndUpdate({_id: params._id}, params.update, {new: true})
         return draft
     }
 }
