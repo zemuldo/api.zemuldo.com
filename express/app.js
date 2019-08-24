@@ -28,12 +28,15 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
 app.use('/posts', require('./routes/posts'))
+app.use('/user', require('./routes/user'))
 
 
 // Let's create the regular HTTP request and response
 app.get('/', function (req, res) {
     res.send({ status: 'Ok' })
 });
+app.get('/success', (req, res) => res.send("You have successfully logged in"));
+app.get('/error', (req, res) => res.send("error logging in"));
 app.get('/*', function (req, res) {
     res.status(404).send({ errors: [{ errorType: "NOT_FOUND", errorMessage: "Resource not found" }]})
 });
