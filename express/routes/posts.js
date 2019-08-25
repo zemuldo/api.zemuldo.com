@@ -3,7 +3,11 @@ const posts = require('../../db/services/posts')
 
 const router = express()
 
-router.get('/', async (req, res) => {
+router.get('/',(req, res, next) =>{
+    console.log(req.cookies)
+    if(!req.user) return res.send([])
+    next()
+}, async (req, res) => {
     try {
         const list = await posts.get(req.query)
         res.send(list)

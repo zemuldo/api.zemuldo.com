@@ -2,6 +2,11 @@ const express = require("express");
 const users = require('../../db/services/users')
 const passport = require('passport')
 const { Strategy } = require('passport-github')
+const jwt = require('jsonwebtoken');
+
+require('dotenv')
+
+const jwtKey = process.env.JWT_KEY
 
 const router = express()
 
@@ -17,42 +22,50 @@ passport.use(new Strategy({
     }
 ));
 
-// router.get('/auth/github',
-//     (req, res, next) => {
-//         req.coo.redirectTo = req.query.redirectTo
-//         next();
-//     },
-//     passport.authenticate('github'))
+router.get('/token', (req, res) =>{
+    if(req.user){
+        const token = jwt.sign(user, jwtKey, {expiresIn: 60 * 60 * 24 * 1000})
+        res.send({token})
+    } 
+    else {
+        res.status(401).send([{errorType: "SESSION_INVALID", errorMessage: "Oauth Login session not found"}])
+    }
+})
+router.get('/auth/user', (req, res) =>{
+    if(req.user) res.send(req.user);
+    else res.status(401).send({})
+})
 
-// router.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/error' }),
+router.get(`/auth/github`, (req, res, next) => {
+    const { redirectTo } = req.query
+    const state = JSON.stringify({ redirectTo })
+    const authenticator = passport.authenticate('github', { scope: [], state, session: true })
+    authenticator(req, res, next)
+}, (req, res, next) =>{
+    console.log(req.user)
+    next
+})
 
-//     function (req, res) {
-//         res.redirect("/");
-//     });
-
-    router.get(`/auth/github`, (req, res, next) => {
-        const { redirectTo } = req.query
-        console.log(redirectTo)
-        const state = JSON.stringify({redirectTo})
-        const authenticator = passport.authenticate('github', { scope: [], state })
-        authenticator(req, res, next)
-    })
-
-    router.get(
-        `/auth/github/callback`,
-        passport.authenticate('github', { failureRedirect: '/login' }),
-        (req, res) => {
+router.get(
+    `/auth/github/callback`,
+    passport.authenticate('github', { failureRedirect: '/login' }),
+    (req, res, next) => {
+        const token = jwt.sign({id: req.user.id}, jwtKey, {expiresIn: 60 * 60 * 24 * 1000})
+        req.logIn(req.user, function(err) {
+            if (err) { return next(err); }
             try {
                 const { state } = req.query
-                console.log(state)
                 const { redirectTo } = JSON.parse(state)
                 if (typeof redirectTo === 'string' && redirectTo.includes('//')) {
-                    return res.redirect(redirectTo)
+                    return res.redirect(`${redirectTo}?token=${token}`)
                 }
+                else return res.redirect(`http://localhost:3001?token=${token}`)
             } catch {
-                // just redirect normally below
+                res.redirect(`http://localhost:3001/login?token=${token}`)
             }
             res.redirect('/')
-        },
-    )
+          });
+        
+    },
+)
 module.exports = router;

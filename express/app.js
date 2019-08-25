@@ -6,19 +6,9 @@ let helmet = require('helmet')
 const compression = require('compression');
 const cookieParser = require('cookie-parser')
 const passport = require('passport')
+const session = require('express-session')
 
 const app = express();
-
-app.use(passport.initialize());
-app.use(passport.session());
-
-passport.serializeUser(function (user, cb) {
-    cb(null, user);
-});
-
-passport.deserializeUser(function (obj, cb) {
-    cb(null, obj);
-});
 
 app.use(require('./plugs/cors'));
 app.use(bodyParser.json({ limit: '50mb' }));
@@ -34,8 +24,20 @@ app.use(helmet({
     frameguard: false,
     noCache: true
 }));
+  // parse cookies
+app.use(cookieParser());
+app.use(session({ secret: 'anything' }));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(require('./plugs/auth'))
 
-app.use(cookieParser())
+passport.serializeUser(function (user, cb) {
+    cb(null, user);
+});
+
+passport.deserializeUser(function (obj, cb) {
+    cb(null, obj);
+});
 
 app.use(express.static(path.join(__dirname, 'public')))
 
@@ -46,8 +48,6 @@ app.use('/user', require('./routes/user'))
 app.get('/', function (req, res) {
     res.send({ status: 'Ok' })
 });
-app.get('/success', (req, res) => res.send("You have successfully logged in"));
-app.get('/error', (req, res) => res.send("error logging in"));
 app.get('/*', function (req, res) {
     res.status(404).send({ errors: [{ errorType: "NOT_FOUND", errorMessage: "Resource not found" }]})
 });
