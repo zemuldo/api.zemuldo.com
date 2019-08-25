@@ -5,8 +5,20 @@ let bodyParser = require('body-parser');
 let helmet = require('helmet')
 const compression = require('compression');
 const cookieParser = require('cookie-parser')
+const passport = require('passport')
 
 const app = express();
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser(function (user, cb) {
+    cb(null, user);
+});
+
+passport.deserializeUser(function (obj, cb) {
+    cb(null, obj);
+});
 
 app.use(require('./plugs/cors'));
 app.use(bodyParser.json({ limit: '50mb' }));
@@ -29,7 +41,6 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 app.use('/posts', require('./routes/posts'))
 app.use('/user', require('./routes/user'))
-
 
 // Let's create the regular HTTP request and response
 app.get('/', function (req, res) {
