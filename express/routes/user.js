@@ -17,23 +17,24 @@ passport.use(new Strategy({
 },
 
     function (accessToken, refreshToken, profile, cb) {
-        users.findOrCreate({ ...profile, accessToken, refreshToken })
+        users.findOrCreate({ 
+            ...profile, 
+            accessToken, 
+            refreshToken, 
+            oAuthId: profile.id, 
+            oAuthData: profile,
+            profilePhotoUrl: profile.photos[0]? profile.photos[0].value: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+         })
         return cb(null, profile);
     }
 ));
-
-router.get('/token', (req, res) =>{
-    if(req.user){
-        const token = jwt.sign(user, jwtKey, {expiresIn: 60 * 60 * 24 * 1000})
-        res.send({token})
-    } 
-    else {
-        res.status(401).send([{errorType: "SESSION_INVALID", errorMessage: "Oauth Login session not found"}])
+router.get('/', async (req, res) =>{
+    try {
+        const user = await users.fineById(req.custom_user.id)
+        res.send(user)
+    }catch(_){
+        res.status(401).send({error: "User not logged in"})
     }
-})
-router.get('/auth/user', (req, res) =>{
-    if(req.user) res.send(req.user);
-    else res.status(401).send({})
 })
 
 router.get(`/auth/github`, (req, res, next) => {
@@ -42,8 +43,7 @@ router.get(`/auth/github`, (req, res, next) => {
     const authenticator = passport.authenticate('github', { scope: [], state, session: true })
     authenticator(req, res, next)
 }, (req, res, next) =>{
-    console.log(req.user)
-    next
+    next()
 })
 
 router.get(

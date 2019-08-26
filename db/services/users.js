@@ -1,13 +1,20 @@
 const User = require('../models/user')
 
 module.exports = {
-    findOrCreate: async (oAuthData) =>{
-        const user = await User.findOne({oAuthId: oAuthData.oAuthId})
-        if(!user) {
-            const newUser = new User(oAuthData, { strict: false })
-            await newUser.save()
-            return newUser
+    findOrCreate: async (oAuthData) => {
+        try {
+            const user = await User.findOne({ oAuthId: oAuthData.id })
+            if (!user) {
+                const newUser = new User(oAuthData)
+                await newUser.save()
+                return newUser
+            }
+            return user;
+        } catch (e) {
+            return Error("User not found")
         }
-        return user;
+    },
+    fineById: async (id) => {
+        return User.findOne({ oAuthId: id })
     }
 }

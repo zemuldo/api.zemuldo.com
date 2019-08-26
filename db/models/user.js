@@ -2,6 +2,9 @@ const mongoose =  require('../mongoose.js')
 
 const Schema = mongoose.Schema;
 const userSchema = new Schema({
+    oAuthId: { type: Number, required: true },
+    oAuthData: { type: Object, required: true},
+    profilePhotoUrl: { type: String, required:  true},
     joined: { type: Date, default: Date.now },
     lastActive: { type: Date, default: Date.now },
 
@@ -11,6 +14,6 @@ const userSchema = new Schema({
     deletedAt: {
         type: Date
     }
-}, { strict: false });
+});
 
 module.exports = mongoose.model('User', userSchema);

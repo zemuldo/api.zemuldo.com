@@ -11,7 +11,7 @@ module.exports = (req, res, next) => {
             next()
         }
         else {
-            req.user = data
+            req.custom_user = data
             next()
         }
     });
