@@ -13,7 +13,6 @@ const app = express();
 app.use(require('./plugs/cors'));
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(compression());
-app.use(bodyParser.json());
 app.use(helmet())
 app.set('x-powered-by', false);
 app.set('X-Powered-By', false);

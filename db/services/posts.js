@@ -20,6 +20,7 @@ module.exports = {
        return {post: post, postBody: postBody}
     },
     create: async (params) => {
+        console.log(params)
         const post = new Post(params)
         const body = new PostBody({...params, postId: post._id})
         await post.save()

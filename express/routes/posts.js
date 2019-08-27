@@ -61,7 +61,8 @@ router.get('/:postId', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        const post = await posts.create(req.body)
+        if(!req.custom_user || !req.custom_user.id) throw Error("Please login first")
+        const post = await posts.create({...req.body, authorId: req.custom_user.id})
         res.send(post)
     } catch (error) {
         res.status(400).send([{ errorType: "BAD_REQUEST", errorMessage: error.toString() }])
