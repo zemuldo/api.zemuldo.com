@@ -25,7 +25,6 @@ app.use(helmet({
 }));
   // parse cookies
 app.use(cookieParser());
-app.use(session({ secret: 'anything' }));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(require('./plugs/auth'))
