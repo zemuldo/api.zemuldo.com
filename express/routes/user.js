@@ -13,7 +13,7 @@ const router = express()
 passport.use(new Strategy({
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackURL: "/user/auth/github/callback"
+    callbackURL: `${process.env.BASE_URL}/user/auth/github/callback`
 },
 
     function (accessToken, refreshToken, profile, cb) {
