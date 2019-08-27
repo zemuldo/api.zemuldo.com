@@ -7,7 +7,11 @@ mongoose.connect(`mongodb://${process.env.DB_HOST}/${process.env.DATABASE}`, {us
 
 const db = mongoose.connection;
 
-db.on('error', ()=> process.exit(999));
+db.on('error', (e)=> {
+  console.log(e)
+  process.exit(999)
+});
+
 db.once('open', function() {
   logger.info("DB Connected Successfully")
 });
