@@ -59,9 +59,9 @@ router.get(
                 if (typeof redirectTo === 'string' && redirectTo.includes('//')) {
                     return res.redirect(`${redirectTo}?token=${token}`)
                 }
-                else return res.redirect(`${process.env.FRONT_URL}?token=${token}`)
+                else return res.redirect(`${process.env.FRONTEND_URL}?token=${token}`)
             } catch {
-                res.redirect(`${process.env.FRONT_URL}/login?token=${token}`)
+                res.redirect(`${process.env.FRONTEND_URL}/login?token=${token}`)
             }
             res.redirect('/')
           });
