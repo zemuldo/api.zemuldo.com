@@ -59,9 +59,9 @@ router.get(
                 if (typeof redirectTo === 'string' && redirectTo.includes('//')) {
                     return res.redirect(`${redirectTo}?token=${token}`)
                 }
-                else return res.redirect(`http://localhost:3001?token=${token}`)
+                else return res.redirect(`${process.env.FRONT_URL}?token=${token}`)
             } catch {
-                res.redirect(`http://localhost:3001/login?token=${token}`)
+                res.redirect(`${process.env.FRONT_URL}/login?token=${token}`)
             }
             res.redirect('/')
           });
