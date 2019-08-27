@@ -31,7 +31,7 @@ passport.use(new Strategy({
 router.get('/', async (req, res) =>{
     try {
         const user = await users.fineById(req.custom_user.id)
-        res.send(user)
+        res.send(user || {})
     }catch(_){
         res.status(401).send({error: "User not logged in"})
     }

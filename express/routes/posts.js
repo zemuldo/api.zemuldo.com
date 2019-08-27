@@ -56,7 +56,6 @@ router.get('/:postId', async (req, res) => {
     } catch (error) {
         res.status(400).send([{ errorType: "BAD_REQUEST", errorMessage: error.toString() }])
     }
-    res.send(`I will be sending one post with id ${postId}`)
 })
 
 router.post('/', async (req, res) => {
@@ -68,9 +67,16 @@ router.post('/', async (req, res) => {
         res.status(400).send([{ errorType: "BAD_REQUEST", errorMessage: error.toString() }])
     }
 })
-router.put('/:postId', (req, res) => {
+router.post('/update/:postId', async (req, res) => {
+    if(!req.custom_user || !req.custom_user.id) throw Error("Please login first")
     const { postId } = req.params
-    res.send(`I will be updating one post with id ${postId}`)
+    try {
+        posts.updatePost(req.body)
+        const post = await posts.findById(postId)
+        res.send(post)
+    } catch(error){
+        res.status(400).send([{ errorType: "BAD_REQUEST", errorMessage: error.toString() }])
+    }
 })
 
 module.exports = router;

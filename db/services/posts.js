@@ -16,11 +16,10 @@ module.exports = {
     },
     findById: async (id) => {
        const post = await Post.findById(id)
-       const postBody = await PostBody.find({postId: id})
+       const postBody = await PostBody.findOne({postId: post.id})
        return {post: post, postBody: postBody}
     },
     create: async (params) => {
-        console.log(params)
         const post = new Post(params)
         const body = new PostBody({...params, postId: post._id})
         await post.save()
@@ -36,6 +35,13 @@ module.exports = {
         await draft.save()
         return draft
     },
+    updatePost: async (params) => {
+        if(!params._id) throw Error('Update must come with _id')
+        if(!params.update) throw Error('Update body must be sent')
+         const post = await Post.updateOne({_id: params._id}, params.update, {new: true})
+         const postBody = await PostBody.updateOne({postId: params._id}, params.update, {new: true})
+         return {post, postBody}
+     },
     updateDraft: async (params) => {
        if(!params._id) throw Error('Update must come with _id')
        if(!params.update) throw Error('Update body must be sent')
