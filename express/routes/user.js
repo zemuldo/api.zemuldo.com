@@ -56,10 +56,10 @@ router.get(
             try {
                 const { state } = req.query
                 const { redirectTo } = JSON.parse(state)
-                if (typeof redirectTo === 'string' && redirectTo.includes('//')) {
-                    return res.redirect(`${redirectTo}?token=${token}`)
+                if (redirectTo) {
+                    return res.redirect(`${process.env.FRONTEND_URL}/blog/login?redirectTo=${redirectTo}&token=${token}`)
                 }
-                else return res.redirect(`${process.env.FRONTEND_URL}?token=${token}`)
+                else return res.redirect(`${process.env.FRONTEND_URL}/blog/login?token=${token}`)
             } catch {
                 res.redirect(`${process.env.FRONTEND_URL}/login?token=${token}`)
             }
