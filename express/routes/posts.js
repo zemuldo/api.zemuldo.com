@@ -68,9 +68,11 @@ router.post('/', async (req, res) => {
     }
 })
 router.post('/update/:postId', async (req, res) => {
-    if(!req.custom_user || !req.custom_user.id) throw Error("Please login first")
+    
     const { postId } = req.params
     try {
+        if(!req.custom_user || !req.custom_user.id) throw Error("Please login first")
+    if(req.custom_user.id !== req.params.authorId) throw Error("You dont own this post!")
         posts.updatePost(req.body)
         const post = await posts.findById(postId)
         res.send(post)
