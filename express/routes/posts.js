@@ -60,23 +60,23 @@ router.get('/:postId', async (req, res) => {
 
 router.post('/', async (req, res) => {
     try {
-        if(!req.custom_user || !req.custom_user.id) throw Error("Please login first")
-        const post = await posts.create({...req.body, authorId: req.custom_user.id})
+        if (!req.custom_user || !req.custom_user.id) throw Error("Please login first")
+        const post = await posts.create({ ...req.body, authorId: req.custom_user.id })
         res.send(post)
     } catch (error) {
         res.status(400).send([{ errorType: "BAD_REQUEST", errorMessage: error.toString() }])
     }
 })
 router.post('/update/:postId', async (req, res) => {
-    
+
     const { postId } = req.params
     try {
-        if(!req.custom_user || !req.custom_user.id) throw Error("Please login first")
-    if(parseInt(req.custom_user.id) !== parseInt(req.params.authorId)) throw Error("You dont own this post!")
+        if (!req.custom_user || !req.custom_user.id) throw Error("Please login first")
+        if (parseInt(req.custom_user.id) !== parseInt(req.body.authorId)) throw Error("You dont own this post!")
         posts.updatePost(req.body)
         const post = await posts.findById(postId)
         res.send(post)
-    } catch(error){
+    } catch (error) {
         res.status(400).send([{ errorType: "BAD_REQUEST", errorMessage: error.toString() }])
     }
 })
