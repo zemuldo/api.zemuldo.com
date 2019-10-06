@@ -9,6 +9,10 @@ module.exports = {
     getDrafts:  async ()=>{
       return Draft.find({})
     },
+
+    getDraftById:  async (id)=>{
+      return Draft.findById(id)
+    },
     getLatest: async () => {
        const post = await Post.findOne({}).sort([['createdAt', -1]])
        const postBody = await PostBody.findOne({postId: post._id})
@@ -45,7 +49,7 @@ module.exports = {
     updateDraft: async (params) => {
        if(!params._id) throw Error('Update must come with _id')
        if(!params.update) throw Error('Update body must be sent')
-        const draft = await Draft.findOneAndUpdate({_id: params._id}, params.update, {new: true})
+        const draft = await Draft.updateOne({_id: params._id}, params.update, {new: true})
         return draft
     }
 }
