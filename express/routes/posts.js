@@ -39,6 +39,17 @@ router.get('/draft/:draftId', requires_auth, async (req, res) => {
     }
 
 })
+
+router.delete('/draft/:draftId', requires_auth, async (req, res) => {
+    try {
+        const { draftId } = req.params;
+        const deleted = await posts.deleteDraft(draftId)
+        res.send(deleted)
+    } catch (error) {
+        res.status(400).send([{ errorType: "BAD_REQUEST", errorMessage: error.toString() }])
+    }
+
+})
 router.post('/draft', requires_auth, async (req, res) => {
     try {
         const draft = await posts.createDraft({ ...req.body, authorId: req.custom_user.id })
@@ -89,7 +100,7 @@ router.post('/update/:postId', requires_auth, async (req, res) => {
 
     const { postId } = req.params
     try {
-        if (parseInt(req.custom_user.id) !== parseInt(req.body.authorId)) throw Error("You dont own this post!")
+        if (parseInt(req.custom_user.id) !== parseInt(req.body.authorId)) throw Error("You don't own this post!")
         posts.updatePost(req.body)
         const post = await posts.findById(postId)
         res.send(post)

@@ -13,6 +13,10 @@ module.exports = {
     getDraftById:  async (id)=>{
       return Draft.findById(id)
     },
+
+    deleteDraft:  async (id)=>{
+      return Draft.deleteOne({_id: id})
+    },
     getLatest: async () => {
        const post = await Post.findOne({}).sort([['createdAt', -1]])
        const postBody = await PostBody.findOne({postId: post._id})
