@@ -1,0 +1,18 @@
+# Add 'repo' label to any root file changes
+repo:
+  - ./*
+  
+database:
+  - db/*
+
+server:
+  - express/*
+
+server:
+  - server/*
+
+packages:
+  - package*
+
+test:
+  - test/*
