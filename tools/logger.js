@@ -10,77 +10,74 @@ const logger = new (winston.Logger)({
         return options.timestamp() + ' ' +
           config.colorize(options.level, options.level.toUpperCase()) + ' ' +
           (options.message ? options.message : '') +
-          config.colorize(options.level,(options.meta && Object.keys(options.meta).length ? '\n\t'+ JSON.stringify(options.meta) : '' ))
+          config.colorize(options.level,(options.meta && Object.keys(options.meta).length ? '\n\t'+ JSON.stringify(options.meta) : '' ));
       },
       prettyPrint: true
     })
   ]
 });
 winston.addColors({
-    error: 'red',
-    warn: 'yellow',
-    info: 'blue',
-    debug: 'green'
+  error: 'red',
+  warn: 'yellow',
+  info: 'blue',
+  debug: 'green'
 });
 
 module.exports = {
-    error: (mess) => {
+  error: (mess) => {
 
-        logger.error('error', { mess: mess, worker: { pid: process.pid } });
+    logger.error('error', { mess: mess, worker: { pid: process.pid } });
 
-    },
-    warn: (mess) => {
+  },
+  warn: (mess) => {
 
-        logger.warn('warning', { mess: mess, worker: { pid: process.pid } });
-    },
-    success: (mess) => {
+    logger.warn('warning', { mess: mess, worker: { pid: process.pid } });
+  },
+  success: (mess) => {
 
-        logger.info('success', { mess: mess, worker: { pid: process.pid } });
+    logger.info('success', { mess: mess, worker: { pid: process.pid } });
 
-    },
-    system: (mess) => {
+  },
+  system: (mess) => {
 
-        logger.log('SYSTEM', { mess: mess, worker: { pid: process.pid } });
+    logger.log('SYSTEM', { mess: mess, worker: { pid: process.pid } });
 
-    },
-    fail: (mess) => {
+  },
+  fail: (mess) => {
 
-        logger.log('FAILED', { mess: mess, worker: { pid: process.pid } });
+    logger.log('FAILED', { mess: mess, worker: { pid: process.pid } });
 
-    },
-    internal: (mess) => {
+  },
+  internal: (mess) => {
 
-        logger.info('INTERNAL', { mess: mess, worker: { pid: process.pid } });
-    },
-    info: (mess) => {
+    logger.info('INTERNAL', { mess: mess, worker: { pid: process.pid } });
+  },
+  info: (mess) => {
 
-        logger.info('INTERNAL', { mess: mess, worker: { pid: process.pid } });
-    },
-    status: (mess) => {
+    logger.info('INTERNAL', { mess: mess, worker: { pid: process.pid } });
+  },
+  status: (mess) => {
 
-        logger.info('STATUS', { mess: mess, worker: { pid: process.pid } });
+    logger.info('STATUS', { mess: mess, worker: { pid: process.pid } });
 
-    },
-    timeout: (mess) => {
+  },
+  timeout: (mess) => {
 
-        logger.error('ERROR', { mess: mess, worker: { pid: process.pid } });
-    },
-    sql: (mess) => {
+    logger.error('ERROR', { mess: mess, worker: { pid: process.pid } });
+  },
+  sql: (mess) => {
 
-        logger.info('DB', { mess: mess, worker: { pid: process.pid } });
+    logger.info('DB', { mess: mess, worker: { pid: process.pid } });
 
-    },
-    db: (mess) => {
+  },
+  db: (mess) => {
 
-        logger.info(`DB`, { task:mess.task || 'unspcified', query:mess.query, mess: mess.mess, worker: { pid: process.pid } });
+    logger.info('DB', { task: mess.task || 'unspcified', query: mess.query, mess: mess.mess, worker: { pid: process.pid } });
 
-    },
-    bus: (mess,bus) => {
+  },
+  bus: (mess,bus) => {
 
-        logger.info(`${bus.vehicleID}`, { mess: mess, bus:bus, worker: { pid: process.pid } });
+    logger.info(`${bus.vehicleID}`, { mess: mess, bus: bus, worker: { pid: process.pid } });
 
-    },
-    warn:(mess)=>{
-        logger.warn( { mess: mess,worker: { pid: process.pid } })
-    }
-}
+  }
+};

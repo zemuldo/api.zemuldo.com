@@ -1,19 +1,20 @@
 const mongoose = require('mongoose');
-const logger = require('../tools/logger')
+const logger = require('../tools/logger');
 
-require('dotenv').config()
+require('dotenv').config();
 
 mongoose.connect(`mongodb://${process.env.DB_HOST}/${process.env.DATABASE}`, {useNewUrlParser: true});
 
 const db = mongoose.connection;
 
 db.on('error', (e)=> {
-  console.log(e)
-  process.exit(999)
+  logger(e.toString());
+  logger(e.stack);
+  process.exit(999);
 });
 
 db.once('open', function() {
-  logger.info("DB Connected Successfully")
+  logger.info('DB Connected Successfully');
 });
 
 module.exports = mongoose;
