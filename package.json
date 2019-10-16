@@ -4,8 +4,9 @@
   "description": "Zemuldo Website API",
   "main": "app.js",
   "scripts": {
-    "test": "NODE_ENV=test mocha",
+    "test": "NODE_ENV=test mocha --exit",
     "test:watch": "NODE_ENV=test nodemon --exec \"mocha -R min\"",
+    "pretest": "NODE_ENV=test eslint . --fix",
     "lint": "NODE_ENV=test eslint . --fix",
     "dev": "nodemon app.js",
     "start": "pm2 start app.js --name API"
