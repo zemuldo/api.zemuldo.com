@@ -39,6 +39,17 @@ module.exports = {
     }
     return { post, body, draft };
   },
+
+  deletePostById: async (id) =>{
+    const post = await Post.findById(id);
+
+    if (!post) throw 'Deleting a post that doesn\'t exist.';
+
+    const postBody = PostBody.findOne({postId: post._id});
+
+    return Promise.all([post.deleteOne(), postBody.deleteOne()]);
+
+  },
   createDraft: async (params) => {
     const draft = new Draft(params);
     await draft.save();

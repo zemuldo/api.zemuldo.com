@@ -1,5 +1,5 @@
 const express = require('express');
-const posts = require('../../db/services/posts');
+const posts = require('../../db/services/post');
 
 const router = express();
 
