@@ -39,7 +39,7 @@ passport.deserializeUser(function (obj, cb) {
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/posts', require('./routes/posts'));
+app.use('/post', require('./routes/post'));
 app.use('/user', require('./routes/user'));
 
 // Let's create the regular HTTP request and response

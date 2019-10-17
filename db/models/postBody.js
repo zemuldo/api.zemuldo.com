@@ -17,4 +17,4 @@ postBodySchema.index({'createdAt': 1});
 postBodySchema.index({'updatedAt': 1});
 postBodySchema.index({'postId': 1});
 
-module.exports = mongoose.model('PostBody', postBodySchema);
+module.exports = mongoose.models.PostBody || mongoose.model('PostBody', postBodySchema);

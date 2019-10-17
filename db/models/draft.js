@@ -21,4 +21,4 @@ draftSchema.index({ 'createdAt': 1 });
 draftSchema.index({ 'updatedAt': 1 });
 draftSchema.index({ 'postId': 1 });
 
-module.exports = mongoose.model('Draft', draftSchema);
+module.exports = mongoose.models.Draft || mongoose.model('Draft', draftSchema);

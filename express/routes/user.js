@@ -2,11 +2,9 @@ const express = require('express');
 const users = require('../../db/services/users');
 const passport = require('passport');
 const { Strategy } = require('passport-github');
-const jwt = require('jsonwebtoken');
+const jwt = require('../../tools/jwt');
 
 require('dotenv');
-
-const jwtKey = process.env.JWT_KEY;
 
 const router = express();
 
@@ -50,7 +48,7 @@ router.get(
   '/auth/github/callback',
   passport.authenticate('github', { failureRedirect: '/login' }),
   (req, res, next) => {
-    const token = jwt.sign({id: req.user.id}, jwtKey, {expiresIn: 60 * 60 * 24 * 1000});
+    const token = jwt.sign(req.user.id);
     req.logIn(req.user, function(err) {
       if (err) {
         return next(err); 
