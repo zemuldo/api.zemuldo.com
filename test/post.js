@@ -33,23 +33,22 @@ describe('HTTP API', function() {
         .catch(e=> done(e));
     });
 
-    // it('GET Post, Should Get posts', function(done) {
-    //   this.timeout(5000);
-    //   chai.request(app).get('/post')
-    //     .then((res)=>{
-    //       assert.deepEqual(res.status, 200);
-    //       assert.deepEqual(res.body, expectedResponse.rootPathResponse);
-    //       done();
-    //     })
-    //     .catch(e=> done(e));
-    // });
+    it('GET /post, Should Get posts', function(done) {
+      this.timeout(5000);
+      chai.request(app).get('/post')
+        .then((res)=>{
+          expect(res.status).equal(200);
+          expect(res.body).to.be.a('array').length(1);
+          expect(res.body[0].title).eql(post.title);
+          done();
+        })
+        .catch(e=> done(e));
+    });
   });
 
   after(function(done) {
     postService.deletePostById(postId)
-    .then(()=>done())
-    .catch(e=>done(e))
-
-    
+      .then(()=>done())
+      .catch(e=>done(e));
   });
 });
