@@ -34,3 +34,5 @@ process.on('warning', (warning) => {
 process.on('message', (message=>{
   logger.info(message);
 }));
+
+module.exports = server;

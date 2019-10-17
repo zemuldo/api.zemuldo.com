@@ -4,8 +4,10 @@
   "description": "Zemuldo Website API",
   "main": "app.js",
   "scripts": {
-    "test": "mocha",
-    "lint": "eslint . --fix",
+    "test": "NODE_ENV=test mocha --exit",
+    "test:watch": "NODE_ENV=test nodemon --exec \"mocha -R min\"",
+    "pretest": "NODE_ENV=test eslint . --fix",
+    "lint": "NODE_ENV=test eslint . --fix",
     "dev": "nodemon app.js",
     "start": "pm2 start app.js --name API"
   },
@@ -42,7 +44,10 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.0.3",
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
     "eslint": "^6.5.1",
-    "eslint-plugin-import": "^2.18.2"
+    "eslint-plugin-import": "^2.18.2",
+    "mocha": "^6.2.1"
   }
 }

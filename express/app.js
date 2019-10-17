@@ -6,6 +6,7 @@ let helmet = require('helmet');
 const compression = require('compression');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
+const {rootPathResponse} = require('./definitions/responses');
 
 const app = express();
 
@@ -43,7 +44,7 @@ app.use('/user', require('./routes/user'));
 
 // Let's create the regular HTTP request and response
 app.get('/', function (req, res) {
-  res.send({ status: 'Ok' });
+  res.send(rootPathResponse);
 });
 app.get('/*', function (req, res) {
   res.status(404).send({ errors: [{ errorType: 'NOT_FOUND', errorMessage: 'Resource not found' }]});
