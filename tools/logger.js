@@ -25,8 +25,8 @@ winston.addColors({
 });
 
 module.exports = {
-  error: (mess) => {
-    if (!log) return;
+  error: (mess, always) => {
+    if (!log && !always) return;
 
     logger.error('error', { mess: mess, worker: { pid: process.pid } });
 

@@ -8,8 +8,8 @@ mongoose.connect(`mongodb://${process.env.DB_HOST}/${process.env.DATABASE}`, {us
 const db = mongoose.connection;
 
 db.on('error', (e)=> {
-  logger(e.toString());
-  logger(e.stack);
+  logger.error(e.toString(), true);
+  logger.error(e.stack, true);
   process.exit(999);
 });
 
