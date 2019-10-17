@@ -20,4 +20,4 @@ postSchema.index({'createdAt': 1});
 postSchema.index({'updatedAt': 1});
 postSchema.index({'postId': 1});
 
-module.exports = mongoose.model('Post', postSchema);
+module.exports = mongoose.models.Post ||  mongoose.model('Post', postSchema);

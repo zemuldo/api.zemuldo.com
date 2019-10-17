@@ -1,3 +1,3 @@
 module.exports = {
-  rootPathResponse: { status: 'Ok' }
+  rootPathResponse: { status: 'OK' }
 };
