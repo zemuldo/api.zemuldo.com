@@ -3,18 +3,22 @@ services:
   site-api-dev:
     build:
       context: ./
-      dockerfile: ./.docker/Dockerfile.development
-    command: node app.js
+      dockerfile: ./.docker/dev.Dockerfile
+    command: pm2 start --no-daemon app.js --watch
     env_file:
       - .env
     environment:
       - DB_HOST=mongo
     restart: always
     volumes:
-      - .:/app
+      - .:/usr/src/app
     ports:
       - "8090:8090"
     container_name: api
+    depends_on:
+      - mongo
+    networks:
+      - api-net
 
   mongo:
     container_name: mongo
@@ -25,3 +29,10 @@ services:
       - ~/data/mongodb:/data/db
 
     restart: always
+
+    networks:
+      - api-net
+
+networks:
+  api-net:
+    driver: bridge
