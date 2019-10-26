@@ -1,0 +1,33 @@
+version: "3.7"
+services:
+
+  site-api:
+    restart: always
+    volumes:
+      - .:/app
+    ports:
+      - "8090:8090"
+    env_file:
+      - .env
+    container_name: ui
+    image: gcr.io/$GCP_PROJECT_ID/site-api
+    labels:
+      - com.centurylinklabs.watchtower.enable=true
+
+  mongo:
+    container_name: mongo
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes: 
+      - '/var/lib/mongodb:/data/db'
+
+    restart: always
+
+  watch-api:
+        image: v2tec/watchtower
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - ~/.docker/config.json:/config.json
+        restart: always
+
