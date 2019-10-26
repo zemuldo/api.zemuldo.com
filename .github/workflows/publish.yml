@@ -1,0 +1,33 @@
+name: Build & Publish
+on: 
+  push:
+      branches:    
+          - master
+jobs:
+  to_gcr_io:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Git-Crypt Unlock
+      uses: zemuldo/git-crypt-unlock@master
+      env: 
+        GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+        GPG_KEY_GRIP: ${{ secrets.GPG_KEY_GRIP }}
+        GPG_KEY_PASS: ${{ secrets.GPG_KEY_PASS }}
+    - name: Create ENV File
+      run: |
+        touch .env
+        
+    - name: Build and Push
+      uses: zemuldo/docker-build-push@master
+      env:
+        GA_TRACKING_ID: ${{ secrets.GA_TRACKING_ID }}
+        GCLOUD_PROJECT_ID: ${{ secrets.GCLOUD_PROJECT_ID }}
+        GCLOUD_AUTH: ${{ secrets.GCLOUD_AUTH }}
+        REGISTRY_URL: "gcr.io"
+      with:
+       image_name: "site-api"
+       image_tag: "latest"
+
+    
