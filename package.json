@@ -9,7 +9,8 @@
     "pretest": "NODE_ENV=test eslint . --fix",
     "lint": "NODE_ENV=test eslint . --fix",
     "dev": "nodemon app.js",
-    "start": "pm2 start app.js --name API"
+    "start:pm2": "pm2 start app.js --name API",
+    "start": "NODE_ENV=production node app.js"
   },
   "repository": {
     "type": "git",
