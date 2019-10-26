@@ -1,33 +1,38 @@
 version: "3.7"
 services:
-
-  site-api:
-    restart: always
-    volumes:
-      - .:/app
-    ports:
-      - "8090:8090"
+  site-api-dev:
+    build:
+      context: ./
+      dockerfile: ./.docker/dev.Dockerfile
+    command: pm2 start --no-daemon app.js --watch
     env_file:
       - .env
-    container_name: ui
-    image: gcr.io/$GCP_PROJECT_ID/site-api
-    labels:
-      - com.centurylinklabs.watchtower.enable=true
+    environment:
+      - DB_HOST=mongo
+    restart: always
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - "8090:8090"
+    container_name: api
+    depends_on:
+      - mongo
+    networks:
+      - api-net
 
   mongo:
     container_name: mongo
     image: mongo:latest
     ports:
       - "27017:27017"
-    volumes: 
-      - '/var/lib/mongodb:/data/db'
+    volumes:
+      - ~/data/mongodb:/data/db
 
     restart: always
 
-  watch-api:
-        image: v2tec/watchtower
-        volumes:
-            - /var/run/docker.sock:/var/run/docker.sock
-            - ~/.docker/config.json:/config.json
-        restart: always
+    networks:
+      - api-net
 
+networks:
+  api-net:
+    driver: bridge
