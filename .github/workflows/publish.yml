@@ -1,7 +1,7 @@
 name: Build & Publish
 on: 
   push:
-      branches:    
+      branches:
           - master
 jobs:
   to_gcr_io:
