@@ -8,7 +8,7 @@ function connectionString (){
   else `mongodb://${process.env.DB_HOST}/${process.env.DATABASE}`
 }
 
-mongoose.connect(, {useNewUrlParser: true});
+mongoose.connect(connectionString(), {useNewUrlParser: true});
 
 const db = mongoose.connection;
 
