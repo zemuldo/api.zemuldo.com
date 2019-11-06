@@ -3,7 +3,12 @@ const logger = require('../tools/logger');
 
 require('dotenv').config();
 
-mongoose.connect(`mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.DB_HOST}/${process.env.DATABASE}`, {useNewUrlParser: true});
+function connectionString (){
+  if (process.env.NODE_ENV === 'production') `mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.DB_HOST}/${process.env.DATABASE}`
+  else `mongodb://${process.env.DB_HOST}/${process.env.DATABASE}`
+}
+
+mongoose.connect(, {useNewUrlParser: true});
 
 const db = mongoose.connection;
 
