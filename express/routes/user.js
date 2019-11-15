@@ -57,6 +57,7 @@ router.get(
         const { state } = req.query;
         const { redirectTo } = JSON.parse(state);
         if (redirectTo) {
+          res.set('token', token);
           return res.redirect(`${process.env.FRONTEND_URL}/blog/login?redirectTo=${redirectTo}&token=${token}`);
         } else return res.redirect(`${process.env.FRONTEND_URL}/blog/login?token=${token}`);
       } catch {
