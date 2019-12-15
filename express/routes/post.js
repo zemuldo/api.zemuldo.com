@@ -9,6 +9,11 @@ const requires_auth = (req, res, next) => {
   next();
 };
 
+router.use((_res, res, next)=> {
+  res.cookie('1__cookieName', 'cookieValue');
+  next();
+});
+
 router.get('/', async (req, res) => {
   try {
     const list = await posts.get(req.query);
