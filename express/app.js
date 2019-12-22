@@ -7,8 +7,14 @@ const compression = require('compression');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const {rootPathResponse} = require('./definitions/responses');
+const logger = require('../tools/logger')
 
 const app = express();
+
+app.use((req, _res, next) =>{
+  logger.info(`New Request - ${req.protocol.toUpperCase()} - ${req.url}`);
+  next();
+});
 
 app.use(require('./plugs/cors'));
 app.use(bodyParser.json({ limit: '50mb' }));
