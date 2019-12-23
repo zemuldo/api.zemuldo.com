@@ -11,7 +11,7 @@ const router = express();
 passport.use(new Strategy({
   clientID: process.env.GITHUB_CLIENT_ID,
   clientSecret: process.env.GITHUB_CLIENT_SECRET,
-  callbackURL: `${process.env.BASE_URL}/user/auth/github/callback`
+  callbackURL: `${process.env.API_URL}/user/auth/github/callback`
 },
 
 function (accessToken, refreshToken, profile, cb) {
@@ -58,10 +58,10 @@ router.get(
         const { redirectTo } = JSON.parse(state);
         if (redirectTo) {
           res.set('token', token);
-          return res.redirect(`${process.env.FRONTEND_URL}/blog/login?redirectTo=${redirectTo}&token=${token}`);
-        } else return res.redirect(`${process.env.FRONTEND_URL}/blog/login?token=${token}`);
+          return res.redirect(`${process.env.UI_URL}/blog/login?redirectTo=${redirectTo}&token=${token}`);
+        } else return res.redirect(`${process.env.UI_URL}/blog/login?token=${token}`);
       } catch {
-        res.redirect(`${process.env.FRONTEND_URL}/login?token=${token}`);
+        res.redirect(`${process.env.UI_URL}/login?token=${token}`);
       }
       res.redirect('/');
     });
