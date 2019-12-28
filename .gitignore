@@ -4,3 +4,4 @@ node_modules
 .gitmodules
 *.env
 .vscode
+z-site-images/

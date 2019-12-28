@@ -7,7 +7,7 @@ const compression = require('compression');
 const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const {rootPathResponse} = require('./definitions/responses');
-const logger = require('../tools/logger')
+const logger = require('../tools/logger');
 
 const app = express();
 
@@ -47,6 +47,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/post', require('./routes/post'));
 app.use('/user', require('./routes/user'));
+app.use('/image', require('./routes/image'));
 
 // Let's create the regular HTTP request and response
 app.get('/', function (req, res) {

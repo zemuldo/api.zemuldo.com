@@ -5,7 +5,13 @@ const isSameDate = require('../../tools/is_same_date');
 
 module.exports = {
   get: async (params) => {
-    return Post.find({}, [], { skip: parseInt(params.skip, 10), limit: parseInt(params.limit, 10) });
+    return Post.find({}, [], {
+      skip: parseInt(params.skip, 10),
+      limit: parseInt(params.limit, 10),
+      sort: {
+        updatedAt: -1
+      }
+    });
   },
   getDrafts: async () => {
     return Draft.find({});
@@ -40,12 +46,12 @@ module.exports = {
     return { post, body, draft };
   },
 
-  deletePostById: async (id) =>{
+  deletePostById: async (id) => {
     const post = await Post.findById(id);
 
     if (!post) throw 'Deleting a post that doesn\'t exist.';
 
-    const postBody = PostBody.findOne({postId: post._id});
+    const postBody = PostBody.findOne({ postId: post._id });
 
     return Promise.all([post.deleteOne(), postBody.deleteOne()]);
 
@@ -66,7 +72,7 @@ module.exports = {
     if (!params._id) throw Error('Update must come with _id');
     if (!params.update) throw Error('Update body must be sent');
     const draft = await Draft.findById(params._id);
-    
+
     if (!params.update.last_update) {
       const data = await draft.save();
       return { ...data._doc, rejected: true };
