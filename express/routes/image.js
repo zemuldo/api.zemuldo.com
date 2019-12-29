@@ -13,6 +13,7 @@ router.get('/', async (req, res) => {
     const list = await imageService.get(req.query);
     res.send(list);
   } catch (error) {
+    console.log(error);
     res.status(400).send([{ errorType: 'BAD_REQUEST', errorMessage: error.toString() }]);
   }
 
@@ -21,7 +22,7 @@ router.get('/', async (req, res) => {
 router.post('/:name', requires_auth, async (req, res) => {
   try {
     await imageService.createWithUniqueName({
-      name: req.params.name,
+      name: req.params.name.toLowerCase(),
       ownerId: parseInt(req.custom_user.id, 16)
     });
     res.send('Files saved');
