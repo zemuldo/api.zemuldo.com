@@ -2,6 +2,16 @@ const Image = require('../models/image');
 
 module.exports = {
   get: async (params) => {
+    if (params.search) {
+      const searchString = `.*${params.search}.*`;
+      return Image.find({name: {$regex: searchString}}, [], {
+        skip: parseInt(params.skip, 10),
+        limit: parseInt(params.limit, 10),
+        sort: {
+          updatedAt: -1
+        }
+      });
+    }
     return Image.find({}, [], {
       skip: parseInt(params.skip, 10),
       limit: parseInt(params.limit, 10),
