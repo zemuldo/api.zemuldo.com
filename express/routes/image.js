@@ -13,7 +13,6 @@ router.get('/', async (req, res) => {
     const list = await imageService.get(req.query);
     res.send(list);
   } catch (error) {
-    console.log(error);
     res.status(400).send([{ errorType: 'BAD_REQUEST', errorMessage: error.toString() }]);
   }
 
