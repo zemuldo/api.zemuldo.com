@@ -4,7 +4,8 @@ const logger = require('../tools/logger');
 require('dotenv').config();
 
 function connectionString (){
-  if (process.env.NODE_ENV === 'production') return `mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.DB_HOST}/${process.env.DATABASE}`;
+  if (process.env.MONGO_URI) return process.env.MONGO_URI;
+  else if (process.env.NODE_ENV === 'production') return `mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.DB_HOST}/${process.env.DATABASE}`;
   else return `mongodb://${process.env.DB_HOST}/${process.env.DATABASE}`;
 }
 
