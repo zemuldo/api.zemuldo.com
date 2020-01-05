@@ -48,6 +48,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/post', require('./routes/post'));
 app.use('/user', require('./routes/user'));
 app.use('/image', require('./routes/image'));
+app.use('/tag', require('./routes/tag'));
 
 // Let's create the regular HTTP request and response
 app.get('/', function (req, res) {

@@ -10,6 +10,7 @@ const postSchema = new Schema({
   updatedAt: { type: Date, default: Date.now },
   deleted: { type: Boolean, default: false},
   tags: {type: Array, required: true},
+  metaTags: {type: Array, required: false, default: []},
 
   deletedAt: {
     type: Date

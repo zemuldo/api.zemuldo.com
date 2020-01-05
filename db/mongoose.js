@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const logger = require('../tools/logger');
+const tags = require('./data/meta_tags');
 
 require('dotenv').config();
 
@@ -19,8 +20,18 @@ db.on('error', (e)=> {
   process.exit(999);
 });
 
-db.once('open', function() {
+db.once('open', async function() {
   logger.info('DB Connected Successfully');
+  logger.info('Seeding tags');
+
+  const Tag = require('./models/tag');
+  await tags.map((t)=>{
+    const tag = new Tag(t);
+    tag.save()
+      .then((_d)=>true)
+      .catch(_e=>false);
+
+  });
 });
 
 module.exports = mongoose;
