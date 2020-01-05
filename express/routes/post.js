@@ -96,7 +96,7 @@ router.post('/', requires_auth, async (req, res) => {
     res.status(400).send([{ errorType: 'BAD_REQUEST', errorMessage: error.toString() }]);
   }
 });
-router.post('/update/:postId', requires_auth, async (req, res) => {
+router.put('/:postId', requires_auth, async (req, res) => {
 
   const { postId } = req.params;
   try {
