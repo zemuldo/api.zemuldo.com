@@ -26,7 +26,7 @@ db.once('open', async function() {
 
   const Tag = require('./models/tag');
   await tags.map((t)=>{
-    const tag = new Tag(t);
+    const tag = new Tag({...t, _id: t.value});
     tag.save()
       .then((_d)=>true)
       .catch(_e=>false);
