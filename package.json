@@ -4,6 +4,7 @@
   "description": "Zemuldo Website API",
   "main": "app.js",
   "scripts": {
+    "pm2-start": "NODE_ENV=production pm2 start app.js --name 'site-api'",
     "test": "NODE_ENV=test mocha --exit",
     "test:watch": "NODE_ENV=test mocha -w",
     "pretest": "NODE_ENV=test eslint . --fix",
