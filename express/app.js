@@ -32,17 +32,11 @@ app.use(helmet({
 // parse cookies
 app.use(cookieParser());
 app.use(passport.initialize());
-app.use(passport.session());
-app.use(require('./plugs/auth'));
 
 passport.serializeUser(function (user, cb) {
   cb(null, user);
 });
-
-passport.deserializeUser(function (obj, cb) {
-  cb(null, obj);
-});
-
+app.use(require('./plugs/auth'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/post', require('./routes/post'));
