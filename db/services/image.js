@@ -5,8 +5,8 @@ module.exports = {
     if (params.search) {
       const searchString = `.*${params.search}.*`;
       return Image.find({name: {$regex: searchString}}, [], {
-        skip: parseInt(params.skip, 10),
-        limit: parseInt(params.limit, 10),
+        skip: parseInt(params.skip, 12),
+        limit: parseInt(params.limit, 12),
         sort: {
           _: -1
         }
@@ -16,7 +16,7 @@ module.exports = {
       {$sort: {_id: -1}},
       {$skip: parseInt(params.skip, 0)}, 
       {$limit: parseInt(params.limit, 12)},
-      {$sample: {size: 6}}
+      {$sample: {size: 12}}
     ]);
   },
   findById: async (id) => {
