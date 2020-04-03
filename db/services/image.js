@@ -8,17 +8,16 @@ module.exports = {
         skip: parseInt(params.skip, 10),
         limit: parseInt(params.limit, 10),
         sort: {
-          updatedAt: -1
+          _: -1
         }
       });
     }
-    return Image.find({}, [], {
-      skip: parseInt(params.skip, 10),
-      limit: parseInt(params.limit, 10),
-      sort: {
-        updatedAt: -1
-      }
-    });
+    return Image.aggregate([
+      {$sort: {_id: -1}},
+      {$skip: parseInt(params.skip, 0)}, 
+      {$limit: parseInt(params.limit, 12)},
+      {$sample: {size: 6}}
+    ]);
   },
   findById: async (id) => {
     const image = await Image.findById(id);
