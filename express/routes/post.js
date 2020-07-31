@@ -29,7 +29,7 @@ router.get('/draft', requires_auth, async (req, res) => {
 
 });
 
-router.get('/draft/:draftId', requires_auth, async (req, res) => {
+router.get('/draft/:draftId', async (req, res) => {
   try {
     const { draftId } = req.params;
     const list = await posts.getDraftById(draftId);
