@@ -20,7 +20,7 @@ wss.on('connection', (ws) => {
   ws.sessionId = sessionId;
 
   ws.on('message', function (_msg) {
-    logger.debug('new message');
+    return _msg;
   });
   ws.on('error', (err) => {
     logger.error(err);
