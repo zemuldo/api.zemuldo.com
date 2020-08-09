@@ -10,10 +10,7 @@ use Mix.Config
 # which you should run after static files are built and
 # before starting your production server.
 config :phoenix_app, PhoenixAppWeb.Endpoint,
-  http: [:inet6, port: System.get_env("PORT") || 4000],
-  render_errors: [accepts: ~w(json)],
-  debug_errors: false,
-  url: [host: "ex_api.zemuldo.com", port: 80]
+  http: [port: 4000]
 
 # Do not print debug messages in production
 config :logger, level: :info
