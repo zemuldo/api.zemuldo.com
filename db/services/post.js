@@ -5,7 +5,9 @@ const isSameDate = require('../../tools/is_same_date');
 
 module.exports = {
   get: async (params) => {
-    return Post.find({}, [], {
+    let q = {};
+    if (params.tag) q = {'tags.value': params.tag};
+    return Post.find(q, [], {
       skip: parseInt(params.skip, 10),
       limit: parseInt(params.limit, 10),
       sort: {

@@ -7,5 +7,7 @@ defmodule PhoenixAppWeb.Router do
 
   scope "/api", PhoenixAppWeb do
     pipe_through :api
+
+    get "/top_tags", TopTagsController, :get
   end
 end

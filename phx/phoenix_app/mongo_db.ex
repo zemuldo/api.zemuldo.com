@@ -1,22 +1,22 @@
-defmodule PhoenixApp.MongioDB do
+defmodule PhoenixApp.MongoDB do
   use GenServer
 
-  def start_link do
-   {:ok, conn} = Mongo.start_link(url: "mongodb://localhost:27017/db-name")
-   {}
+  @env Application.get_env(:phoenix_app, PhoenixApp.MongoDB)
+
+  @uri "mongodb://#{@env[:user]}:#{@env[:password]}@#{@env[:host]}/#{@env[:database]}"
+
+  @server __MODULE__
+
+  def init(init_arg) do
+    {:ok, init_arg}
   end
 
-  def init(state) do
-    schedule_work()
-    {:ok, state}
+  def start_link() do
+    Mongo.start_link(name: @server, url: @uri)
   end
 
-  def handle_info(:work, state) do
-    work()
-    {:noreply, state}
-  end
-
-  defp work() do
-    Process.send_after(self(), :work, 5 * 60 * 60 * 1000)
+  def get_posts_tags() do
+    Mongo.find(@server, "posts", %{})
+    |> Enum.to_list()
   end
 end
