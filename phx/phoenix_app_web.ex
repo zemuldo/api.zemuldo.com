@@ -30,7 +30,7 @@ defmodule PhoenixAppWeb do
   def view do
     quote do
       use Phoenix.View,
-        root: "lib/phoenix_app_web/templates",
+        root: "phx/phoenix_app_web/templates",
         namespace: PhoenixAppWeb
 
       # Import convenience functions from controllers

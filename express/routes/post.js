@@ -81,7 +81,8 @@ router.get('/:postId', async (req, res) => {
   const { postId } = req.params;
   try {
     const post = await posts.findById(postId);
-    res.send(post);
+    if (!post) return res.status(404).send(post);
+    return res.send(post);
   } catch (error) {
     res.status(400).send([{ errorType: 'BAD_REQUEST', errorMessage: error.toString() }]);
   }

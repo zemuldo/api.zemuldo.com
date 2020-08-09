@@ -31,6 +31,7 @@ module.exports = {
   },
   findById: async (id) => {
     const post = await Post.findById(id);
+    if (!post) return null;
     const postBody = await PostBody.findOne({ postId: post.id });
     return { post: post, postBody: postBody };
   },
