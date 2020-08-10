@@ -40,7 +40,8 @@ defmodule PhoenixApp.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:mongodb, ">= 0.0.0"},
-      {:poolboy, ">= 0.0.0"}
+      {:poolboy, ">= 0.0.0"},
+      {:cors_plug, "~> 2.0"}
     ]
   end
 
