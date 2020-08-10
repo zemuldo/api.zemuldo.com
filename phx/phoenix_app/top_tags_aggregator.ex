@@ -17,7 +17,7 @@ defmodule PhoenixApp.TopTagsAggregator do
   end
 
   def handle_info(:aggregate, state) do
-    tags = aggregate() |> IO.inspect()
+    tags = aggregate()
     {:noreply, state |> Map.put(:tags, tags)}
   end
 
