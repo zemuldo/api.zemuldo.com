@@ -41,7 +41,8 @@ defmodule PhoenixApp.MixProject do
       {:plug_cowboy, "~> 2.0"},
       {:mongodb, ">= 0.0.0"},
       {:poolboy, ">= 0.0.0"},
-      {:cors_plug, "~> 2.0"}
+      {:cors_plug, "~> 2.0"},
+      {:bamboo, "~> 1.4"}
     ]
   end
 

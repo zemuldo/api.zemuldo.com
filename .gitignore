@@ -39,3 +39,5 @@ phoenix_app-*.tar
 
 *.secret.*
 *ignore_me*
+
+public/
