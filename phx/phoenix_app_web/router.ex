@@ -9,6 +9,9 @@ defmodule PhoenixAppWeb.Router do
     pipe_through :api
 
     get "/top_tags", TopTagsController, :get
-    get "/resume", ResumeController, :get
+
+    scope "/resume" do
+      post "/share", ResumeController, :share
+    end
   end
 end
