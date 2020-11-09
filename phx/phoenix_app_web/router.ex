@@ -5,6 +5,10 @@ defmodule PhoenixAppWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :auth do
+    plug :accepts, ["json"]
+  end
+
   scope "/api", PhoenixAppWeb do
     pipe_through :api
 

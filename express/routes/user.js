@@ -29,7 +29,7 @@ function (accessToken, refreshToken, profile, cb) {
 router.get('/', async (req, res) =>{
   try {
     const user = await users.fineById(req.custom_user.id);
-    res.send(user || {});
+    res.send({profilePhotoUrl: user.profilePhotoUrl, token: req.custom_user.token});
   } catch (_){
     res.status(401).send({error: 'User not logged in'});
   }

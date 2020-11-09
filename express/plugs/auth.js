@@ -10,7 +10,7 @@ module.exports = (req, res, next) => {
     if (err) {
       next();
     } else {
-      req.custom_user = data;
+      req.custom_user = {...data, token: token};
       next();
     }
   });
