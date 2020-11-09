@@ -5,7 +5,6 @@ const router = express();
 
 const requires_auth = (req, res, next) => {
   if (!req.custom_user || !req.custom_user.id) return res.status(401).send('Please login first');
-
   next();
 };
 
@@ -21,7 +20,7 @@ router.get('/', async (req, res) => {
 
 router.get('/draft', requires_auth, async (req, res) => {
   try {
-    const list = await posts.getDrafts();
+    const list = await posts.getDrafts(req.custom_user.id);
     res.send(list);
   } catch (error) {
     res.status(400).send([{ errorType: 'BAD_REQUEST', errorMessage: error.toString() }]);
@@ -43,7 +42,7 @@ router.get('/draft/:draftId', async (req, res) => {
 router.delete('/draft/:draftId', requires_auth, async (req, res) => {
   try {
     const { draftId } = req.params;
-    const deleted = await posts.deleteDraft(draftId);
+    const deleted = await posts.deleteDraft(draftId, req.custom_user.id);
     res.send(deleted);
   } catch (error) {
     res.status(400).send([{ errorType: 'BAD_REQUEST', errorMessage: error.toString() }]);
@@ -62,7 +61,7 @@ router.post('/draft', requires_auth, async (req, res) => {
 router.put('/draft/:_id', requires_auth, async (req, res) => {
   try {
     const { _id } = req.params;
-    const draft = await posts.updateDraft({ update: { ...req.body, authorId: req.custom_user.id }, _id: _id });
+    const draft = await posts.updateDraft({ update: { ...req.body }, _id: _id, authorId: req.custom_user.id });
     res.send(draft);
   } catch (error) {
     res.status(400).send([{ errorType: 'BAD_REQUEST', errorMessage: error.toString() }]);
@@ -90,7 +89,6 @@ router.get('/:postId', async (req, res) => {
 
 router.post('/', requires_auth, async (req, res) => {
   try {
-    if (!req.custom_user || !req.custom_user.id) throw Error('Please login first');
     const post = await posts.create({ ...req.body, authorId: req.custom_user.id });
     res.send(post);
   } catch (error) {
@@ -101,9 +99,12 @@ router.put('/:postId', requires_auth, async (req, res) => {
 
   const { postId } = req.params;
   try {
-    if (parseInt(req.custom_user.id, 10) !== parseInt(req.body.authorId, 10)) throw Error('You don\'t own this post!');
+    
     posts.updatePost(req.body);
     const post = await posts.findById(postId);
+    console.log(req.custom_user.id)
+    console.log(post)
+    if (req.custom_user.id !== post.post.authorId) throw Error('You don\'t own this post!');
     res.send(post);
   } catch (error) {
     res.status(400).send([{ errorType: 'BAD_REQUEST', errorMessage: error.toString() }]);

@@ -15,16 +15,16 @@ module.exports = {
       }
     });
   },
-  getDrafts: async () => {
-    return Draft.find({});
+  getDrafts: async (authorId) => {
+    return Draft.find({authorId});
   },
 
   getDraftById: async (id) => {
     return Draft.findById(id);
   },
 
-  deleteDraft: async (id) => {
-    return Draft.deleteOne({ _id: id });
+  deleteDraft: async (id, authorId) => {
+    return Draft.deleteOne({ _id: id, authorId });
   },
   getLatest: async () => {
     const post = await Post.findOne({}).sort([['createdAt', -1]]);
@@ -75,6 +75,8 @@ module.exports = {
     if (!params._id) throw Error('Update must come with _id');
     if (!params.update) throw Error('Update body must be sent');
     const draft = await Draft.findById(params._id);
+
+    if(draft.authorId !== params.authorId) throw Error('Unauthorized Access');
 
     if (!params.update.last_update) {
       const data = await draft.save();
