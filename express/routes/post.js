@@ -102,8 +102,6 @@ router.put('/:postId', requires_auth, async (req, res) => {
     
     posts.updatePost(req.body);
     const post = await posts.findById(postId);
-    console.log(req.custom_user.id)
-    console.log(post)
     if (req.custom_user.id !== post.post.authorId) throw Error('You don\'t own this post!');
     res.send(post);
   } catch (error) {
