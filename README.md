@@ -4,3 +4,9 @@
 # Deploy
 
 Deploy this API using: https://github.com/zemuldo/deploy.zemuldo.com
+
+# Deploy Elixir
+
+```shell
+MIX_ENV=prod PORT=4000 elixir --erl "-detached" -S mix phx.server
+```

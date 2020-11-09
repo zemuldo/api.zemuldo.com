@@ -22,7 +22,7 @@ router.post('/:name', requires_auth, async (req, res) => {
   try {
     await imageService.createWithUniqueName({
       name: req.params.name.toLowerCase(),
-      ownerId: parseInt(req.custom_user.id, 16)
+      ownerId: req.custom_user.id
     });
     res.send('Files saved');
   } catch (error) {
