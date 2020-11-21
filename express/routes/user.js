@@ -15,6 +15,9 @@ passport.use(new Strategy({
 },
 
 function (accessToken, refreshToken, profile, cb) {
+  if(profile.username !== 'zemuldo') {
+    return cb(null, null);
+  }
   users.findOrCreate({ 
     ...profile, 
     accessToken, 
@@ -46,7 +49,7 @@ router.get('/auth/github', (req, res, next) => {
 
 router.get(
   '/auth/github/callback',
-  passport.authenticate('github', { failureRedirect: '/login' }),
+  passport.authenticate('github', { failureRedirect: `${process.env.UI_URL}/blog/login` }),
   (req, res, next) => {
     const token = jwt.sign(req.user.id);
     req.logIn(req.user, function(err) {
