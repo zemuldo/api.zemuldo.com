@@ -25,10 +25,6 @@ defmodule PhoenixAppWeb.ResumeController do
         |> put_status(422)
         |> json(%{error: "Something happenned, please try again"})
     end
-
-    conn
-    |> put_status(200)
-    |> json(%{})
   end
 
   def share(conn, _),
