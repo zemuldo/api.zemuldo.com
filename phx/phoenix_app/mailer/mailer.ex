@@ -6,7 +6,7 @@ defmodule PhoenixApp.Mailer do
 
   def send(reason, params) do
     {:ok,
-    reason
+     reason
      |> Email.new(params)
      |> put_attachment(Bamboo.Attachment.new(params.resume))
      |> deliver_now()}

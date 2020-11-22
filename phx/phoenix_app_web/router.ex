@@ -16,6 +16,7 @@ defmodule PhoenixAppWeb.Router do
 
     scope "/resume" do
       post "/share", ResumeController, :share
+      post "/upload", ResumeController, :upload
     end
   end
 end

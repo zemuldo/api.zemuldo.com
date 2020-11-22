@@ -8,8 +8,7 @@ defmodule PhoenixApp.Mailer.Email do
       to: params.recipient,
       from: "Danstan Onyango<no-reply@zemuldo.com>",
       subject: "Danstan's Resume",
-      text_body:
-        "Hi, Please find my resume attached",
+      text_body: "Hi, Please find my resume attached",
       html_body: Templates.share_resume()
     )
   end

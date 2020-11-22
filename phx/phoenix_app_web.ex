@@ -75,4 +75,11 @@ defmodule PhoenixAppWeb do
   defmacro __using__(which) when is_atom(which) do
     apply(__MODULE__, which, [])
   end
+
+  def dynamic_cors(conn) do
+    Plug.Conn.get_req_header(conn, "origin") |> put_origin()
+  end
+
+  defp put_origin([]), do: []
+  defp put_origin(origin), do: origin
 end

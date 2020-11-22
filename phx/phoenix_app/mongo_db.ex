@@ -19,4 +19,25 @@ defmodule PhoenixApp.MongoDB do
     Mongo.find(@server, "posts", %{})
     |> Enum.to_list()
   end
+
+  def log_resume_request(email, resume) do
+    Mongo.insert_one(@server, "resume_request", %{
+      email: email,
+      resume: resume,
+      timestamp: DateTime.utc_now()
+    })
+  end
+
+  def new_resume(filename) do
+    Mongo.insert_one(@server, "resumes", %{filename: filename, timestamp: DateTime.utc_now()})
+  end
+
+  def find_by_filename(filename) do
+    Mongo.find_one(@server, "resumes", %{filename: filename})
+  end
+
+  def get_latest_resume() do
+    [resume] = Mongo.find(@server, "resumes", %{}, limit: 1, sort: %{_id: -1}) |> Enum.to_list()
+    {:ok, resume}
+  end
 end
