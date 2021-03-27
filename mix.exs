@@ -43,7 +43,11 @@ defmodule PhoenixApp.MixProject do
       {:poolboy, ">= 0.0.0"},
       {:cors_plug, "~> 2.0"},
       {:bamboo, "~> 1.4"},
-      {:joken, "~> 2.0"}
+      {:joken, "~> 2.0"},
+      {:ecto_sql, "~> 3.0"},
+      {:postgrex, ">= 0.0.0"},
+      {:tesla, "~> 1.4.0"},
+      {:hackney, "~> 1.17.0"}
     ]
   end
 

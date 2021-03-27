@@ -11,7 +11,7 @@ defmodule PhoenixApp.MongoDB do
     {:ok, init_arg}
   end
 
-  def start_link() do
+  def start_link(_) do
     Mongo.start_link(name: @server, url: @uri)
   end
 

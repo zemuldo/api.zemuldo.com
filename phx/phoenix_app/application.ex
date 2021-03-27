@@ -1,14 +1,14 @@
 defmodule PhoenixApp.Application do
   use Application
-  import Supervisor.Spec
 
   def start(_type, _args) do
     children = [
       PhoenixAppWeb.Telemetry,
       {Phoenix.PubSub, name: PhoenixApp.PubSub},
       PhoenixAppWeb.Endpoint,
-      supervisor(PhoenixApp.MongoDB, []),
-      supervisor(PhoenixApp.TopTagsAggregator, [])
+      {PhoenixApp.MongoDB, []},
+      PhoenixApp.Postgres,
+      {PhoenixApp.TopTagsAggregator, []}
     ]
 
     opts = [strategy: :one_for_one, name: PhoenixApp.Supervisor]

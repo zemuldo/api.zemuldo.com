@@ -34,4 +34,7 @@ config :cors_plug,
   max_age: 86400,
   credentials: true
 
+config :phoenix_app,
+  ecto_repos: [PhoenixApp.Postgres]
+
 import_config "#{Mix.env()}.exs"

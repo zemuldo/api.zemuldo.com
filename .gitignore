@@ -41,3 +41,5 @@ phoenix_app-*.tar
 *ignore_me*
 
 public/
+
+.elixir_ls
