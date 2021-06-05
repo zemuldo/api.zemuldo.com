@@ -11,6 +11,7 @@ const requires_auth = (req, res, next) => {
 router.get('/', async (req, res) => {
   try {
     const list = await posts.get(req.query);
+    console.log(list)
     res.send(list);
   } catch (error) {
     res.status(400).send([{ errorType: 'BAD_REQUEST', errorMessage: error.toString() }]);
@@ -86,7 +87,6 @@ router.get('/:postId', async (req, res) => {
     res.status(400).send([{ errorType: 'BAD_REQUEST', errorMessage: error.toString() }]);
   }
 });
-
 router.post('/', requires_auth, async (req, res) => {
   try {
     const post = await posts.create({ ...req.body, authorId: req.custom_user.id });

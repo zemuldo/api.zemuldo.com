@@ -8,7 +8,8 @@ defmodule PhoenixAppWeb.ResumeController do
   @resumes_path "public/resumes"
 
   def share(conn, %{"email" => email, "recaptchaChallengeValue" => value}) do
-    with {:ok, %{body: %{"success" => true}}} <- PhoenixApp.Recaptcha.verify(value) |> IO.inspect(),
+    with {:ok, %{body: %{"success" => true}}} <-
+           PhoenixApp.Recaptcha.verify(value) |> IO.inspect(),
          {:ok, latest_resume} <- Resume.get_latest(),
          {:ok, _} <-
            Mailer.send(:share_resume, %{

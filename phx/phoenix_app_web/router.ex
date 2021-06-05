@@ -14,6 +14,8 @@ defmodule PhoenixAppWeb.Router do
 
     get "/top_tags", TopTagsController, :get
 
+    post "/posts/:post_id/view_record", PostsController, :track_view
+
     scope "/resume" do
       post "/share", ResumeController, :share
       post "/upload", ResumeController, :upload
