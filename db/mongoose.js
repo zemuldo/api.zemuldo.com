@@ -5,9 +5,9 @@ const tags = require('./data/meta_tags');
 require('dotenv').config();
 
 function connectionString (){
-  if (process.env.MONGO_URI) return process.env.MONGO_URI;
-  else if (process.env.NODE_ENV === 'production') return `mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.DB_HOST}/${process.env.DATABASE}`;
-  else return `mongodb://${process.env.DB_HOST}/${process.env.DATABASE}`;
+  if (process.env.MONGODB_URI) return process.env.MONGODB_URI;
+  else if (process.env.NODE_ENV === 'production') return `mongodb://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_HOST}/${process.env.MONGODB_DATABASE}`;
+  else return `mongodb://${process.env.MONGODB_HOST}/${process.env.MONGODB_DATABASE}`;
 }
 
 mongoose.connect(connectionString(), {useNewUrlParser: true, useUnifiedTopology: true});

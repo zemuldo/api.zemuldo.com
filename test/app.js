@@ -1,5 +1,5 @@
 const assert = require('assert');
-process.env.DATABASE = 'zemuldo-test';
+process.env.MONGODB_DATABASE = 'zemuldo-test';
 process.env.PORT = 8091;
 const app = require('../app');
 const chai = require('chai');

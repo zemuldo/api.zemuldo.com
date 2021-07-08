@@ -3,7 +3,7 @@ node_modules
 .idea
 .DS_Store
 .gitmodules
-*.env
+*.env*
 .vscode
 z-site-images/
 
