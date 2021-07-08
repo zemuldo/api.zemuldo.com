@@ -39,7 +39,6 @@ defmodule PhoenixApp.MixProject do
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
-      {:mongodb, ">= 0.0.0"},
       {:poolboy, ">= 0.0.0"},
       {:cors_plug, "~> 2.0"},
       {:bamboo, "~> 1.4"},
@@ -47,7 +46,8 @@ defmodule PhoenixApp.MixProject do
       {:ecto_sql, "~> 3.0"},
       {:postgrex, ">= 0.0.0"},
       {:tesla, "~> 1.4.0"},
-      {:hackney, "~> 1.17.0"}
+      {:hackney, "~> 1.17.0"},
+      {:mongodb_driver, "~> 0.7"}
     ]
   end
 
