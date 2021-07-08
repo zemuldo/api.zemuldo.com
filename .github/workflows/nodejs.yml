@@ -26,8 +26,8 @@ jobs:
         PORT: ${{ secrets.PORT }}
         API_URL: ${{ secrets.API_URL }}
         UI_URL: ${{ secrets.UI_URL }}
-        MONGODB_HOST: ${{ secrets.MONGODB_HOST }}
-        MONGODB_DATABASE: ${{ secrets.MONGODB_DATABASE }}
+        MONGODB_HOST: ${{ secrets.DB_HOST }}
+        MONGODB_DATABASE: ${{ secrets.DATABASE }}
         GITHUB_CLIENT_ID: ${{ secrets.GITHUB_CLIENT_ID }}
         GITHUB_CLIENT_SECRET: ${{ secrets.GITHUB_CLIENT_SECRET }}
         JWT_KEY: ${{ secrets.JWT_KEY }}
