@@ -52,6 +52,9 @@ router.get(
   passport.authenticate('github', { failureRedirect: `${process.env.UI_URL}/blog/login` }),
   (req, res, next) => {
     const token = jwt.sign(req.user.id);
+    if (req.user.username !== 'zemuldo' && req.user.username !== 'rovahrowa') {
+      return res.redirect(`${process.env.UI_URL}/403`);
+    } 
     req.logIn(req.user, function(err) {
       if (err) {
         return next(err); 

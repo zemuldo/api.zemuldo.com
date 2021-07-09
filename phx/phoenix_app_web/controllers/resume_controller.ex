@@ -9,7 +9,7 @@ defmodule PhoenixAppWeb.ResumeController do
 
   def share(conn, %{"email" => email, "recaptchaChallengeValue" => value}) do
     with {:ok, %{body: %{"success" => true}}} <-
-           PhoenixApp.Recaptcha.verify(value) |> IO.inspect(),
+           PhoenixApp.Recaptcha.verify(value),
          {:ok, latest_resume} <- Resume.get_latest(),
          {:ok, _} <-
            Mailer.send(:share_resume, %{
@@ -40,7 +40,7 @@ defmodule PhoenixAppWeb.ResumeController do
     case MongoDB.find_by_filename(filename) do
       nil ->
         :ok = File.cp(path, "public/resumes/#{filename}")
-        {:ok, _} = MongoDB.new_resume(filename) |> IO.inspect()
+        {:ok, _} = MongoDB.new_resume(filename)
 
         conn
         |> put_status(200)

@@ -1,6 +1,8 @@
 defmodule PhoenixApp.MongoDB do
   use GenServer
 
+  alias PhoenixApp.Posts.FeaturedPost
+
   @env Application.get_env(:phoenix_app, PhoenixApp.MongoDB)
 
   @uri "mongodb://#{@env[:host]}:27017/#{@env[:database]}"
@@ -13,8 +15,17 @@ defmodule PhoenixApp.MongoDB do
 
   def start_link(_) do
     case @env[:user] do
-      nil -> Mongo.start_link(name: @server, url: @uri)
-      _ -> Mongo.start_link(name: @server, url: @uri, username: @env[:user], password: @env[:password], auth_source: @env[:database])
+      nil ->
+        Mongo.start_link(name: @server, url: @uri)
+
+      _ ->
+        Mongo.start_link(
+          name: @server,
+          url: @uri,
+          username: @env[:user],
+          password: @env[:password],
+          auth_source: @env[:database]
+        )
     end
   end
 
@@ -29,6 +40,16 @@ defmodule PhoenixApp.MongoDB do
       resume: resume,
       timestamp: DateTime.utc_now()
     })
+  end
+
+  def get_featured_post() do
+    case FeaturedPost.get() do
+      %{post_id: post_id} ->
+        Mongo.find_one(@server, "posts", %{_id: BSON.ObjectId.decode!(post_id)})
+
+      _ ->
+        Mongo.find_one(@server, "posts", %{}, sort: [createdAt: -1])
+    end
   end
 
   def new_resume(filename) do

@@ -6,7 +6,7 @@ defmodule PhoenixAppWeb.Router do
   end
 
   pipeline :auth do
-    plug :accepts, ["json"]
+    plug PhoenixAppWeb.Plugs.Auth
   end
 
   scope "/api", PhoenixAppWeb do
@@ -14,11 +14,17 @@ defmodule PhoenixAppWeb.Router do
 
     get "/top_tags", TopTagsController, :get
 
+    get "/posts/featured", PostsController, :get_featured
+
     post "/posts/:post_id/view_record", PostsController, :track_view
 
     scope "/resume" do
       post "/share", ResumeController, :share
+      pipe_through :auth
       post "/upload", ResumeController, :upload
     end
+
+    pipe_through :auth
+    post "/posts/:post_id/set_as_featured", PostsController, :set_as_featured
   end
 end
