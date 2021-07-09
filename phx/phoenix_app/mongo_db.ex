@@ -3,7 +3,7 @@ defmodule PhoenixApp.MongoDB do
 
   @env Application.get_env(:phoenix_app, PhoenixApp.MongoDB)
 
-  @uri "mongodb://#{@env[:user]}:#{@env[:password]}@#{@env[:host]}/#{@env[:database]}"
+  @uri "mongodb://#{@env[:host]}:27017/#{@env[:database]}"
 
   @server __MODULE__
 
@@ -12,7 +12,10 @@ defmodule PhoenixApp.MongoDB do
   end
 
   def start_link(_) do
-    Mongo.start_link(name: @server, url: @uri)
+    case @env[:user] do
+      nil -> Mongo.start_link(name: @server, url: @uri)
+      _ -> Mongo.start_link(name: @server, url: @uri, username: @env[:user], password: @env[:password], auth_source: @env[:database])
+    end
   end
 
   def get_posts_tags() do
