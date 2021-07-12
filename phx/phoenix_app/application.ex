@@ -7,7 +7,7 @@ defmodule PhoenixApp.Application do
       {Phoenix.PubSub, name: PhoenixApp.PubSub},
       PhoenixAppWeb.Endpoint,
       {PhoenixApp.MongoDB, []},
-      PhoenixApp.Postgres,
+      PhoenixApp.Repo,
       {PhoenixApp.TopTagsAggregator, []}
     ]
 

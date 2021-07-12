@@ -35,6 +35,6 @@ config :cors_plug,
   credentials: true
 
 config :phoenix_app,
-  ecto_repos: [PhoenixApp.Postgres]
+  ecto_repos: [PhoenixApp.Repo]
 
 import_config "#{Mix.env()}.exs"

@@ -1,4 +1,4 @@
-defmodule PhoenixApp.Postgres.Migrations.AddPostsViewsTable do
+defmodule PhoenixApp.Repo.Migrations.AddPostsViewsTable do
   use Ecto.Migration
 
   def change do

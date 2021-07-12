@@ -2,7 +2,7 @@ defmodule PhoenixAppWeb.PostsController do
   use PhoenixAppWeb, :controller
 
   alias PhoenixApp.PostViewCount
-  alias PhoenixApp.Postgres
+  alias PhoenixApp.Repo
   alias PhoenixApp.Posts.FeaturedPost
   alias PhoenixApp.MongoDB
 
@@ -39,7 +39,7 @@ defmodule PhoenixAppWeb.PostsController do
   end
 
   def track_view(conn, params) do
-    case Postgres.insert(%PostViewCount{post_id: params["post_id"], count: 1},
+    case Repo.insert(%PostViewCount{post_id: params["post_id"], count: 1},
            conflict_target: :post_id,
            on_conflict: [inc: [count: 1]]
          ) do

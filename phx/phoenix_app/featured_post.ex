@@ -26,7 +26,7 @@ defmodule PhoenixApp.Posts.FeaturedPost do
 
     %{post_id: post_id, period: period}
     |> changeset()
-    |> PhoenixApp.Postgres.insert(on_conflict: on_conflict, conflict_target: :period)
+    |> PhoenixApp.Repo.insert(on_conflict: on_conflict, conflict_target: :period)
   end
 
   def get() do
@@ -36,7 +36,7 @@ defmodule PhoenixApp.Posts.FeaturedPost do
       where: p.period == ^period,
       select: %{post_id: p.post_id}
     )
-    |> PhoenixApp.Postgres.one()
+    |> PhoenixApp.Repo.one()
   end
 
   def current_period() do

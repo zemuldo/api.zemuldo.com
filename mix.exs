@@ -47,7 +47,8 @@ defmodule PhoenixApp.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:tesla, "~> 1.4.0"},
       {:hackney, "~> 1.17.0"},
-      {:mongodb_driver, "~> 0.7"}
+      {:mongodb_driver, "~> 0.7"},
+      {:distillery, "~> 2.1"}
     ]
   end
 
