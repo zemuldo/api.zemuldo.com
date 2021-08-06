@@ -39,8 +39,8 @@ router.get('/', async (req, res) =>{
 });
 
 router.get('/auth/github', (req, res, next) => {
-  const { redirectTo } = req.query;
-  const state = JSON.stringify({ redirectTo });
+  const { redirectTo, exit } = req.query;
+  const state = JSON.stringify({ redirectTo, exit });
   const authenticator = passport.authenticate('github', { scope: [], state, session: true });
   authenticator(req, res, next);
 }, (req, res, next) =>{
@@ -61,7 +61,8 @@ router.get(
       }
       try {
         const { state } = req.query;
-        const { redirectTo } = JSON.parse(state);
+        const { redirectTo, exit } = JSON.parse(state);
+        if (exit) return res.redirect(`${process.env.UI_URL}/blog/login/callback?token=${token}&exit=true`);
         if (redirectTo) {
           res.set('token', token);
           return res.redirect(`${process.env.UI_URL}/blog/login?redirectTo=${redirectTo}&token=${token}`);
