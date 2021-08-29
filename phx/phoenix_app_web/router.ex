@@ -17,6 +17,7 @@ defmodule PhoenixAppWeb.Router do
     get "/posts/featured", PostsController, :get_featured
 
     post "/posts/:post_id/view_record", PostsController, :track_view
+    post "/posts/:post_id/copied_code", PostsController, :copied_code
 
     scope "/resume" do
       post "/share", ResumeController, :share
