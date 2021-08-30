@@ -1,4 +1,4 @@
-defmodule PhoenixApp.Repo.Migrations.CreateFeaturedPost do
+defmodule ExApi.Repo.Migrations.CreateFeaturedPost do
   use Ecto.Migration
 
   def change do

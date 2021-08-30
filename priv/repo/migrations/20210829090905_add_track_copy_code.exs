@@ -1,4 +1,4 @@
-defmodule PhoenixApp.Repo.Migrations.AddTrackCopyCode do
+defmodule ExApi.Repo.Migrations.AddTrackCopyCode do
   use Ecto.Migration
 
   def change do

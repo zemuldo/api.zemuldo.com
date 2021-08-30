@@ -7,15 +7,15 @@
 # General application configuration
 use Mix.Config
 
-config :phoenix_app,
+config :ex_api,
   generators: [binary_id: true]
 
 # Configures the endpoint
-config :phoenix_app, PhoenixAppWeb.Endpoint,
+config :ex_api, ExApiWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "sdfxCrkDMF6QclqHW2ItwpGXEHn2GaSnJbKhAOZEDUX45ZvFwLnP3RUJIVn51XG/",
-  render_errors: [view: PhoenixAppWeb.ErrorView, accepts: ~w(json), layout: false],
-  pubsub_server: PhoenixApp.PubSub,
+  render_errors: [view: ExApiWeb.ErrorView, accepts: ~w(json), layout: false],
+  pubsub_server: ExApi.PubSub,
   live_view: [signing_salt: "WzMqgfgR"]
 
 # Configures Elixir's Logger
@@ -30,11 +30,11 @@ config :phoenix, :json_library, Jason
 # of this file so it overrides the configuration defined above.
 
 config :cors_plug,
-  origin: &PhoenixAppWeb.dynamic_cors/1,
+  origin: &ExApiWeb.dynamic_cors/1,
   max_age: 86400,
   credentials: true
 
-config :phoenix_app,
-  ecto_repos: [PhoenixApp.Repo]
+config :ex_api,
+  ecto_repos: [ExApi.Repo]
 
 import_config "#{Mix.env()}.exs"

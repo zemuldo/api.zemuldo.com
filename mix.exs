@@ -1,9 +1,9 @@
-defmodule PhoenixApp.MixProject do
+defmodule ExApi.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :phoenix_app,
+      app: :ex_api,
       version: "0.1.0",
       elixir: "~> 1.7",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -19,14 +19,14 @@ defmodule PhoenixApp.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {PhoenixApp.Application, []},
+      mod: {ExApi.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end
 
   # Specifies which paths to compile per environment.
-  defp elixirc_paths(:test), do: ["phx", "test/support"]
-  defp elixirc_paths(_), do: ["phx"]
+  defp elixirc_paths(:test), do: ["ex_api", "test/support"]
+  defp elixirc_paths(_), do: ["ex_api"]
 
   # Specifies your project dependencies.
   #

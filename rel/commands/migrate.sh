@@ -1,3 +1,3 @@
 #!/bin/sh
 
-bin/phoenix_app command Elixir.PhoenixApp.ReleaseTasks migrate
+bin/ex_api command Elixir.ExApi.ReleaseTasks migrate
