@@ -1,9 +1,6 @@
-defmodule ExApi.Mailer.Templates do
-  @moduledoc """
-  Email template with builders
-  """
-  def share_resume() do
-    """
+module.exports = {
+  resume: () => {
+    return `
     <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
     <meta name="viewport" content="width=3Ddevice-width" />
@@ -233,6 +230,6 @@ defmodule ExApi.Mailer.Templates do
       <!-- /body -->
       </body>
     </html>
-    """
-  end
-end
+        `;
+  }
+};

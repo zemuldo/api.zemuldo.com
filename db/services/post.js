@@ -1,7 +1,11 @@
 const Post = require('../models/post');
 const Draft = require('../models/draft');
 const PostBody = require('../models/postBody');
+const FeaturedPost = require('../models/featuredPost');
+const postView = require('../models/postView');
+const codeCopy = require('../models/codeCopy');
 const isSameDate = require('../../tools/is_same_date');
+const logger = require('../../tools/logger');
 
 module.exports = {
   get: async (params) => {
@@ -96,5 +100,62 @@ module.exports = {
     draft.updatedAt = Date.now();
     const data = await draft.save();
     return { ...data._doc, rejected: false };
+  },
+  getFeatured: async () => {
+    const d = new Date();
+    const currentPeriod = `${d.getMonth()}-${d.getFullYear()}`;
+    const featuredId = await FeaturedPost.findOne({ period: currentPeriod }, [], {
+      sort: {
+        _id: -1
+      }
+    });
+
+    if (featuredId) {
+      const post = await Post.findOne({ _id: featuredId.postId });
+
+      return post;
+    }
+    return null;
+  },
+  setFeatured: async (id) => {
+    const d = new Date();
+    const period = `${d.getMonth()}-${d.getFullYear()}`;
+    const featuredPost = new FeaturedPost({ period, postId: id });
+    await featuredPost.save();
+
+  },
+  updateViews: async (postId) => {
+    await postView.findOneAndUpdate(
+      { postId: postId },
+      { $inc: { value: 1 } },
+      { new: true, upsert: true }
+    );
+  },
+  trackCodeCopy: async (postId) => {
+    await codeCopy.findOneAndUpdate(
+      { postId: postId },
+      { $inc: { value: 1 } },
+      { new: true, upsert: true }
+    );
+  },
+  buildTopTags: async () => {
+    Post.find({}, [], {
+      limit: 100,
+      sort: {
+        updatedAt: -1
+      }
+    })
+      .then(async posts => {
+        const flat = posts.map((p => p.tags.map(t => t.value))).flat(1).reduce((acc, tag) => {
+          acc[tag] = (acc[tag] || 0) + 1;
+          return acc;
+        }, {});
+
+        const final = Object.keys(flat).map(k => ({ name: k, value: flat[k] })).sort((a, b) => (a.value < b.value) ? 1 : -1).slice(0, 8);
+        global.topTags = final;
+      } )
+      .catch(_ => {
+        logger.error('Failed to fetch posts in build top tags');
+      });
   }
 };

@@ -1,5 +1,11 @@
 const express = require('express');
+const fileUpload = require('express-fileupload');
 const imageService = require('../../db/services/image');
+const blobServiceClient = require('../apis/azureBlob');
+
+require('dotenv').config();
+
+const containerClient = blobServiceClient.getContainerClient('images');
 
 const router = express();
 
@@ -12,6 +18,35 @@ router.get('/', async (req, res) => {
   try {
     const list = await imageService.get(req.query);
     res.send(list);
+  } catch (error) {
+    res.status(400).send([{ errorType: 'BAD_REQUEST', errorMessage: error.toString() }]);
+  }
+
+});
+
+router.use(fileUpload({
+  limits: { fileSize: 50 * 1024 * 1024 },
+}));
+
+router.post('/', requires_auth, async (req, res) => {
+
+  try {
+    const { files } = req;
+    Object.keys(files).forEach(async name => {
+      if (Object.prototype.hasOwnProperty.call(files, name)) {
+        const file = files[name];
+        const blockBlobClient = containerClient.getBlockBlobClient(file.name);
+        const uploadBlobResponse = await blockBlobClient.upload(file.data, file.data.length);
+
+        if (uploadBlobResponse.requestId) {
+          await imageService.createWithUniqueName({
+            name: file.name.toLowerCase(),
+            ownerId: req.custom_user.id
+          });
+        }
+      }
+    });
+    res.send({status: 'Okay'});
   } catch (error) {
     res.status(400).send([{ errorType: 'BAD_REQUEST', errorMessage: error.toString() }]);
   }

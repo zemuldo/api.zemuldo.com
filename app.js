@@ -1,10 +1,16 @@
 
 const os = require('os');
+const schedule = require('node-schedule');
 const logger = require('./tools/logger');
+const postServices = require('./db/services/post');
+
+global.topTags = [];
 
 require('./db/mongoose');
 require('./ws/app.js');
 require('dotenv').config();
+
+schedule.scheduleJob('0 0 * * *', () => postServices.buildTopTags());
 
 logger.info('Starting Zemuldo API');
 let hostDetils = {
@@ -25,13 +31,13 @@ server.listen(process.env.PORT, () => {
   logger.info(`Web Socket started at  ws://localhost:${process.env.PORT}`);
 });
 process.on('exit', (code) => {
-  logger.info({status: `App exited with an error ${code}`,code: code});
+  logger.info({ status: `App exited with an error ${code}`, code: code });
 });
 process.on('warning', (warning) => {
   logger.warn(warning);
 
 });
-process.on('message', (message=>{
+process.on('message', (message => {
   logger.info(message);
 }));
 
