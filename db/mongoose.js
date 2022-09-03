@@ -25,16 +25,16 @@ db.once('open', async function() {
   logger.info('Seeding tags');
   process.emit('db-connected');
 
-  // const Tag = require('./models/tag');
+  const Tag = require('./models/tag');
   const posService = require('./services/post');
-  // await tags.map((t)=>{
-  //   const tag = new Tag({...t, _id: t.value});
-  //   tag.save()
-  //     .then((_d)=>true)
-  //     .catch(_e=>false);
+  await tags.map((t)=>{
+    const tag = new Tag({...t, _id: t.value});
+    tag.save()
+      .then((_d)=>true)
+      .catch(_e=>false);
 
-  // });
-  // await posService.buildTopTags()
+  });
+  await posService.buildTopTags()
 });
 
 module.exports = mongoose;
