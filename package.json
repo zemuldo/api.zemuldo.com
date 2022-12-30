@@ -53,6 +53,6 @@
     "chai-http": "^4.3.0",
     "eslint": "^6.5.1",
     "eslint-plugin-import": "^2.18.2",
-    "mocha": "^6.2.1"
+    "mocha": "^10.2.0"
   }
 }
